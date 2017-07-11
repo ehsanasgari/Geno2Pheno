@@ -1,0 +1,14 @@
+F1 rf: 0.62 (+/- 0.07)
+
+
+Confusion matix
+0 1
+109 2
+3 353
+F1 svm: 0.50 (+/- 0.04)
+
+
+Confusion matix
+0 1
+55 56
+0 356
