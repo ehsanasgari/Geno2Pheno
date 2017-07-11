@@ -60,9 +60,9 @@ for classifier,class_idx in list(itertools.product(classifier_method, classes_id
     print("recall "+classifier+" : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
     f[class_idx].write("recall "+classifier+": %0.2f (+/- %0.2f)" % (scores.mean(), scores.std())+'\n')
 
-    scores = cross_val_score(classifier_method[classifier], X, Y, cv=cv, scoring='recall')
-    print("recall "+classifier+" : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
-    f[class_idx].write("recall "+classifier+": %0.2f (+/- %0.2f)" % (scores.mean(), scores.std())+'\n')
+    scores = cross_val_score(classifier_method[classifier], X, Y, cv=cv, scoring='f')
+    print("f "+classifier+" : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
+    f[class_idx].write("f "+classifier+": %0.2f (+/- %0.2f)" % (scores.mean(), scores.std())+'\n')
 
     scores = cross_val_score(classifier_method[classifier], X, Y, cv=cv, scoring='roc_auc')
     print("roc_auc "+classifier+" : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
