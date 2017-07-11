@@ -64,4 +64,6 @@ for classifier,class_idx in list(itertools.product(classifier_method, classes_id
     f[class_idx].write(' '.join([str(x) for x in showing_labels])+'\n')
     for row in confusion:
         f[class_idx].write(' '.join([str(elem) for elem in row])+'\n')
+
+for class_idx in classes_idx:
     f[class_idx].close()
