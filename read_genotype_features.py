@@ -10,37 +10,58 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import SVC
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
+import itertools
+
+
 
 
 data_dir='/mounts/data/proj/asgari/github_data/data/pseudomonas/data/'
 label_files='MIC/v2/mic_bin_with_intermediate.txt'
 gene_expression_file='gene_expression/rpg_log_transformed.txt'
 
-label_mapping={str(l.strip().split('\t')[0]):[int(float(str(x)))  for x in l.strip().split('\t')[1::]] if len(l.strip().split('\t')[1::])==5 else [0,0,0,0,0] for l in codecs.open(data_dir+label_files,'r','utf-8').readlines()[1::]}
-classes= ['Ciprofloxacin','Tobramycin','Colistin','Ceftazidim','Meropenem']
 
-# question 'MHH2417', does have only one entry
+# data reading
+label_mapping={str(l.strip().split('\t')[0]):[int(float(str(x)))  for x in l.strip().split('\t')[1::]] if len(l.strip().split('\t')[1::])==5 else [0,0,0,0,0] for l in codecs.open(data_dir+label_files,'r','utf-8').readlines()[1::]}
 gene_expression=[l.strip() for l in codecs.open(data_dir+gene_expression_file,'r','utf-8').readlines()]
 gene_expression_mapping={str(entry.split('\t')[0]):[float(str(x)) for x in entry.split('\t')[1::]] for entry in gene_expression[1::]}
 training_instances=set(label_mapping.keys()).intersection(gene_expression_mapping.keys())
-
-Y=[str(label_mapping[x][0]) for x in training_instances]
 X=np.array([gene_expression_mapping[x] for x in training_instances])
-print (X.shape)
-print (len(Y))
-f=open('results_SVM.txt','w')
-clf = svm.SVC(kernel='rbf', C=1)
+# question 'MHH2417', does have only one entry
+
+classes_idx=[0,1,2,3,4]
+classes= ['Ciprofloxacin','Tobramycin','Colistin','Ceftazidim','Meropenem']
+classifier_method=['svm','rf']
+
+f=[]
+for x in classes:
+    f.append(open('results_gene_exp_'+x+'.txt','w'))
+
+clf_random_forest=RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=None, max_features='auto', max_leaf_nodes=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=2,
+            oob_score=False, random_state=None, verbose=0,
+            warm_start=False)
+
+clf_svm = svm.SVC(kernel='rbf', C=1)
+
+classifier_method={'rf':clf_random_forest, 'svm':clf_svm}
 cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=1)
-scores = cross_val_score(clf, X, Y, cv=cv, scoring='f1_macro')
-print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
-f.write("F1: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std())+'\n')
-y_pred=clf.fit(X, Y).predict(X)
-showing_labels=list(set(Y))
-showing_labels.sort()
-print(confusion_matrix(Y, y_pred,labels=showing_labels))
-confusion=confusion_matrix(Y, y_pred,labels=showing_labels)
-f.write('\n\nConfusion matix\n')
-f.write(' '.join([str(x) for x in showing_labels])+'\n')
-for row in confusion:
-    f.write(' '.join([str(elem) for elem in row])+'\n')
-f.close()
+
+for classifier,class_idx in list(itertools.product(classifier_method, classes_idx)):
+
+    Y=[str(label_mapping[x][class_idx]) for x in training_instances]
+
+    scores = cross_val_score(classifier_method[classifier], X, Y, cv=cv, scoring='f1_macro')
+    print("F1 "+classifier+" : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
+    f[class_idx].write("F1 "+classifier+": %0.2f (+/- %0.2f)" % (scores.mean(), scores.std())+'\n')
+    y_pred=classifier_method[classifier].fit(X, Y).predict(X)
+    showing_labels=list(set(Y))
+    showing_labels.sort()
+    print(confusion_matrix(Y, y_pred,labels=showing_labels))
+    confusion=confusion_matrix(Y, y_pred,labels=showing_labels)
+    f[class_idx].write('\n\nConfusion matix\n')
+    f[class_idx].write(' '.join([str(x) for x in showing_labels])+'\n')
+    for row in confusion:
+        f[class_idx].write(' '.join([str(elem) for elem in row])+'\n')
+    f[class_idx].close()
