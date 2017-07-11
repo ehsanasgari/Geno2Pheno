@@ -52,15 +52,29 @@ for classifier,class_idx in list(itertools.product(classifier_method, classes_id
 
     Y=[str(label_mapping[x][class_idx]) for x in training_instances]
 
-    scores = cross_val_score(classifier_method[classifier], X, Y, cv=cv, scoring='f1_macro')
-    print("F1 "+classifier+" : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
-    f[class_idx].write("F1 "+classifier+": %0.2f (+/- %0.2f)" % (scores.mean(), scores.std())+'\n')
+    scores = cross_val_score(classifier_method[classifier], X, Y, cv=cv, scoring='precision')
+    print("precision "+classifier+" : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
+    f[class_idx].write("precision "+classifier+": %0.2f (+/- %0.2f)" % (scores.mean(), scores.std())+'\n')
+
+    scores = cross_val_score(classifier_method[classifier], X, Y, cv=cv, scoring='recall')
+    print("recall "+classifier+" : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
+    f[class_idx].write("recall "+classifier+": %0.2f (+/- %0.2f)" % (scores.mean(), scores.std())+'\n')
+
+    scores = cross_val_score(classifier_method[classifier], X, Y, cv=cv, scoring='recall')
+    print("recall "+classifier+" : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
+    f[class_idx].write("recall "+classifier+": %0.2f (+/- %0.2f)" % (scores.mean(), scores.std())+'\n')
+
+    scores = cross_val_score(classifier_method[classifier], X, Y, cv=cv, scoring='roc_auc')
+    print("roc_auc "+classifier+" : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
+    f[class_idx].write("roc_auc "+classifier+": %0.2f (+/- %0.2f)" % (scores.mean(), scores.std())+'\n')
+
+
     y_pred=classifier_method[classifier].fit(X, Y).predict(X)
     showing_labels=list(set(Y))
     showing_labels.sort()
     print(confusion_matrix(Y, y_pred,labels=showing_labels))
     confusion=confusion_matrix(Y, y_pred,labels=showing_labels)
-    f[class_idx].write('\n\nConfusion matix\n')
+    f[class_idx].write('\n\nConfusion matrix\n')
     f[class_idx].write(' '.join([str(x) for x in showing_labels])+'\n')
     for row in confusion:
         f[class_idx].write(' '.join([str(elem) for elem in row])+'\n')

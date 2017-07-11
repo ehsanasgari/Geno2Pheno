@@ -5,6 +5,8 @@ Confusion matix
 0 1
 161 1
 4 301
+
+
 F1 svm: 0.63 (+/- 0.06)
 
 
