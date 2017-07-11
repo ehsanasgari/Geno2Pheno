@@ -5,7 +5,6 @@ from sklearn.preprocessing import normalize
 from sklearn import svm
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import ShuffleSplit
-from dimreduction.visualize_matrix import VisualizeMatrix
 from sklearn.metrics import confusion_matrix, f1_score
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import SVC
