@@ -1,14 +1,20 @@
-F1 rf: 0.64 (+/- 0.04)
+precision rf: 0.75 (+/- 0.05)
+recall rf: 0.78 (+/- 0.04)
+f1 rf: 0.76 (+/- 0.03)
+roc_auc rf: 0.71 (+/- 0.04)
 
 
-Confusion matix
+Confusion matrix
 0 1
 161 2
-2 302
-F1 svm: 0.65 (+/- 0.06)
+3 301
+precision svm: 0.74 (+/- 0.05)
+recall svm: 0.90 (+/- 0.02)
+f1 svm: 0.81 (+/- 0.03)
+roc_auc svm: 0.82 (+/- 0.03)
 
 
-Confusion matix
+Confusion matrix
 0 1
 139 24
 8 296
