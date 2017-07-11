@@ -26,7 +26,7 @@ label_mapping={str(l.strip().split('\t')[0]):[int(float(str(x)))  for x in l.str
 #gene_expression=[l.strip() for l in codecs.open(data_dir+gene_expression_file,'r','utf-8').readlines()]
 #gene_expression_mapping={str(entry.split('\t')[0]):[float(str(x)) for x in entry.split('\t')[1::]] for entry in gene_expression[1::]}
 
-snps=[l.strip() for l in codecs.open(data_dir+snps_files,'r','utf-8').readlines()]
+snps=[l.strip().replace(' ','') for l in codecs.open(data_dir+snps_files,'r','utf-8').readlines()]
 snps_mapping={str(entry.split('\t')[0]):[float(str(x)) for x in entry.split('\t')[1::]] for entry in snps[1::]}
 
 #training_instances=set(label_mapping.keys()).intersection(gene_expression_mapping.keys())
