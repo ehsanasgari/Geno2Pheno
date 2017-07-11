@@ -50,7 +50,7 @@ cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=1)
 
 for classifier,class_idx in list(itertools.product(classifier_method, classes_idx)):
 
-    Y=[str(label_mapping[x][class_idx]) for x in training_instances]
+    Y=[label_mapping[x][class_idx] for x in training_instances]
 
     scores = cross_val_score(classifier_method[classifier], X, Y, cv=cv, scoring='precision')
     print("precision "+classifier+" : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()))
