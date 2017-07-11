@@ -18,14 +18,21 @@ import itertools
 data_dir='/mounts/data/proj/asgari/github_data/data/pseudomonas/data/'
 label_files='MIC/v2/mic_bin_with_intermediate.txt'
 gene_expression_file='gene_expression/rpg_log_transformed.txt'
-
+snps_files='snp/v2/all_SNPs_final_bin.txt'
 
 # data reading
 label_mapping={str(l.strip().split('\t')[0]):[int(float(str(x)))  for x in l.strip().split('\t')[1::]] if len(l.strip().split('\t')[1::])==5 else [0,0,0,0,0] for l in codecs.open(data_dir+label_files,'r','utf-8').readlines()[1::]}
-gene_expression=[l.strip() for l in codecs.open(data_dir+gene_expression_file,'r','utf-8').readlines()]
-gene_expression_mapping={str(entry.split('\t')[0]):[float(str(x)) for x in entry.split('\t')[1::]] for entry in gene_expression[1::]}
-training_instances=set(label_mapping.keys()).intersection(gene_expression_mapping.keys())
-X=np.array([gene_expression_mapping[x] for x in training_instances])
+
+#gene_expression=[l.strip() for l in codecs.open(data_dir+gene_expression_file,'r','utf-8').readlines()]
+#gene_expression_mapping={str(entry.split('\t')[0]):[float(str(x)) for x in entry.split('\t')[1::]] for entry in gene_expression[1::]}
+
+snps=[l.strip() for l in codecs.open(data_dir+snps_files,'r','utf-8').readlines()]
+snps_mapping={str(entry.split('\t')[0]):[float(str(x)) for x in entry.split('\t')[1::]] for entry in snps[1::]}
+
+#training_instances=set(label_mapping.keys()).intersection(gene_expression_mapping.keys())
+#X=np.array([gene_expression_mapping[x] for x in training_instances])
+training_instances=set(label_mapping.keys()).intersection(snps_mapping.keys())
+X=np.array([snps_mapping[x] for x in training_instances])
 # question 'MHH2417', does have only one entry
 
 classes_idx=[0,1,2,3,4]
@@ -34,7 +41,7 @@ classifier_method=['svm','rf']
 
 f=[]
 for x in classes:
-    f.append(open('results_gene_exp_'+x+'.txt','w'))
+    f.append(open('results_snps_'+x+'.txt','w'))
 
 clf_random_forest=RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
             max_depth=None, max_features='auto', max_leaf_nodes=None,
@@ -74,7 +81,7 @@ for classifier,class_idx in list(itertools.product(classifier_method, classes_id
     showing_labels.sort()
     print(confusion_matrix(Y, y_pred,labels=showing_labels))
     confusion=confusion_matrix(Y, y_pred,labels=showing_labels)
-    f[class_idx].write('\n\nConfusion matrix\n')
+    f[class_idx].write('\nConfusion matrix\n')
     f[class_idx].write(' '.join([str(x) for x in showing_labels])+'\n')
     for row in confusion:
         f[class_idx].write(' '.join([str(elem) for elem in row])+'\n')
