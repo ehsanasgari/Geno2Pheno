@@ -24,9 +24,10 @@ gene_expression=[l.strip() for l in codecs.open(data_dir+gene_expression_file,'r
 gene_expression_mapping={str(entry.split('\t')[0]):[float(str(x)) for x in entry.split('\t')[1::]] for entry in gene_expression[1::]}
 training_instances=set(label_mapping.keys()).intersection(gene_expression_mapping.keys())
 
-Y=[label_mapping[x][0] for x in training_instances]
+Y=[str(label_mapping[x][0]) for x in training_instances]
 X=np.array([gene_expression_mapping[x] for x in training_instances])
-
+print (X.shape)
+print (len(Y))
 f=open('results_SVM.txt','w')
 clf = svm.SVC(kernel='rbf', C=1)
 cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=1)
