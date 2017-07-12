@@ -1,0 +1,9 @@
+precision rf: 0.74 (+/- 0.04)
+recall rf: 0.91 (+/- 0.02)
+f1 rf: 0.81 (+/- 0.02)
+roc_auc rf: 0.63 (+/- 0.05)
+
+Confusion matrix
+0 1
+95 7
+2 322
