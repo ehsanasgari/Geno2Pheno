@@ -11,8 +11,7 @@
 ## Antibiotic Resistance Feature Extraction 
 <ul>
 <li>Finding relevant features to the resistance
-<li>X<sup>2 
-statistics to find relevant features to the resistance profile
+<li>Chi2 statistics to find relevant features to the resistance profile
 <li>Single drugs
 <li>Multiple drugs
 <li>Hierarchical clustering of univariate important features
