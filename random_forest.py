@@ -5,58 +5,58 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsaneddin Asgari"
 __email__ = "asgari@berkeley.edu"
 
+from sklearn.cross_validation import LeaveOneOut
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+import math
+import operator
+import codecs
 from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.model_selection import ShuffleSplit
 from sklearn.metrics import confusion_matrix, f1_score
-from sklearn.ensemble import RandomForestClassifier
 
 class RandomForest(object):
-    def __init__(self,X,Y):
+    def __init__(self,X,Y,feature_names):
         self.X=X
         self.Y=Y
+        self.feature_names=feature_names
         self.clf_random_forest=RandomForestClassifier(bootstrap=True, criterion='gini',
-            max_depth=None, max_features='auto', min_samples_leaf=1, n_estimators=500, n_jobs=30)
+            min_samples_split= 2, max_features='auto', min_samples_leaf=1, n_estimators=1000, n_jobs=-1)
 
-    def evaluate_through_cv(self,folds=10, test_portion=0.1, multiclass=True):
-        cv = ShuffleSplit(n_splits=folds, test_size=test_portion, random_state=1)
-        if not multiclass:
-            scores = cross_val_score(self.clf_random_forest, X, Y, cv=cv, scoring='precision')
-            self.precision=(scores.mean(), scores.std())
-            scores = cross_val_score(self.clf_random_forest, X, Y, cv=cv, scoring='recall')
-            self.recall=(scores.mean(), scores.std())
-            scores = cross_val_score(self.clf_random_forest, X, Y, cv=cv, scoring='f1')
-            self.f1=(scores.mean(), scores.std())
-        if multiclass:
-            #scores = cross_val_score(self.clf_random_forest, X, Y, cv=cv, scoring='precision_macro')
-            #self.precision_macro=(scores.mean(), scores.std())
-            #scores = cross_val_score(self.clf_random_forest, X, Y, cv=cv, scoring='recall_macro')
-            #self.recall_macro=(scores.mean(), scores.std())
-            #scores = cross_val_score(self.clf_random_forest, X, Y, cv=cv, scoring='precision_weighted')
-            #self.precision_weighted=(scores.mean(), scores.std())
-            #scores = cross_val_score(self.clf_random_forest, X, Y, cv=cv, scoring='recall_weighted')
-            #self.recall_weighted=(scores.mean(), scores.std())
-            scores = cross_val_score(self.clf_random_forest, X, Y, cv=cv, scoring='f1_weighted')
-            self.f1_weighted=(scores.mean(), scores.std())
-            scores = cross_val_score(self.clf_random_forest, X, Y, cv=cv, scoring='f1_macro')
-            self.f1_macro=(scores.mean(), scores.std())
-
-        X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
-        y_pred=self.clf_random_forest.fit(X_train, y_train).predict(X_test)
-        self.showing_labels=list(set(Y))
-        self.showing_labels.sort()
-        self.confusion=confusion_matrix(y_test, y_pred,labels=self.showing_labels)
-
-
-    def get_important_features(self, N, labels):
-        self.clf_random_forest.fit(self.X, self.Y)
-        importances = self.clf_random_forest.feature_importances_
-        std = np.std([tree.feature_importances_ for tree in self.clf_random_forest.estimators_],axis=0)
-        indices = np.argsort(importances)[::-1]
-        # Print the feature ranking
-        results=[]
-        print("Feature ranking:")
-        for f in range(self.X.shape[1]):
-            if f<N:
-                print("%d. feature %s (%f, %f)" % (f + 1, labels[indices[f]], importances[indices[f]],std[indices[f]]))
-            results.append((f + 1, labels[indices[f]], importances[indices[f]],std[indices[f]]))
+    def evaluateOLO(self):
+        results=[('gtruth','prediction')]
+        self.loo = LeaveOneOut(self.X.shape[0])
+        for train_index, test_index in self.loo:
+            Y_train=[self.Y[idx] for idx in train_index]
+            Y_test=[self.Y[idx] for idx in test_index]
+            y_pred=self.clf_random_forest.fit(self.X[train_index,:], Y_train).predict(self.X[test_index,:])
+            results.append((Y_test[0],y_pred[0]))
         return results
+    
+    def kFoldCV(self,folds=10):
+        cv = ShuffleSplit(n_splits=folds, test_size=0.1, random_state=1)
+        scores = cross_val_score(self.clf_random_forest, self.X, self.Y, cv=cv, scoring='precision')
+        precision=(scores.mean(), scores.std())
+        scores = cross_val_score(self.clf_random_forest, self.X, self.Y, cv=cv, scoring='recall')
+        recall=(scores.mean(), scores.std())
+        scores = cross_val_score(self.clf_random_forest, self.X, self.Y, cv=cv, scoring='f1')
+        f1=(scores.mean(), scores.std())
+        return dict([('PRE',precision),('REC',recall),('F1',f1)])
+
+
+
+
+    def get_important_features(self,file_name, N):
+        self.clf_random_forest.fit(self.X, self.Y)
+        std = np.std([tree.feature_importances_ for tree in self.clf_random_forest.estimators_],axis=0)
+
+        scores = {self.feature_names[i]: (s,std[i]) for i, s in enumerate(list(self.clf_random_forest.feature_importances_)) if not math.isnan(s) }
+        scores = sorted(scores.items(), key=operator.itemgetter([1][0]),reverse=True)[0:N]
+        f = codecs.open(file_name,'w')
+        f.write('\t'.join(['feature', 'score', 'std', '#I-out-of-'+str(np.sum(self.Y)), '#O-out-of-'+str(len(self.Y)-np.sum(self.Y))])+'\n')
+        for w, score in scores:
+            feature_array=self.X[:,self.feature_names.index(w)]
+            pos=[feature_array[idx] for idx, x in enumerate(self.Y) if x==1]
+            neg=[feature_array[idx] for idx, x in enumerate(self.Y) if x==0]
+            f.write('\t'.join([str(w), str(score[0]), str(score[1]), str(np.sum(pos)), str(np.sum(neg))])+'\n')
+        f.close()
