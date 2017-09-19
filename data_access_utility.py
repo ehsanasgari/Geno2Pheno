@@ -33,7 +33,7 @@ class ABRAccessUtility(object):
         # feature types
         features=list(self.X.keys())
 
-        tf=TfidfTransformer(norm='l2', use_idf=True, smooth_idf=True)
+        tf=TfidfTransformer(norm=None, use_idf=True, smooth_idf=True)
 
         feature_names=[]
         feature_matrices=[]
@@ -64,7 +64,7 @@ class ABRAccessUtility(object):
         # feature types
         features=list(self.X.keys())
 
-        tf=TfidfTransformer(norm='l2', use_idf=True, smooth_idf=True)
+        tf=TfidfTransformer(norm=None, use_idf=True, smooth_idf=True)
 
         feature_names=[]
         feature_matrices=[]
