@@ -13,8 +13,8 @@ import operator
 import codecs
 from file_utility import FileUtility
 
-def single_drug_patterns(file_name, list_of_feature=['snps_nonsyn_trimmed', 'snps_all_envclin_trimmed', 'snps_all_full_trimmed' ,'snps_nonsyn_envclin_trimmed', 'gpa','genexp_count'], mapping={'0':0,'0.0':0,'1':1,'1.0':1}):
-    '''
+def single_drug_patterns(file_name, list_of_feature=['snps_nonsyn_trimmed', 'snps_all_full_trimmed' ,'snps_nonsyn_envclin_trimmed', 'gpa','genexp_count'], mapping={'0':0,'0.0':0,'1':1,'1.0':1}):
+    ''' snps_all_envclin_trimmed_feature_vect
     :param file_name:
     :param list_of_feature:
     :param mapping:
