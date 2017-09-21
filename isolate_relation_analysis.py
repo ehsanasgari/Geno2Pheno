@@ -2,6 +2,7 @@ import codecs
 import numpy as np
 from drug_relation_analysis import DrugRelation
 from visualization_utility import create_mat_plot
+from sklearn.preprocessing import MinMaxScaler
 
 class IsolatesRelations(object):
     '''
@@ -26,11 +27,15 @@ class IsolatesRelations(object):
         self.common_dist_phylogen=np.zeros((len(self.common_isolates),len(self.common_isolates)))
         self.common_dist_phenotype=np.zeros((len(self.common_isolates),len(self.common_isolates)))
         self.make_common_distances()
-
+        self.stndrd_common_dist_phylogen=MinMaxScaler().fit_transform(self.common_dist_phylogen.reshape([self.common_dist_phylogen.size, 1])).reshape(self.common_dist_phylogen.shape)
+        self.stndrd_common_dist_phenotype=MinMaxScaler().fit_transform(self.common_dist_phenotype.reshape([self.common_dist_phenotype.size, 1])).reshape(self.common_dist_phenotype.shape)
 
     def create_phenotype_phylog_image(self):
-        create_mat_plot(self.common_dist_phylogen, [], 'The Isolates Phylogenetic Distance', 'results/isolate_analysis/common_phyl', cmap='Purples', filetype='png')
-        create_mat_plot(self.common_dist_phenotype, [] , 'The Isolates Phynotypical Distance', 'results/isolate_analysis/common_phen', cmap='Purples', filetype='png')
+        '''
+        :return:
+        '''
+        create_mat_plot(self.stndrd_common_dist_phylogen, ['']*len(self.common_isolates), 'Phylogenetic distance between isolates', 'results/isolate_analysis/common_phyl', cmap='Purples', filetype='png')
+        create_mat_plot(self.stndrd_common_dist_phenotype,['']*len(self.common_isolates), 'Phenotypical distance between isolates', 'results/isolate_analysis/common_phen', cmap='Purples', filetype='png')
 
     def make_common_distances(self):
         '''
@@ -77,3 +82,4 @@ class IsolatesRelations(object):
 
 if __name__ == "__main__":
     IR = IsolatesRelations()
+
