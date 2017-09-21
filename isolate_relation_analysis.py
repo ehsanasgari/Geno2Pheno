@@ -11,7 +11,7 @@ class IsolatesRelations(object):
         # phenotype relation
         self.DrugRel = DrugRelation()
         self.phenotype_isolates = self.DrugRel.get_isolate_list()
-        self.isolate_phenotype_dist = self.DrugRel.get_isolate_profile_kldiv() + self.DrugRel.get_isolate_profile_kldiv().T
+        self.isolate_phenotype_dist = self.DrugRel.get_isolate_profile_kldiv()[0] + self.DrugRel.get_isolate_profile_kldiv()[0].T
 
         # phylogenetic relation
         self.phyl_isolates=[]
