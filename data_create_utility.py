@@ -88,7 +88,7 @@ class ABRDataCreate(object):
         # all clinic 306K final
         GenotypeReader.create_read_tabular_file(base_path+'snp.fulltable/all_SNPs_final_bin_uq.txt.trimmed', save_pref=path+'snps_all_full_trimmed', feature_normalization='binary', transpose=True)
         # idk
-        GenotypeReader.create_read_tabular_file(base_path+'EnviCln_snp/snp_environ_clinical_bin.txt.trimmed', save_pref=path+'snps_envclin_trimmed', feature_normalization='binary')
+        GenotypeReader.create_read_tabular_file(base_path+'EnviCln_snp/snp_environ_clinical_bin.txt.trimmed', save_pref=path+'snps_nonsyn_envclin_trimmed', feature_normalization='binary')
 
         #### gene_presence/absence
         GenotypeReader.create_read_tabular_file('/mounts/data/proj/asgari/github_data/data/pseudomonas/data_v2/annot.txt', save_pref=path+'gpa', feature_normalization='binary')
@@ -97,14 +97,13 @@ class ABRDataCreate(object):
         GenotypeReader.create_read_tabular_file('/mounts/data/proj/asgari/github_data/data/pseudomonas/data_v2/rpg_log_transformed_426.txt', save_pref=path+'genexp_count', feature_normalization='percent')
         '''
         /mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/snps_nonsyn_trimmed  created successfully containing  426  isolates and  73475  features
+        /mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/snps_nonsyn_envclin_trimmed  created successfully containing  442  isolates and  77748  features
         /mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/snps_all_envclin_trimmed  created successfully containing  442  isolates and  316168  features
         /mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/snps_all_full_trimmed  created successfully containing  426  isolates and  306527  features
         /mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/gpa  created successfully containing  508  isolates and  41872  features
         /mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/genexp_norm01  created successfully containing  426  isolates and  6026  features
         /mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/genexp_count  created successfully containing  426  isolates and  6026  features
-        /mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/snps_envclin_trimmed  created successfully containing  442  isolates and  77748  features
         '''
-
 
     @staticmethod
     def get_multilabel_label_dic(isolate2label_vec_mapping):
