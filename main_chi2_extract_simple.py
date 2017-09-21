@@ -34,14 +34,14 @@ def single_drug_patterns(file_name, list_of_feature=['snps_nonsyn_trimmed' ,'snp
             Y=[iso2label[iso] for iso in refined_isos]
             X=sparse.csr_matrix(np.delete(ABRAccess.X[feature_type].toarray(),idx_removed, 0))
             CH2=Chi2Anlaysis(X,Y,ABRAccess.feature_names[feature_type])
-            sc=CH2.extract_features_fdr('results/features/chi2/separate_drugs/details/'+file_name+'_'+drug+'_'+feature_type+'.txt',500)
+            sc=CH2.extract_features_fdr('results/features/chi2/separate_drug/details/'+file_name+'_'+drug+'_'+feature_type+'.txt',500)
             scores[feature_type]=sc
         score_aggregated=[]
         for feature, score_list in scores.items():
             [score_aggregated.append(('##'.join([feature,feat_detail]),value)) for feat_detail,value in score_list]
         score_aggregated=dict(score_aggregated)
         score_aggregated = sorted(score_aggregated.items(), key=operator.itemgetter([1][0]),reverse=True)
-        f = codecs.open('results/features/chi2/separate_drugs/aggregation/'+file_name+'_all_'+drug+'.txt','w')
+        f = codecs.open('results/features/chi2/separate_drug/aggregation/'+file_name+'_all_'+drug+'.txt','w')
         f.write('\t'.join(['feature', 'score', 'p-value'])+'\n')
         selected=set()
         for w, score in score_aggregated:
@@ -53,7 +53,7 @@ def single_drug_patterns(file_name, list_of_feature=['snps_nonsyn_trimmed' ,'snp
             global_selected=selected
         elif len(global_selected)>0:
             global_selected.intersection(selected)
-    FileUtility.save_list('results/features/chi2/separate_drugs/'+file_name+'_alldrugs.txt',list(global_selected))
+    FileUtility.save_list('results/features/chi2/separate_drug/'+file_name+'_alldrugs.txt',list(global_selected))
 
 if __name__ == "__main__":
     single_drug_patterns('R_S')
