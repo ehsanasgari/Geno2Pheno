@@ -42,6 +42,7 @@ class ABRDataAccess(object):
         :return:
         '''
         for save_pref in prefix_list:
+            print ('@@@'+'_'.join([dir + save_pref, 'feature', 'vect.npz']))
             self.X[save_pref] = FileUtility.load_sparse_csr('_'.join([dir + save_pref, 'feature', 'vect.npz']))
             self.feature_names[save_pref] = FileUtility.load_list('_'.join([dir + save_pref, 'feature', 'list.txt']))
             self.isolates[save_pref] = FileUtility.load_list('_'.join([dir + save_pref, 'isolates', 'list.txt']))
