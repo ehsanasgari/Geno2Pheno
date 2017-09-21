@@ -14,6 +14,13 @@ class DrugRelation(object):
         # fill drugs and drug vectors
         self.make_drug_vector()
 
+    def get_isolate_list(self):
+        '''
+        Get the isolate list
+        :return:
+        '''
+        return self.BasicDataObj.labeled_isolates
+
     def make_drug_vector(self, mapping={'0': 0, '0.0': 0, '1': 1, '1.0': 1, '': 0.5}):
         '''
         :param mapping: resistance value mapping

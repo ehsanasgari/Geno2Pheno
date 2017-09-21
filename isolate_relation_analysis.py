@@ -1,72 +1,72 @@
+import codecs
 import numpy as np
-from data_create_utility import ABRDataCreate
-from math_utility import get_kl_rows
-from visualization_utility import create_mat_plot
 from drug_relation_analysis import DrugRelation
+import itertools
 
-class IsolatessRelations(object):
+class IsolatesRelations(object):
+    '''
+        Isolates Relations
+    '''
     def __init__(self):
-        # load ABRDataCreat for basic access
-        self.BasicDataObj = ABRDataCreate()
-        # init to be filled by make_drug_vector
-        self.drug_vectors=[]
-        self.drugs=[]
-        # fill drugs and drug vectors
-        self.make_drug_vector()
+        # phenotype relation
+        self.DrugRel = DrugRelation()
+        self.phenotype_isolates = self.DrugRel.get_isolate_list()
+        self.isolate_phenotype_dist = self.DrugRel.get_isolate_profile_kldiv() + self.DrugRel.get_isolate_profile_kldiv().T
 
-    def make_drug_vector(self, mapping={'0': 0, '0.0': 0, '1': 1, '1.0': 1, '': 0.5}):
-        '''
-        :param mapping: resistance value mapping
-        :return: drug vectors
-        '''
-        self.drug_vectors = np.zeros((len(self.BasicDataObj.drugs), len(self.BasicDataObj.labeled_isolates)))
-        for col, isolate in enumerate(self.BasicDataObj.labeled_isolates):
-            self.drug_vectors[:, col] = [mapping[res_val] for res_val in
-                                         self.BasicDataObj.isolate2label_vec_mapping[isolate]]
-        self.drugs = self.BasicDataObj.drugs
+        # phylogenetic relation
+        self.phyl_isolates=[]
+        self.isolate_phyl_distance=[]
+        self.make_isolate_phlyogen_dist()
 
-    def get_correlation_coefficient(self):
-        '''
-        :return: Return Pearson product-moment correlation coefficients
-        '''
-        return np.corrcoef(self.drug_vectors)
+        # common_isolates
+        self.common_isolates=list(set(self.isolate_phenotype_dist).intersection(self.isolate_phyl_distance))
+        self.common_isolates.sort()
+        self.common_dist_phylogen=np.zeros((len(self.common_isolates),len(self.common_isolates)))
+        self.common_dist_phenotype=np.zeros((len(self.common_isolates),len(self.common_isolates)))
+        self.make_common_distances()
 
-    def get_kl_divergence(self):
+    def make_common_distances(self):
         '''
-        :return: kl-div between drugs
+        Produce the common distance matrices
         '''
-        return get_kl_rows(self.drug_vectors)
+        for i in range(len(self.common_isolates)):
+            for j in range(i+1, len(self.common_isolates)):
+                self.common_dist_phylogen  [i,j] = self.get_isolate_phlyogen_dist(self.common_isolates[i], self.common_isolates[j])
+                self.common_dist_phylogen  [j,i] = self.common_dist_phylogen [i,j]
+                self.common_dist_phenotype [i,j] = self.get_isolate_phenotype_dist(self.common_isolates[i], self.common_isolates[j])
+                self.common_dist_phenotype [j,i] = self.common_dist_phylogen [i,j]
 
-    def get_isolate_profile_kldiv(self):
+    def make_isolate_phlyogen_dist(self):
         '''
-        :return: kl_div matrix, list of isolates on col,row
+        Make the similarity matrix
+        :return:
         '''
-        return get_kl_rows(self.drug_vectors.T), self.BasicDataObj.labeled_isolates
+        self.phyl_isolates=[line.split()[0] for line in codecs.open('data_config/distance.txt','r','utf-8').readlines()]
+        self.isolate_phyl_distance=np.array([[float(x) for x in line.split()[1::]] for line in codecs.open('data_config/distance.txt','r','utf-8').readlines()])
 
-    def get_isolate_profile_correlation_coefficient(self):
+    def get_isolate_phlyogen_dist(self, isol1, isol2):
         '''
-        :return: corr matrix, list of isolates on col,row
+        Get the distance score
+        :return:
         '''
-        return np.corrcoef(self.drug_vectors.T), self.BasicDataObj.labeled_isolates
+        if isol1 not in self.phyl_isolates or isol2 not in self.phyl_isolates:
+            return 'NULL'
+        else:
+            return self.phyl_distance[self.phyl_isolates.index(isol1), self.phyl_isolates.index(isol2)]
 
-    def create_kl_divergence(self, filename):
-        '''
-        :param filename
-        to play with colormaps https://matplotlib.org/users/colormaps.html
-        '''
-        create_mat_plot(self.get_kl_divergence(), self.drugs, 'Drug performance Kullback–Leibler divergence',
-                        'results/drug_analysis/' + filename, cmap='Purples')
 
-    def create_correlation_coefficient(self, filename):
+    def get_isolate_phenotype_dist(self, isol1, isol2):
         '''
-        :param filename
-        to play with colormaps https://matplotlib.org/users/colormaps.html
+        Get the similarity score
+        :param isol1:
+        :param isol2:
+        :return:
         '''
-        create_mat_plot(self.get_correlation_coefficient(), self.drugs,
-                        'Drug performance Pearson correlation coefficients', 'results/drug_analysis/' + filename,
-                         cmap='Purples')
+        if isol1 not in self.phenotype_isolates or isol2 not in self.phenotype_isolates:
+            return 'NULL'
+        else:
+            return self.isolate_phenotype_dist[self.phenotype_isolates.index(isol1), self.phenotype_isolates.index(isol2)]
+
 
 if __name__ == "__main__":
-    DR = DrugRelation()
-    DR.create_correlation_coefficient('drugs_corr_SRI')
-    DR.create_kl_divergence('drugs_kl_SRI')
+    IR = IsolatesRelations()
