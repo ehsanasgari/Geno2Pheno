@@ -29,7 +29,7 @@ class GenotypeReader(object):
             [[GenotypeReader.get_float_or_zero(x) for x in entry.split('\t')[1::]] for entry in rows[1::]])
 
         if transpose:
-            tf_vec = tf_vec.T
+            tf_vec = sparse.csr_matrix(tf_vec.toarray().T)
             isolates = [feat.replace(' ', '') for feat in rows[0].rstrip().split('\t')]
             feature_names = [row.split()[0] for row in rows[1::]]
         else:
