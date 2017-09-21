@@ -13,7 +13,7 @@ import operator
 import codecs
 from file_utility import FileUtility
 
-def single_drug_patterns(file_name, list_of_feature=['snps_nonsyn_trimmed' 'snps_all_envclin_trimmed', 'snps_all_full_trimmed' 'snps_nonsyn_envclin_trimmed' 'gpa','genexp_count'], mapping={'0':0,'0.0':0,'1':1,'1.0':1}):
+def single_drug_patterns(file_name, list_of_feature=['snps_nonsyn_trimmed', 'snps_all_envclin_trimmed', 'snps_all_full_trimmed' ,'snps_nonsyn_envclin_trimmed', 'gpa','genexp_count'], mapping={'0':0,'0.0':0,'1':1,'1.0':1}):
     '''
     :param file_name:
     :param list_of_feature:
@@ -53,7 +53,7 @@ def single_drug_patterns(file_name, list_of_feature=['snps_nonsyn_trimmed' 'snps
             global_selected=selected
         elif len(global_selected)>0:
             global_selected.intersection(selected)
-    FileUtility.save_list('esults/features/chi2/separate_drugs/'+file_name+'_alldrugs.txt',list(global_selected))
+    FileUtility.save_list('results/features/chi2/separate_drugs/'+file_name+'_alldrugs.txt',list(global_selected))
 
 if __name__ == "__main__":
     single_drug_patterns('R_S')
