@@ -25,11 +25,11 @@ class CrossValidator(object):
             '''
             self.scoring = { 'precision': 'precision',
                              'recall': 'recall', 'f1-pos': 'f1', 'opt-f1': make_scorer(self.opt_f1_score),
-                             'tnr': make_scorer(self.TNR)}
+                             'tnr': make_scorer(self.TNR), 'accuracy':'accuracy','f1_macro':'f1_macro'}
         else:
             self.scoring = {'auc_score': 'roc_auc', 'precision': 'precision',
                             'recall': 'recall', 'f1-pos': 'f1', 'opt-f1': make_scorer(self.opt_f1_score),
-                            'tnr': make_scorer(self.TNR)}
+                            'tnr': make_scorer(self.TNR),'accuracy':'accuracy','f1_macro':'f1_macro'}
 
     def TNR(self, y_true, y_pred):
         '''
@@ -88,7 +88,7 @@ class NestedCrossVal(CrossValidator):
         self.inner_cv = StratifiedKFold(n_splits=inner_folds, shuffle=True, random_state=random_state)
         self.outer_cv = StratifiedKFold(n_splits=outer_folds, shuffle=True, random_state=random_state)
 
-    def tune_and_evaluate(self, estimator, parameters, score='opt-f1', file_name='results'):
+    def tune_and_evaluate(self, estimator, parameters, score='f1_macro', file_name='results'):
         '''
         :param estimator:
         :param parameters:
@@ -126,7 +126,7 @@ class KFoldCrossVal(CrossValidator):
     def tune_and_evaluate(self, estimator, parameters, score='opt-f1', n_jobs=-1, file_name='results'):
         '''
         :param estimator:
-        :param parameters:
+        :param parameters:p
         :param score:
         :param n_jobs:
         :param file_name: directory/tuning/classifier/features/

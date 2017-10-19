@@ -56,4 +56,11 @@ def single_drug_patterns(file_name, list_of_feature=['snps_all_envclin_trimmed',
     FileUtility.save_list('results/features/chi2/separate_drug/'+file_name+'_alldrugs.txt',list(global_selected))
 
 if __name__ == "__main__":
-    single_drug_patterns('R_S')
+    #single_drug_patterns('R_S')
+    #single_drug_patterns('R_S')
+    single_drug_patterns('I_S',mapping={'0':0,'0.0':0,'':1})
+    single_drug_patterns('R_I',mapping={'1':1,'1.0':1,'':0})
+    single_drug_patterns('R_IS',mapping={'0':0,'0.0':0,'1':1,'1.0':1,'':0})
+    single_drug_patterns('S_IR',mapping={'0':1,'0.0':1,'1':0,'1.0':0,'':0})
+    single_drug_patterns('I_RS',mapping={'':1,'0':0,'0.0':0,'1':0,'1.0':0})
+
