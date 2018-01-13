@@ -12,8 +12,8 @@ class CrossValidator(object):
     def __init__(self, X, Y):
         self.X = X
         self.Y = Y
-        self.scoring =  {'precision_micro': 'precision_micro', 'precision_macro': 'precision_macro', 'recall_macro': 'recall_macro','recall_micro': 'recall_micro', 'f1_macro':'f1_macro', 'f1_micro':'f1_micro'}
-
+        self.scoring =  {'accuracy': 'accuracy','precision_micro': 'precision_micro', 'precision_macro': 'precision_macro', 'recall_macro': 'recall_macro','recall_micro': 'recall_micro', 'f1_macro':'f1_macro', 'f1_micro':'f1_micro'}
+        #'roc_auc': 'roc_auc',
 
 class KFoldCrossVal(CrossValidator):
     '''
@@ -31,7 +31,7 @@ class KFoldCrossVal(CrossValidator):
         self.X = X
         self.Y = Y
 
-    def tune_and_evaluate(self, estimator, parameters, score='macro_f1', n_jobs=-1, file_name='results'):
+    def tune_and_evaluate(self, estimator, parameters, score='f1_macro', n_jobs=-1, file_name='results'):
         '''
         :param estimator:
         :param parameters:p
@@ -50,6 +50,6 @@ class KFoldCrossVal(CrossValidator):
         y_predicted = cross_val_predict(self.greed_search.best_estimator_, self.X, self.Y)
         conf=confusion_matrix(self.Y,y_predicted,labels=label_set)
         # save in file
-        FileUtility.save_obj(file_name, [label_set, conf, self.greed_search.best_score_, self.greed_search.best_estimator_, self.greed_search.cv_results_, self.greed_search.best_params_, y_predicted])
+        FileUtility.save_obj(file_name, [label_set, conf, self.greed_search.best_score_, self.greed_search.best_estimator_, self.greed_search.cv_results_, self.greed_search.best_params_, (y_predicted,label_set)])
 
 
