@@ -4,7 +4,6 @@ from data_access.data_access_utility import ABRDataAccess
 from Bio import Phylo
 import networkx as nx
 import numpy as np
-from isolate_relation_analysis import IsolatesRelations
 import itertools
 import codecs
 from multiprocessing import Pool
@@ -25,7 +24,6 @@ class PhyloChi2(object):
         '''
         # data reading
         self.tree = Phylo.read(nwk_file, "newick")
-        self.ISR=IsolatesRelations()
         feature_list=['snps_nonsyn_trimmed']
         ABRAccess=ABRDataAccess('/mounts/data/proj/asgari/dissertation/datasets/deepbio/pseudomonas/data_v3/',feature_list)
         self.X,self.Y,self.features,self.isolates=ABRAccess.get_xy_multidrug_prediction_mats()
