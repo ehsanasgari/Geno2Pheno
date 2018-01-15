@@ -3,7 +3,6 @@ __license__ = "GPL"
 __version__ = "1.0.0"
 __maintainer__ = "Ehsaneddin Asgari"
 __email__ = "asgari@berkeley.edu ehsaneddin.asgari@helmholtz-hzi.de"
-
 import codecs
 import numpy as np
 from scipy import sparse

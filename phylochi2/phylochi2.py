@@ -1,3 +1,10 @@
+__copyright__ = "Copyright 2017, HH-HZI Project"
+__author__ = "Ehsaneddin Asgari"
+__license__ = "GPL"
+__version__ = "1.0.0"
+__maintainer__ = "Ehsaneddin Asgari"
+__email__ = "asgari@berkeley.edu ehsaneddin.asgari@helmholtz-hzi.de"
+
 import sys
 sys.path.append('../')
 from data_access.data_access_utility import ABRDataAccess
@@ -17,6 +24,7 @@ from scipy.sparse import csr_matrix
 class PhyloChi2(object):
 
     saving_path='/mounts/data/proj/asgari/dissertation/datasets/deepbio/pseudomonas/data_v3/feature_selection/'
+    resulting_path='../results/features/phylochi2/'
 
     def __init__(self, nwk_file="../data_config/tree.nwk"):
         '''
@@ -148,6 +156,10 @@ class PhyloChi2(object):
 
 
     def generate_features_chi2(self):
+        '''
+        Generate chi2 selected features over the edges and store them for eahc separate drug
+        :return:
+        '''
         for drug_idx in range(0,5):
             print(self.drugs[drug_idx])
             X=FileUtility.load_sparse_csr(self.saving_path+'_'.join([self.drugs[drug_idx],'gainlosses','X.npz']))
@@ -163,6 +175,6 @@ class PhyloChi2(object):
             #X[two_idxs,:]=X[two_idxs,:]*2
             #X=csr_matrix(X)
             CHI2=Chi2Analysis(X,chi2_label,feature_names=features)
-            res=CHI2.extract_features_fdr('../results/features/phylochi2/'+self.drugs[drug_idx]+'.txt',N=100)
+            res=CHI2.extract_features_fdr(PhyloChi2.resulting_path+self.drugs[drug_idx]+'.txt',N=100)
 
 

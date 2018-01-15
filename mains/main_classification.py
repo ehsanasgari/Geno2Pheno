@@ -1,3 +1,10 @@
+__copyright__ = "Copyright 2017, HH-HZI Project"
+__author__ = "Ehsaneddin Asgari"
+__license__ = "GPL"
+__version__ = "1.0.0"
+__maintainer__ = "Ehsaneddin Asgari"
+__email__ = "asgari@berkeley.edu ehsaneddin.asgari@helmholtz-hzi.de"
+
 from data_access.data_access_utility import ABRDataAccess
 from classifier.classical_classifiers import SVM, RFClassifier, KNN
 

@@ -5,7 +5,11 @@ import operator
 import numpy as np
 from sklearn.feature_selection import SelectFdr
 from sklearn.feature_selection import chi2
-
+__author__ = "Ehsaneddin Asgari"
+__license__ = "GPL"
+__version__ = "1.0.0"
+__maintainer__ = "Ehsaneddin Asgari"
+__email__ = "asgari@berkeley.edu ehsaneddin.asgari@helmholtz-hzi.de"
 
 class Chi2Analysis(object):
     # X^2 is statistically significant at the p-value level
