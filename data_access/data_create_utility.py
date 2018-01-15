@@ -5,8 +5,10 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsaneddin Asgari"
 __email__ = "asgari@berkeley.edu ehsaneddin.asgari@helmholtz-hzi.de"
 
+import sys
+sys.path.append('../')
 import codecs
-from genotype_file_utility import GenotypeReader
+from utility.genotype_file_utility import GenotypeReader
 from scipy.sparse import csr_matrix
 from utility.file_utility import FileUtility
 import pandas as pd

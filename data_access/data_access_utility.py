@@ -88,7 +88,7 @@ class ABRDataAccess(object):
         X = np.concatenate(tuple(feature_matrices), axis=1)
         X = sparse.csr_matrix(X)
         Y = [mapping_isolate_label[isol] for isol in final_isolates]
-        return X, Y, feature_names
+        return X, Y, feature_names, final_isolates
 
     def get_xy_multidrug_prediction_mats(self, features_for_idf=[]):
         '''
