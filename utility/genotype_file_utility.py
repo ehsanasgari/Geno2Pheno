@@ -1,9 +1,11 @@
-import codecs
+import sys
+sys.path.append('../')
 
+import codecs
 import numpy as np
 from scipy import sparse
 from sklearn.preprocessing import MaxAbsScaler
-from file_utility import FileUtility
+from utility.file_utility import FileUtility
 
 class GenotypeReader(object):
     '''

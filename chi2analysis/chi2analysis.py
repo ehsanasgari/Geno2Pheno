@@ -56,8 +56,7 @@ class Chi2Analysis(object):
             #    s=-s
             s=np.round(s,2)
             pos_scores.append([str(w), s, score[1], m_pos, m_neg])
-            if m_pos> m_neg:
-                
-                f.write('\t'.join([str(w), str(s), str(score[1])] + [str(x) for x in [m_pos, s_pos, m_neg, s_neg]]) + '\n')
+            #if m_pos> m_neg:
+            f.write('\t'.join([str(w), str(s), str(score[1])] + [str(x) for x in [m_pos, s_pos, m_neg, s_neg]]) + '\n')
         f.close()
         return pos_scores

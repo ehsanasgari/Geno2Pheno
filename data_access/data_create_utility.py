@@ -7,6 +7,12 @@ __email__ = "asgari@berkeley.edu"
 
 import codecs
 from genotype_file_utility import GenotypeReader
+from scipy.sparse import csr_matrix
+from utility.file_utility import FileUtility
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+
+
 
 class ABRDataCreate(object):
     '''
@@ -105,13 +111,13 @@ class ABRDataCreate(object):
         /mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/genexp_count  created successfully containing  426  isolates and  6026  features
         '''
 
-    @staticmethod
-    def get_multilabel_label_dic(isolate2label_vec_mapping):
+
+    def get_multilabel_label_dic(self):
         '''
             drug resistance profile label
         '''
         mapping = {'': 'I', '0': 'S', '0.0': 'S', '1': 'R', '1.0': 'R'}
-        return {k: ''.join([mapping[x] for x in list(v)]) for k, v in isolate2label_vec_mapping.items()}
+        return {k: ''.join([mapping[x] for x in list(v)]) for k, v in self.isolate2label_vec_mapping.items()}
 
     @staticmethod
     def get_common_isolates(list_of_list_of_isolates):
@@ -125,6 +131,29 @@ class ABRDataCreate(object):
         common_isolate = list(common_isolate)
         common_isolate.sort()
         return common_isolate
+    
+    @staticmethod
+    def create_continous_mics():
+        '''
+        
+        '''
+        scaler = MinMaxScaler()
+        df=pd.read_table("../data_config/Final_MICs_16.06.16.txt")
+        res=df[['Isolates','CIP MIC','TOB MIC','COL MIC','CAZ MIC','MEM MIC']]
+        matrix=np.array([[float(str(x).replace('<=','').replace('≤','').replace('<=','').replace('≥','').replace('>=','')) for x in row] for row in res[['CIP MIC','TOB MIC','COL MIC','CAZ MIC','MEM MIC']].as_matrix()])
+        # find nans [[(idx,idy) for idy,y in enumerate(x) if y] for idx, x in enumerate(np.isnan(matrix))]
+        resistances=np.delete(matrix,[509],axis=0)
+        isolates=[x[0] for idx, x in enumerate(list(df[['Isolates']].values)) if not idx==509]
+        # scale to 0-1
+        resistances=scaler.fit_transform(resistances)
+        features=['CIP','TOB','COL','CAZ','MEM']
+        base_path='/mounts/data/proj/asgari/dissertation/datasets/deepbio/pseudomonas/data_v3/continous_mic_vals'
+        resistances=csr_matrix(resistances)
+        FileUtility.save_sparse_csr(base_path+'_feature_vect',resistances)
+        FileUtility.save_list(base_path+'_isolates_list.txt', isolates)
+        FileUtility.save_list(base_path+'_feature_list.txt', features)
+
+
 
 
 

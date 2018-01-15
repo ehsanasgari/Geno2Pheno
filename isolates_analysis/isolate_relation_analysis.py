@@ -1,7 +1,9 @@
+import sys
+sys.path.append('../')
 import codecs
 import numpy as np
-from drug_relation_analysis import DrugRelation
-from visualization_utility import create_mat_plot
+from drug_analysis.drug_relation_analysis import DrugRelation
+from utility.visualization_utility import create_mat_plot
 from sklearn.preprocessing import MinMaxScaler
 
 class IsolatesRelations(object):
@@ -53,8 +55,8 @@ class IsolatesRelations(object):
         Make the similarity matrix
         :return:
         '''
-        self.phyl_isolates=[line.split()[0] for line in codecs.open('data_config/distance.txt','r','utf-8').readlines()]
-        self.isolate_phyl_distance=np.array([[float(x) for x in line.split()[1::]] for line in codecs.open('data_config/distance.txt','r','utf-8').readlines()])
+        self.phyl_isolates=[line.split()[0] for line in codecs.open('../data_config/distance.txt','r','utf-8').readlines()]
+        self.isolate_phyl_distance=np.array([[float(x) for x in line.split()[1::]] for line in codecs.open('../data_config/distance.txt','r','utf-8').readlines()])
 
     def get_isolate_phlyogen_dist(self, isol1, isol2):
         '''

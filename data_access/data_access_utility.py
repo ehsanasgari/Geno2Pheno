@@ -127,7 +127,7 @@ class ABRDataAccess(object):
         X = np.concatenate(tuple(feature_matrices), axis=1)
         X = sparse.csr_matrix(X)
         Y = [mapping_isolate_label[isol] for isol in final_isolates]
-        return X, Y, feature_names
+        return X, Y, feature_names, final_isolates
 
     @staticmethod
     def common_isolates(list_of_list_of_isolates):
