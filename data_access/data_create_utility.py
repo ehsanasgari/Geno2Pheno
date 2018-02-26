@@ -101,7 +101,7 @@ class ABRDataCreate(object):
         GenotypeReader.create_read_tabular_file(base_path+'results/featuresAnalysis/v2/gpa/annot.uniq.txt', save_pref=path+'gpa_trimmed', feature_normalization='binary', transpose=True)
 
         #### gpa - roary
-        GenotypeReader.create_read_tabular_file(base_path+'/net/sgi/metagenomics/projects/pseudo_genomics/results/assembly/v2/roary/v5/out_95/indels/indel_annot.txt', save_pref=path+'gpa_roary', feature_normalization='binary', transpose=True)
+        GenotypeReader.create_read_tabular_file(base_path+'results/assembly/v2/roary/v5/out_95/indels/indel_annot.txt', save_pref=path+'gpa_roary', feature_normalization='binary', transpose=True)
 
 
         '''
