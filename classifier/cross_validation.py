@@ -165,6 +165,7 @@ class NestedCrossVal(CrossValidator):
 class GroupKFoldCrossVal(CrossValidator):
     '''
         K-fold cross-validation tuning and evaluation
+        https://stackoverflow.com/questions/46815252/using-scikit-learn-gridsearchcv-for-cross-validation-with-predefinedsplit-susp
     '''
     def __init__(self, X, Y, folds=10, random_state=1, isolate_list, fold_file):
         '''
