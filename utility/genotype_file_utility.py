@@ -56,7 +56,7 @@ class GenotypeReader(object):
             elif feature_normalization == 'percent':
                 tf_vec = np.round(MaxAbsScaler().fit_transform(tf_vec) * 100)
             elif feature_normalization == 'zu':
-                tf_vec = preprocessing.StandardScaler().fit_transform(tf_vec)
+                tf_vec = sparse.csr_matrix(preprocessing.StandardScaler().fit_transform(tf_vec.toarray()))
 
         FileUtility.save_sparse_csr('_'.join([save_pref, 'feature', 'vect.npz']), tf_vec)
         FileUtility.save_list('_'.join([save_pref, 'feature', 'list.txt']), feature_names)
