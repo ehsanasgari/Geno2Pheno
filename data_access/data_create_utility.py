@@ -87,22 +87,23 @@ class ABRDataCreate(object):
         :param path: output path
         :return:
         '''
-        base_path='/mounts/data/proj/asgari/github_data/data/pseudomonas/data_v2/trimmed_features/'
-        #### snp
-        # non-syn
-        GenotypeReader.create_read_tabular_file(base_path+'clinical_snp/non-syn_SNPs_bin_uq.txt.trimmed', save_pref=path+'snps_nonsyn_trimmed', feature_normalization='binary')
-        # all clinic_env 316K all
-        GenotypeReader.create_read_tabular_file(base_path+'EnviCln_snp.fulltable/all_snps_environ_clinical_bin.trimmed', save_pref=path+'snps_all_envclin_trimmed', feature_normalization='binary', transpose=True)
-        # all clinic 306K final
-        GenotypeReader.create_read_tabular_file(base_path+'snp.fulltable/all_SNPs_final_bin_uq.txt.trimmed', save_pref=path+'snps_all_full_trimmed', feature_normalization='binary', transpose=True)
-        # idk
-        GenotypeReader.create_read_tabular_file(base_path+'EnviCln_snp/snp_environ_clinical_bin.txt.trimmed', save_pref=path+'snps_nonsyn_envclin_trimmed', feature_normalization='binary')
+        base_path='/net/sgi/metagenomics/projects/pseudo_genomics/'
+        #/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt
 
         #### gene_presence/absence
-        GenotypeReader.create_read_tabular_file('/mounts/data/proj/asgari/github_data/data/pseudomonas/data_v2/annot.txt', save_pref=path+'gpa', feature_normalization='binary')
-        #### gene exp.
-        GenotypeReader.create_read_tabular_file('/mounts/data/proj/asgari/github_data/data/pseudomonas/data_v2/rpg_log_transformed_426.txt', save_pref=path+'genexp_norm01', feature_normalization='01')
-        GenotypeReader.create_read_tabular_file('/mounts/data/proj/asgari/github_data/data/pseudomonas/data_v2/rpg_log_transformed_426.txt', save_pref=path+'genexp_count', feature_normalization='percent')
+        GenotypeReader.create_read_tabular_file(base_path+'data/gene_expression/rpg_log_transformed.txt', save_pref=path+'gpa', feature_normalization='zu')
+        GenotypeReader.create_read_tabular_file(base_path+'data/gene_expression/rpg_log_transformed.txt', save_pref=path+'genexp_percent', feature_normalization='percent')
+
+        #### snp
+        GenotypeReader.create_read_tabular_file(base_path+'results/featuresAnalysis/v2/non-syn_snps/non_syn_snps_aa_uq.uniq.txt', save_pref=path+'snps_nonsyn_trimmed', feature_normalization='binary')
+
+        #### gpa
+        GenotypeReader.create_read_tabular_file(base_path+'results/featuresAnalysis/v2/gpa/annot.uniq.txt', save_pref=path+'gpa_trimmed', feature_normalization='binary', transpose=True)
+
+        #### gpa - roary
+        GenotypeReader.create_read_tabular_file(base_path+'/net/sgi/metagenomics/projects/pseudo_genomics/results/assembly/v2/roary/v5/out_95/indels/indel_annot.txt', save_pref=path+'gpa_roary', feature_normalization='binary', transpose=True)
+
+
         '''
         /mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/snps_nonsyn_trimmed  created successfully containing  426  isolates and  73475  features
         /mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/snps_nonsyn_envclin_trimmed  created successfully containing  442  isolates and  77748  features
@@ -160,5 +161,5 @@ class ABRDataCreate(object):
 
 
 if __name__ == "__main__":
-    ABRDataCreate.create_feature_files('/mounts/data/proj/asgari/github_data/data/pseudomonas/data_v3/')
+    ABRDataCreate.create_feature_files('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/intermediate_reps/')
 
