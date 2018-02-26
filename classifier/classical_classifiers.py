@@ -1,8 +1,10 @@
+__copyright__ = "Copyright 2017-2018, HH-HZI and LLP Project"
 __author__ = "Ehsaneddin Asgari"
 __license__ = "GPL"
 __version__ = "1.0.0"
 __maintainer__ = "Ehsaneddin Asgari"
 __email__ = "asgari@berkeley.edu ehsaneddin.asgari@helmholtz-hzi.de"
+
 
 import sys
 
@@ -11,8 +13,16 @@ from sklearn.svm import LinearSVC, SVC
 from classifier.cross_validation import KFoldCrossVal
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from utility.file_utility import FileUtility
+import numpy as np
+import codecs
+import math
+import operator
 
 class SVM:
+    '''
+        Support vector machine classifier
+    '''
     def __init__(self, X, Y, clf_model='LSVM'):
         if clf_model == 'LSVM':
             self.model = LinearSVC(C=1.0, multi_class='ovr')
@@ -31,14 +41,24 @@ class SVM:
 
 
 class RFClassifier:
+    '''
+        Random forest classifier
+    '''
     def __init__(self, X, Y):
         self.model = RandomForestClassifier(bootstrap=True, criterion='gini',
                                             min_samples_split=2, max_features='auto', min_samples_leaf=1,
-                                            n_estimators=1000)
+                                            n_estimators=1000,n_jobs=30)
         self.X = X
         self.Y = Y
 
-    def tune_and_eval(self, results_file, params=None):
+    def tune_and_eval(self, results_file, params=None, feature_names=None):
+        '''
+        Tune, evaluate, extract features (if a list of features are provided)
+        :param results_file:
+        :param params:
+        :param feature_names:
+        :return:
+        '''
         if params is None:
             params = [{"n_estimators": [100, 200, 500, 1000],
                        "criterion": ["entropy"],  # "gini",
@@ -47,9 +67,31 @@ class RFClassifier:
                        'min_samples_leaf': [1]}]
         self.CV = KFoldCrossVal(self.X, self.Y, folds=10)
         self.CV.tune_and_evaluate(self.model, parameters=params, score='f1_macro', file_name=results_file + '_RF',
-                                  n_jobs=15)
+                                  n_jobs=30)
+        if feature_names is not None:
+            [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_, (y_predicted,label_set)]=FileUtility.load_obj(results_file + '_RF.pickle')
+            self.generate_RF_important_features(best_estimator_,feature_names,results_file,500)
+
+    def generate_RF_important_features(self, clf_random_forest,feature_names,results_file, N):
+        file_name=results_file+'RF_features'
+        clf_random_forest.fit(self.X, self.Y)
+        std = np.std([tree.feature_importances_ for tree in clf_random_forest.estimators_],axis=0)
+
+        scores = {feature_names[i]: (s,std[i]) for i, s in enumerate(list(clf_random_forest.feature_importances_)) if not math.isnan(s) }
+        scores = sorted(scores.items(), key=operator.itemgetter([1][0]),reverse=True)[0:N]
+        f = codecs.open(file_name,'w')
+        f.write('\t'.join(['feature', 'score', 'std', '#I-out-of-'+str(np.sum(self.Y)), '#O-out-of-'+str(len(self.Y)-np.sum(self.Y))])+'\n')
+        for w, score in scores:
+            feature_array=self.X[:,feature_names.index(w)]
+            pos=[feature_array[idx] for idx, x in enumerate(self.Y) if x==1]
+            neg=[feature_array[idx] for idx, x in enumerate(self.Y) if x==0]
+            f.write('\t'.join([str(w), str(score[0]), str(score[1]), str(np.sum(pos)), str(np.sum(neg))])+'\n')
+        f.close()
 
 class KNN:
+    '''
+        K-nearest neighbor classifier
+    '''
     def __init__(self, X, Y):
         self.model = KNeighborsClassifier(n_neighbors=3)
         self.X = X

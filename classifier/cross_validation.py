@@ -8,9 +8,11 @@ import sys
 sys.path.append('../')
 from sklearn.model_selection import GridSearchCV, StratifiedKFold, cross_val_predict,cross_val_score
 from utility.file_utility import FileUtility
-from sklearn.metrics import f1_score,confusion_matrix
+from sklearn.metrics import f1_score,confusion_matrix,roc_auc_score
 from sklearn.metrics.classification import precision_recall_fscore_support
 from sklearn.metrics.scorer import make_scorer
+
+
 
 class CrossValidator(object):
     '''
@@ -19,9 +21,7 @@ class CrossValidator(object):
     def __init__(self, X, Y):
         self.X = X
         self.Y = Y
-        self.scoring =  {'accuracy': 'accuracy','precision_micro': 'precision_micro', 'precision_macro': 'precision_macro', 'recall_macro': 'recall_macro','recall_micro': 'recall_micro', 'f1_macro':'f1_macro', 'f1_micro':'f1_micro'}
-        #'roc_auc': 'roc_auc',
-        # self.scoring = {'auc_score': 'roc_auc', 'precision': 'precision','recall': 'recall', 'f1-pos': 'f1', 'opt-f1': make_scorer(self.opt_f1_score),'tnr': make_scorer(self.TNR),'accuracy':'accuracy','f1_macro':'f1_macro'}
+        self.scoring =  {'auc_score_macro': make_scorer(self.roc_auc_macro), 'auc_score_micro': make_scorer(self.roc_auc_micro),'accuracy': 'accuracy','scores_p_r_f_1': make_scorer(self.precision_recall_f_1),'tnr': make_scorer(self.TNR),'scores_p_r_f_0': make_scorer(self.precision_recall_f_0),'precision_micro': 'precision_micro', 'precision_macro': 'precision_macro', 'recall_macro': 'recall_macro','recall_micro': 'recall_micro', 'f1_macro':'f1_macro', 'f1_micro':'f1_micro'}
 
 
     def TNR(self, y_true, y_pred):
@@ -45,7 +45,13 @@ class CrossValidator(object):
                 FN += 1
         return float(TN / (TN + FP))
 
-    def opt_f1_score(self, y_true, y_pred, labels=None, average='binary', sample_weight=None):
+    def roc_auc_macro(self, y_true, y_score):
+        return roc_auc_score(y_true, y_score, average="macro")
+
+    def roc_auc_micro(self, y_true, y_score):
+        return roc_auc_score(y_true, y_score, average="micro")
+
+    def precision_recall_f_0(self, y_true, y_pred, labels=None, average='binary', sample_weight=None):
         '''
         :param y_true:
         :param y_pred:
@@ -54,14 +60,33 @@ class CrossValidator(object):
         :param sample_weight:
         :return: calculate f1 for self.opt_f1_class class
         '''
-        _, _, f, _ = precision_recall_fscore_support(y_true, y_pred,
+        p, r, f, _ = precision_recall_fscore_support(y_true, y_pred,
                                                      beta=1,
                                                      labels=labels,
-                                                     pos_label=self.opt_f1_class,
+                                                     pos_label=0,
                                                      average=average,
                                                      warn_for=('f-score',),
                                                      sample_weight=sample_weight)
-        return f
+        return p,r,f
+
+    def precision_recall_f_1(self, y_true, y_pred, labels=None, average='binary', sample_weight=None):
+        '''
+        :param y_true:
+        :param y_pred:
+        :param labels:
+        :param average:
+        :param sample_weight:
+        :return: calculate f1 for self.opt_f1_class class
+        '''
+        p, r, f, _ = precision_recall_fscore_support(y_true, y_pred,
+                                                     beta=1,
+                                                     labels=labels,
+                                                     pos_label=1,
+                                                     average=average,
+                                                     warn_for=('f-score',),
+                                                     sample_weight=sample_weight)
+        return p,r,f
+
 
 
 class KFoldCrossVal(CrossValidator):
@@ -135,3 +160,5 @@ class NestedCrossVal(CrossValidator):
 
         # saving
         FileUtility.save_obj([self.greed_search,self.nested_score],file_name)
+
+
