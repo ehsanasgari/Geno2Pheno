@@ -1,9 +1,9 @@
-__copyright__ = "Copyright 2017, HH-HZI Project"
+__copyright__ = "Copyright 2017-2018, HH-HZI Project"
 __author__ = "Ehsaneddin Asgari"
 __license__ = "GPL"
 __version__ = "1.0.0"
 __maintainer__ = "Ehsaneddin Asgari"
-__email__ = "asgari@berkeley.edu ehsaneddin.asgari@helmholtz-hzi.de"
+__email__ = "asgari@berkeley.edu / ehsaneddin.asgari@helmholtz-hzi.de"
 
 import sys
 sys.path.append('../')
@@ -13,6 +13,7 @@ import numpy as np
 from scipy import sparse
 from sklearn.preprocessing import MaxAbsScaler
 from utility.file_utility import FileUtility
+from sklearn import preprocessing
 
 class GenotypeReader(object):
     '''
@@ -28,7 +29,7 @@ class GenotypeReader(object):
         :param path:
         :param save_pref:
         :param transpose: if isolates are columns
-        :param feature_normalization: 'binary': {0,1}, '0-1': [0-1],  'percent': {0,1,..,100}
+        :param feature_normalization: 'binary': {0,1}, '0-1': [0-1],  'percent': {0,1,..,100}, 'zu': zero mean, unit variance
         :return:
         '''
         print ('Start creating ', save_pref)
@@ -52,9 +53,10 @@ class GenotypeReader(object):
 
             elif feature_normalization == '01':
                 tf_vec = MaxAbsScaler().fit_transform(tf_vec)
-
             elif feature_normalization == 'percent':
                 tf_vec = np.round(MaxAbsScaler().fit_transform(tf_vec) * 100)
+            elif feature_normalization == 'zu':
+                tf_vec = preprocessing.StandardScaler().fit_transform(tf_vec)
 
         FileUtility.save_sparse_csr('_'.join([save_pref, 'feature', 'vect.npz']), tf_vec)
         FileUtility.save_list('_'.join([save_pref, 'feature', 'list.txt']), feature_names)
