@@ -44,7 +44,7 @@ class ABRDataCreate(object):
         '''
             This function load labels ZG02420619 ['1.0', '0.0', '0.0', '', '1.0']
         '''
-        label_file_address =  '/mounts/data/proj/asgari/dissertation/git_repos/amrprediction/data_config/mic_bin_without_intermediate.txt'
+        label_file_address =  '/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt'
         #'/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt'
         rows = [l.replace('\n', '') for l in codecs.open(label_file_address, 'r', 'utf-8').readlines()]
         self.isolate2label_vec_mapping = {
@@ -91,9 +91,9 @@ class ABRDataCreate(object):
         base_path='/net/sgi/metagenomics/projects/pseudo_genomics/'
         #/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt
 
-        #### gene_presence/absence
-        GenotypeReader.create_read_tabular_file(base_path+'data/gene_expression/rpg_log_transformed.txt', save_pref=path+'gpa', feature_normalization='zu')
-        GenotypeReader.create_read_tabular_file(base_path+'data/gene_expression/rpg_log_transformed.txt', save_pref=path+'genexp_percent', feature_normalization='percent')
+        #### gene_exp
+        GenotypeReader.create_read_tabular_file(base_path+'data/gene_expression/v2/rpg_414_log.txt', save_pref=path+'gpa', feature_normalization='zu')
+        GenotypeReader.create_read_tabular_file(base_path+'data/gene_expression/v2/rpg_414_log.txt', save_pref=path+'genexp_percent', feature_normalization='percent')
 
         #### snp
         GenotypeReader.create_read_tabular_file(base_path+'results/featuresAnalysis/v2/non-syn_snps/non_syn_snps_aa_uq.uniq.txt', save_pref=path+'snps_nonsyn_trimmed', feature_normalization='binary')
