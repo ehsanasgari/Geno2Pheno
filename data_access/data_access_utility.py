@@ -1,4 +1,4 @@
-__copyright__ = "Copyright 2017, HH-HZI Project"
+__copyright__ = "Copyright 2017-2018, HH-HZI Project"
 __author__ = "Ehsaneddin Asgari"
 __license__ = "GPL"
 __version__ = "1.0.0"

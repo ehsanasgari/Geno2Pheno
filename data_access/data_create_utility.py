@@ -90,9 +90,9 @@ class ABRDataCreate(object):
         :return:
         '''
         base_path='/net/sgi/metagenomics/projects/pseudo_genomics/'
-        
+
         #### gene_exp
-        GenotypeReader.create_read_tabular_file(base_path+'data/gene_expression/v2/rpg_414_log.txt', save_pref=path+'gpa', feature_normalization='zu')
+        GenotypeReader.create_read_tabular_file(base_path+'data/gene_expression/v2/rpg_414_log.txt', save_pref=path+'genexp', feature_normalization='zu')
         GenotypeReader.create_read_tabular_file(base_path+'data/gene_expression/v2/rpg_414_log.txt', save_pref=path+'genexp_percent', feature_normalization='percent')
 
         #### snp
