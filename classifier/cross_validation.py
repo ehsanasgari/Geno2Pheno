@@ -24,8 +24,8 @@ class CrossValidator(object):
     def __init__(self, X, Y):
         self.X = X
         self.Y = Y
-        self.scoring = {'auc_score_macro': make_scorer(self.roc_auc_macro),
-                        'auc_score_micro': make_scorer(self.roc_auc_micro),
+        self.scoring = {#'auc_score_macro': make_scorer(self.roc_auc_macro),
+                        #'auc_score_micro': make_scorer(self.roc_auc_micro),
                         'accuracy': 'accuracy',
                         'scores_p_1': 'precision',
                         'scores_r_1': 'recall',
