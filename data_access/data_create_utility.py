@@ -52,7 +52,7 @@ class ABRDataCreate(object):
             str(entry.split('\t')[0]): [str(x) for idx, x in enumerate(entry.split('\t')[1::])] for entry in rows[1::]}
         self.labeled_isolates = list(self.isolate2label_vec_mapping)
         self.labeled_isolates.sort()
-        self.drugs = rows[0].rstrip().split('\t')[1::]
+        self.drugs = [x.split('_')[0] for x in rows[0].rstrip().split('\t')[1::]]
         # init
         for drug in self.drugs:
             self.drug2labeled_isolates_mapping[drug] = []
