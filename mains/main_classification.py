@@ -19,7 +19,7 @@ for drug in ABRAccess.BasicDataObj.drugs:
     X_rep, Y, features, final_isolates = ABRAccess.get_xy_prediction_mats(drug, mapping={'0':0,'0.0':0,'1':1,'1.0':1})
     print (drug,' Random Forest ..')
     MRF = RFClassifier(X_rep, Y)
-    MRF.tune_and_eval_predefined('results/classification/phylogenetic_snp/'+drug+'_phylogenetic_full_10xfold_RvIS',final_isolates,'/mounts/data/proj/asgari/dissertation/git_repos/amrprediction/data_config/cv/block_cv/'+drug+'_S-vs-R_folds.txt')
+    MRF.tune_and_eval_predefined('../results/'+drug+'_phylogenetic_full_10xfold_RvIS',final_isolates,'/mounts/data/proj/asgari/dissertation/git_repos/amrprediction/data_config/cv/block_cv/'+drug+'_S-vs-R_folds.txt')
     #print (drug,' SVM ..')
     #MSVM = SVM(X_rep, Y)
     #MSVM.tune_and_eval('results/classification/phylogenetic_snp/'+drug+'_phylogenetic_full_10xfold_RvIS')

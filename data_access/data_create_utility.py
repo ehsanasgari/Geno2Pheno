@@ -44,7 +44,8 @@ class ABRDataCreate(object):
         '''
             This function load labels ZG02420619 ['1.0', '0.0', '0.0', '', '1.0']
         '''
-        label_file_address =  '/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt'
+        label_file_address = '/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt'
+        #'/mounts/data/proj/asgari/dissertation/git_repos/amrprediction/data_config/mic_bin_without_intermediate.txt'
         #'/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt'
         rows = [l.replace('\n', '') for l in codecs.open(label_file_address, 'r', 'utf-8').readlines()]
         self.isolate2label_vec_mapping = {
@@ -89,8 +90,7 @@ class ABRDataCreate(object):
         :return:
         '''
         base_path='/net/sgi/metagenomics/projects/pseudo_genomics/'
-        #/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt
-
+        
         #### gene_exp
         GenotypeReader.create_read_tabular_file(base_path+'data/gene_expression/v2/rpg_414_log.txt', save_pref=path+'gpa', feature_normalization='zu')
         GenotypeReader.create_read_tabular_file(base_path+'data/gene_expression/v2/rpg_414_log.txt', save_pref=path+'genexp_percent', feature_normalization='percent')
