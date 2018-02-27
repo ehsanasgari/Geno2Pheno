@@ -10,7 +10,7 @@ import sys
 
 sys.path.append('../')
 from sklearn.svm import LinearSVC, SVC
-from classifier.cross_validation import KFoldCrossVal
+from classifier.cross_validation import KFoldCrossVal, PredefinedFoldCrossVal
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from utility.file_utility import FileUtility
@@ -72,6 +72,27 @@ class RFClassifier:
             [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_, (y_predicted,label_set)]=FileUtility.load_obj(results_file + '_RF.pickle')
             self.generate_RF_important_features(best_estimator_,feature_names,results_file,500)
 
+    def tune_and_eval_predefined(self, results_file,isolates, folds, params=None, feature_names=None):
+        '''
+        Tune, evaluate, extract features (if a list of features are provided)
+        :param results_file:
+        :param params:
+        :param feature_names:
+        :return:
+        '''
+        if params is None:
+            params = [{"n_estimators": [100, 200, 500, 1000],
+                       "criterion": ["entropy"],  # "gini",
+                       'max_features': ['sqrt'],  # 'auto',
+                       'min_samples_split': [5],  # 2,5,10
+                       'min_samples_leaf': [1]}]
+        self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds)
+        self.CV.tune_and_evaluate(self.model, parameters=params, score='f1_macro', file_name=results_file + '_RF',
+                                  n_jobs=30)
+        if feature_names is not None:
+            [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_, (y_predicted,label_set)]=FileUtility.load_obj(results_file + '_RF.pickle')
+            self.generate_RF_important_features(best_estimator_,feature_names,results_file,500)
+
     def generate_RF_important_features(self, clf_random_forest,feature_names,results_file, N):
         file_name=results_file+'RF_features'
         clf_random_forest.fit(self.X, self.Y)
@@ -105,3 +126,16 @@ class KNN:
                                   n_jobs=15)
 
 
+    def tune_and_eval_predefined(self, results_file,isolates, folds, params=None, feature_names=None):
+        '''
+        Tune, evaluate, extract features (if a list of features are provided)
+        :param results_file:
+        :param params:
+        :param feature_names:
+        :return:
+        '''
+        if params is None:
+             params = [{"n_neighbors": [1,2,3,4,5,6,7,8,9,10,15,20]}]
+        self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds)
+        self.CV.tune_and_evaluate(self.model, parameters=params, score='f1_macro', file_name=results_file + '_RF',
+                                  n_jobs=30)

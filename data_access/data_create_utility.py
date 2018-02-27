@@ -44,7 +44,8 @@ class ABRDataCreate(object):
         '''
             This function load labels ZG02420619 ['1.0', '0.0', '0.0', '', '1.0']
         '''
-        label_file_address = '/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt'
+        label_file_address =  '/mounts/data/proj/asgari/dissertation/git_repos/amrprediction/data_config/mic_bin_without_intermediate.txt'
+        #'/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt'
         rows = [l.replace('\n', '') for l in codecs.open(label_file_address, 'r', 'utf-8').readlines()]
         self.isolate2label_vec_mapping = {
             str(entry.split('\t')[0]): [str(x) for idx, x in enumerate(entry.split('\t')[1::])] for entry in rows[1::]}

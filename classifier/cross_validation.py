@@ -1,28 +1,42 @@
+__copyright__ = "Copyright 2017-2018, HH-HZI and LLP Project"
 __author__ = "Ehsaneddin Asgari"
 __license__ = "GPL"
 __version__ = "1.0.0"
 __maintainer__ = "Ehsaneddin Asgari"
 __email__ = "asgari@berkeley.edu ehsaneddin.asgari@helmholtz-hzi.de"
 
+
 import sys
+
 sys.path.append('../')
-from sklearn.model_selection import GridSearchCV, StratifiedKFold, cross_val_predict,cross_val_score
+from sklearn.model_selection import GridSearchCV, StratifiedKFold, cross_val_predict, cross_val_score
 from utility.file_utility import FileUtility
-from sklearn.metrics import f1_score,confusion_matrix,roc_auc_score
+from sklearn.metrics import confusion_matrix, roc_auc_score
 from sklearn.metrics.classification import precision_recall_fscore_support
 from sklearn.metrics.scorer import make_scorer
-
 
 
 class CrossValidator(object):
     '''
      The Abstract Cross-Validator
     '''
+
     def __init__(self, X, Y):
         self.X = X
         self.Y = Y
-        self.scoring =  {'auc_score_macro': make_scorer(self.roc_auc_macro), 'auc_score_micro': make_scorer(self.roc_auc_micro),'accuracy': 'accuracy','scores_p_r_f_1': make_scorer(self.precision_recall_f_1),'tnr': make_scorer(self.TNR),'scores_p_r_f_0': make_scorer(self.precision_recall_f_0),'precision_micro': 'precision_micro', 'precision_macro': 'precision_macro', 'recall_macro': 'recall_macro','recall_micro': 'recall_micro', 'f1_macro':'f1_macro', 'f1_micro':'f1_micro'}
-
+        self.scoring = {'auc_score_macro': make_scorer(self.roc_auc_macro),
+                        'auc_score_micro': make_scorer(self.roc_auc_micro),
+                        'accuracy': 'accuracy',
+                        'scores_p_1': 'precision',
+                        'scores_r_1': 'recall',
+                        'scores_f_1_1': 'f1',
+                        'scores_p_0': make_scorer(self.precision_0),
+                        'scores_r_0': make_scorer(self.recall_0),
+                        'scores_f_1_0': make_scorer(self.f1_0),
+                        'tnr': make_scorer(self.TNR),
+                        'precision_micro': 'precision_micro',
+                        'precision_macro': 'precision_macro', 'recall_macro': 'recall_macro',
+                        'recall_micro': 'recall_micro', 'f1_macro': 'f1_macro', 'f1_micro': 'f1_micro'}
 
     def TNR(self, y_true, y_pred):
         '''
@@ -51,48 +65,66 @@ class CrossValidator(object):
     def roc_auc_micro(self, y_true, y_score):
         return roc_auc_score(y_true, y_score, average="micro")
 
-    def precision_recall_f_0(self, y_true, y_pred, labels=None, average='binary', sample_weight=None):
+    def precision_0(self, y_true, y_pred, labels=None, average='binary', sample_weight=None):
         '''
         :param y_true:
         :param y_pred:
         :param labels:
         :param average:
         :param sample_weight:
-        :return: calculate f1 for self.opt_f1_class class
+        :return: calculate prec for neg class
         '''
-        p, r, f, _ = precision_recall_fscore_support(y_true, y_pred,
+        p, _, _, _ = precision_recall_fscore_support(y_true, y_pred,
                                                      beta=1,
                                                      labels=labels,
                                                      pos_label=0,
                                                      average=average,
                                                      warn_for=('f-score',),
                                                      sample_weight=sample_weight)
-        return p,r,f
+        return p
 
-    def precision_recall_f_1(self, y_true, y_pred, labels=None, average='binary', sample_weight=None):
+    def recall_0(self, y_true, y_pred, labels=None, average='binary', sample_weight=None):
         '''
         :param y_true:
         :param y_pred:
         :param labels:
         :param average:
         :param sample_weight:
-        :return: calculate f1 for self.opt_f1_class class
+        :return: calculate recall for neg class
         '''
-        p, r, f, _ = precision_recall_fscore_support(y_true, y_pred,
+        _, r, _, _ = precision_recall_fscore_support(y_true, y_pred,
                                                      beta=1,
                                                      labels=labels,
-                                                     pos_label=1,
+                                                     pos_label=0,
                                                      average=average,
                                                      warn_for=('f-score',),
                                                      sample_weight=sample_weight)
-        return p,r,f
+        return r
 
+    def f1_0(self, y_true, y_pred, labels=None, average='binary', sample_weight=None):
+        '''
+        :param y_true:
+        :param y_pred:
+        :param labels:
+        :param average:
+        :param sample_weight:
+        :return: calculate f1 for neg class
+        '''
+        _, _, f, _ = precision_recall_fscore_support(y_true, y_pred,
+                                                     beta=1,
+                                                     labels=labels,
+                                                     pos_label=0,
+                                                     average=average,
+                                                     warn_for=('f-score',),
+                                                     sample_weight=sample_weight)
+        return  f
 
 
 class KFoldCrossVal(CrossValidator):
     '''
         K-fold cross-validation tuning and evaluation
     '''
+
     def __init__(self, X, Y, folds=10, random_state=1):
         '''
         :param X:
@@ -118,19 +150,22 @@ class KFoldCrossVal(CrossValidator):
         self.greed_search = GridSearchCV(estimator=estimator, param_grid=parameters, cv=self.cv, scoring=self.scoring,
                                          refit=score, error_score=0, n_jobs=n_jobs)
 
-        label_set=list(set(self.Y))
+        label_set = list(set(self.Y))
         # fitting
         self.greed_search.fit(X=self.X, y=self.Y)
         y_predicted = cross_val_predict(self.greed_search.best_estimator_, self.X, self.Y)
-        conf=confusion_matrix(self.Y,y_predicted,labels=label_set)
+        conf = confusion_matrix(self.Y, y_predicted, labels=label_set)
         # save in file
-        FileUtility.save_obj(file_name, [label_set, conf, self.greed_search.best_score_, self.greed_search.best_estimator_, self.greed_search.cv_results_, self.greed_search.best_params_, (y_predicted,label_set)])
+        FileUtility.save_obj(file_name,
+                             [label_set, conf, self.greed_search.best_score_, self.greed_search.best_estimator_,
+                              self.greed_search.cv_results_, self.greed_search.best_params_, (y_predicted, label_set)])
 
 
 class NestedCrossVal(CrossValidator):
     '''
     Nested cross-validation
     '''
+
     def __init__(self, X, Y, inner_folds=10, outer_folds=10, random_state=1, opt_f1_class=0):
         '''
         :param X:
@@ -154,20 +189,20 @@ class NestedCrossVal(CrossValidator):
         '''
         # inner cross_validation
         self.greed_search = GridSearchCV(estimator=estimator, param_grid=parameters, cv=self.inner_cv,
-                                   scoring=self.scoring, refit=score, error_score=0)
+                                         scoring=self.scoring, refit=score, error_score=0)
         # Nested CV with parameter optimization
         self.nested_score = cross_val_score(self.greed_search, X=self.X, y=self.Y, cv=self.outer_cv)
 
         # saving
-        FileUtility.save_obj([self.greed_search,self.nested_score],file_name)
+        FileUtility.save_obj([self.greed_search, self.nested_score], file_name)
 
 
-class GroupKFoldCrossVal(CrossValidator):
+class PredefinedFoldCrossVal(CrossValidator):
     '''
-        K-fold cross-validation tuning and evaluation
-        https://stackoverflow.com/questions/46815252/using-scikit-learn-gridsearchcv-for-cross-validation-with-predefinedsplit-susp
+        Predefined folds
     '''
-    def __init__(self, X, Y, folds=10, random_state=1, isolate_list, fold_file):
+
+    def __init__(self, X, Y, isolate_list, fold_file):
         '''
         :param X:
         :param Y:
@@ -175,7 +210,16 @@ class GroupKFoldCrossVal(CrossValidator):
         :param random_state:
         '''
         CrossValidator.__init__(self, X, Y)
-        self.cv = GroupKFold(n_splits=folds, shuffle=True, random_state=random_state)
+
+        map_to_idx = {isolate: idx for idx, isolate in enumerate(isolate_list)}
+        splits = [[map_to_idx[item] for item in fold_list.split() if item in map_to_idx] for fold_list in
+                  FileUtility.load_list(fold_file)]
+        new_splits = []
+        for i in range(len(splits)):
+            train = [j for i in splits[:i] + splits[i + 1:] for j in i]
+            test = splits[i]
+            new_splits.append([train, test])
+        self.cv = new_splits
         self.X = X
         self.Y = Y
 
@@ -192,10 +236,12 @@ class GroupKFoldCrossVal(CrossValidator):
         self.greed_search = GridSearchCV(estimator=estimator, param_grid=parameters, cv=self.cv, scoring=self.scoring,
                                          refit=score, error_score=0, n_jobs=n_jobs)
 
-        label_set=list(set(self.Y))
+        label_set = list(set(self.Y))
         # fitting
         self.greed_search.fit(X=self.X, y=self.Y)
         y_predicted = cross_val_predict(self.greed_search.best_estimator_, self.X, self.Y)
-        conf=confusion_matrix(self.Y,y_predicted,labels=label_set)
+        conf = confusion_matrix(self.Y, y_predicted, labels=label_set)
         # save in file
-        FileUtility.save_obj(file_name, [label_set, conf, self.greed_search.best_score_, self.greed_search.best_estimator_, self.greed_search.cv_results_, self.greed_search.best_params_, (y_predicted,label_set)])
+        FileUtility.save_obj(file_name,
+                             [label_set, conf, self.greed_search.best_score_, self.greed_search.best_estimator_,
+                              self.greed_search.cv_results_, self.greed_search.best_params_, (y_predicted, label_set)])
