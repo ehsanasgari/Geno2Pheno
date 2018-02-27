@@ -39,6 +39,18 @@ class SVM:
         CV.tune_and_evaluate(self.model, parameters=params, score='f1_macro', file_name=results_file + '_SVM',
                              n_jobs=10)
 
+    def tune_and_eval_predefined(self, results_file,isolates, folds,params=[{'C': [1000, 500, 200, 100, 50, 20, 10, 5, 2, 1, 0.2, 0.5, 0.01, 0.02, 0.05, 0.001]}]):
+        '''
+        Tune, evaluate, extract features (if a list of features are provided)
+        :param results_file:
+        :param params:
+        :param feature_names:
+        :return:
+        '''
+        self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds)
+        self.CV.tune_and_evaluate(self.model, parameters=params, score='f1_macro', file_name=results_file + '_SVM',
+                                  n_jobs=30)
+
 
 class RFClassifier:
     '''
