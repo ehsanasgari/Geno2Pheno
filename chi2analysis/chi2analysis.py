@@ -23,7 +23,7 @@ class Chi2Analysis(object):
         self.Y = Y
         self.feature_names = feature_names
 
-    def extract_features_fdr(self, file_name, N, alpha=5e-2):
+    def extract_features_fdr(self, file_name, N, alpha=5e-2, direction=False):
         '''
             Feature extraction with fdr-correction
         '''
@@ -50,17 +50,14 @@ class Chi2Analysis(object):
             m_neg=np.mean(neg)
             s_neg=np.std(neg)
             
-            #c11 = np.sum(pos)
-            #c01 = c_1 - c11
-            #c10 = np.sum(neg)
-            #c00 = c_0 - c10
-            
+            c11 = np.sum(pos)
+            c01 = c_1 - c11
+            c10 = np.sum(neg)
+            c00 = c_0 - c10
             s=score[0]
-            #if c11 > ((1.0 * c11) * c00 - (c10 * 1.0) * c01):
-            #    s=-s
+            if direction and c11 > ((1.0 * c11) * c00 - (c10 * 1.0) * c01):
+                s=-s
             s=np.round(s,2)
-            pos_scores.append([str(w), s, score[1], m_pos, m_neg])
-            #if m_pos> m_neg:
             f.write('\t'.join([str(w), str(s), str(score[1])] + [str(x) for x in [m_pos, s_pos, m_neg, s_neg]]) + '\n')
         f.close()
         return pos_scores

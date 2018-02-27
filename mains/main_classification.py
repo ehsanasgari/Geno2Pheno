@@ -14,7 +14,7 @@ from classifier.classical_classifiers import SVM, RFClassifier, KNN
 
 
 cvs=['block','standard']
-cv=cvs[1]
+cv=cvs[0]
 feature_lists=[['snps_nonsyn_trimmed'],['gpa_trimmed','gpa_roary'],['genexp']]
 
 errors=[]
@@ -30,7 +30,7 @@ for feature_list in feature_lists:
         MKNN.tune_and_eval_predefined('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list),final_isolates,'../data_config/cv/'+cv+'_cv/'+drug+'_S-vs-R_folds.txt')
         print(drug , ' features ',' and '.join(feature_list), ' SVM')
         MSVM = SVM(X_rep, Y)
-        MSVM.tune_and_eval('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list),final_isolates,'../data_config/cv/'+cv+'_cv/'+drug+'_S-vs-R_folds.txt')
+        MSVM.tune_and_eval_predefined('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list),final_isolates,'../data_config/cv/'+cv+'_cv/'+drug+'_S-vs-R_folds.txt')
 
 feature_list=['snps_nonsyn_trimmed','gpa_trimmed','gpa_roary','genexp']
 ABRAccess=ABRDataAccess('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/intermediate_reps/',feature_list)
@@ -44,5 +44,5 @@ for drug in ABRAccess.BasicDataObj.drugs:
     MKNN.tune_and_eval_predefined('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list),final_isolates,'../data_config/cv/'+cv+'_cv/'+drug+'_S-vs-R_folds.txt')
     print(drug , ' features ',' and '.join(feature_list), ' SVM')
     MSVM = SVM(X_rep, Y)
-    MSVM.tune_and_eval('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list),final_isolates,'../data_config/cv/'+cv+'_cv/'+drug+'_S-vs-R_folds.txt')
+    MSVM.tune_and_eval_predefined('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list),final_isolates,'../data_config/cv/'+cv+'_cv/'+drug+'_S-vs-R_folds.txt')
 
