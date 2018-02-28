@@ -20,21 +20,24 @@ from chi2analysis.chi2analysis import Chi2Analysis
 
 
 class PhyloChi2(object):
-    saving_path = '/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/feature_selection/phylochi2/'
-    resulting_path = '/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/feature_selection/phylochi2/'
 
-    def __init__(self, nwk_file="../data_config/mitip_422_gt90.fasttree", feature_list=['snps_nonsyn_trimmed']):
+    def __init__(self, nwk_file="../data_config/mitip_422_gt90.fasttree", feature_list=['snps_nonsyn_trimmed'], load=False):
         '''
             PhyloChi2
         '''
         # data reading
+        self.saving_path = '/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/feature_selection/phylochi2/'
+        self.resulting_path = '/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/feature_selection/phylochi2/'
+
         self.tree = Phylo.read(nwk_file, "newick")
         ABRAccess = ABRDataAccess(
             '/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/intermediate_reps/', feature_list)
         self.X, self.Y, self.features, self.isolates = ABRAccess.get_xy_multidrug_prediction_mats()
         self.drugs = ABRAccess.BasicDataObj.drugs
+
         # extract_edges
-        self.extract_all_edges()
+        if not load:
+            self.extract_all_edges()
 
     def generate_parallel_gainloss_data_for_drug(self, drug_idx, num_p):
         '''
@@ -56,11 +59,11 @@ class PhyloChi2(object):
         lines = [' '.join(l[1::]) for l in gains_losses_corpus]
         labels = [l[0] for l in gains_losses_corpus]
         TF = TextFeature(lines)
-        FileUtility.save_sparse_csr(PhyloChi2.saving_path + '_'.join([self.drugs[drug_idx], 'gainlosses', 'X']),
+        FileUtility.save_sparse_csr(self.saving_path + '_'.join([self.drugs[drug_idx], 'gainlosses', 'X']),
                                     TF.tf_vec)
-        FileUtility.save_list(PhyloChi2.saving_path + '_'.join([self.drugs[drug_idx], 'gainlosses', 'features']),
+        FileUtility.save_list(self.saving_path + '_'.join([self.drugs[drug_idx], 'gainlosses', 'features']),
                               TF.feature_names)
-        FileUtility.save_list(PhyloChi2.saving_path + '_'.join([self.drugs[drug_idx], 'gainlosses', 'lables']), labels)
+        FileUtility.save_list(self.saving_path + '_'.join([self.drugs[drug_idx], 'gainlosses', 'lables']), labels)
 
     def extract_all_edges(self):
         '''
@@ -175,11 +178,11 @@ class PhyloChi2(object):
             # X=csr_matrix(X)
             CHI2 = Chi2Analysis(X, chi2_label, feature_names=features)
             res = CHI2.extract_features_fdr(
-                PhyloChi2.resulting_path + '_'.join(features) + self.drugs[drug_idx] + '.txt', N=100)
+                self.resulting_path + '_'.join(features) + self.drugs[drug_idx] + '.txt', N=100)
 
 
 if __name__ == "__main__":
-    PCh2 = PhyloChi2(feature_list=['gpa_trimmed', 'gpa_roary'])
-    for i in range(0, 5):
-        PCh2.generate_parallel_gainloss_data_for_drug(i, 20)
+    PCh2 = PhyloChi2(feature_list=['gpa_trimmed', 'gpa_roary'],load=True)
+    #for i in range(0, 5):
+    #    PCh2.generate_parallel_gainloss_data_for_drug(i, 20)
     PCh2.generate_features_chi2()
