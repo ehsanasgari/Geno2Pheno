@@ -23,17 +23,16 @@ from scipy.sparse import csr_matrix
 
 class PhyloChi2(object):
 
-    saving_path='/mounts/data/proj/asgari/dissertation/datasets/deepbio/pseudomonas/data_v3/feature_selection/'
-    resulting_path='../results/features/phylochi2/'
+    saving_path='/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/feature_selection/phylochi2/'
+    resulting_path='/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/feature_selection/phylochi2/'
 
-    def __init__(self, nwk_file="../data_config/tree.nwk"):
+    def __init__(self, nwk_file="../data_config/tree.nwk",feature_list=['snps_nonsyn_trimmed']):
         '''
             PhyloChi2
         '''
         # data reading
         self.tree = Phylo.read(nwk_file, "newick")
-        feature_list=['snps_nonsyn_trimmed']
-        ABRAccess=ABRDataAccess('/mounts/data/proj/asgari/dissertation/datasets/deepbio/pseudomonas/data_v3/',feature_list)
+        ABRAccess=ABRDataAccess('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/intermediate_reps/',feature_list)
         self.X,self.Y,self.features,self.isolates=ABRAccess.get_xy_multidrug_prediction_mats()
         self.drugs=ABRAccess.BasicDataObj.drugs
         # extract_edges
@@ -45,7 +44,7 @@ class PhyloChi2(object):
            generates the data for chi2 in self.gainloss_corpus and self.gainloss_labels
         '''
         triples=[]
-        for A,B in PCh2.all_edges:
+        for A,B in self.all_edges:
             triples.append((A,B,drug_idx))
 
         pool = Pool(processes=num_p)
@@ -157,7 +156,7 @@ class PhyloChi2(object):
 
     def generate_features_chi2(self):
         '''
-        Generate chi2 selected features over the edges and store them for eahc separate drug
+        Generate chi2 selected features over the edges and store them for each separate drug
         :return:
         '''
         for drug_idx in range(0,5):
@@ -165,7 +164,7 @@ class PhyloChi2(object):
             X=FileUtility.load_sparse_csr(self.saving_path+'_'.join([self.drugs[drug_idx],'gainlosses','X.npz']))
             features=FileUtility.load_list(self.saving_path+'_'.join([self.drugs[drug_idx],'gainlosses','features']))
             labels=FileUtility.load_list(self.saving_path+'_'.join([self.drugs[drug_idx],'gainlosses','lables']))
-            label_map={'S=>R':1,'S=>I':0,'S=>IR':1,'I=>R':1,'IS=>R':1}
+            label_map={'S=>R':1,'S=>I':0,'S=>IR':0,'I=>R':0,'IS=>R':0}
             #label_map={'S=>R':2,'S=>I':1,'S=>IR':2,'I=>R':2,'IR=>I':1,'IR=>R':2,'IS=>R':2,'IS=>I':1,'RS=>I':1,'RS=>R':2,'IRS=>I':1,'IRS=>R':2}
             #label_map={'S=>R':2,'S=>I':1,'S=>IR':2,'I=>R':2,'IS=>R':2}
             row_values=[label_map[x] if x in label_map else 0 for x in labels]
