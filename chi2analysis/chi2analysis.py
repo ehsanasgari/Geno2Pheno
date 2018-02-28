@@ -60,4 +60,4 @@ class Chi2Analysis(object):
             s=np.round(s,2)
             f.write('\t'.join([str(w), str(s), str(score[1])] + [str(x) for x in [m_pos, s_pos, m_neg, s_neg]]) + '\n')
         f.close()
-        return pos_scores
+        #return pos_scores

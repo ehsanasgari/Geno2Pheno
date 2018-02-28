@@ -34,7 +34,7 @@ class PhyloChi2(object):
             '/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/intermediate_reps/', feature_list)
         self.X, self.Y, self.features, self.isolates = ABRAccess.get_xy_multidrug_prediction_mats()
         self.drugs = ABRAccess.BasicDataObj.drugs
-
+        self.feature_list=feature_list
         # extract_edges
         if not load:
             self.extract_all_edges()
@@ -175,10 +175,9 @@ class PhyloChi2(object):
             chi2_label = [1 if x > 0 else 0 for x in row_values]
             # X=X.toarray()
             # X[two_idxs,:]=X[two_idxs,:]*2
-            # X=csr_matrix(X)
+            #X=csr_matrix(X)
             CHI2 = Chi2Analysis(X, chi2_label, feature_names=features)
-            res = CHI2.extract_features_fdr(
-                self.resulting_path + '_'.join(features) + self.drugs[drug_idx] + '.txt', N=100)
+            CHI2.extract_features_fdr(self.resulting_path + '_'.join(self.feature_list) + self.drugs[drug_idx] + '.txt', N=100)
 
 
 if __name__ == "__main__":
