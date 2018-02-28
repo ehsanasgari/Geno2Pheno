@@ -14,8 +14,8 @@ from classifier.classical_classifiers import SVM, RFClassifier, KNN
 
 
 cvs=['block','standard']
-cv=cvs[0]
-feature_lists=[['snps_nonsyn_trimmed'],['gpa_trimmed','gpa_roary'],['genexp']]
+cv=cvs[1]
+feature_lists=[['genexp']]
 
 errors=[]
 for feature_list in feature_lists:

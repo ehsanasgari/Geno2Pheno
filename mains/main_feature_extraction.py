@@ -21,5 +21,5 @@ for feature_list in feature_lists:
         print(drug , ' features ',' and '.join(feature_list), ' Random Forest ')
         X_rep, Y, features, final_isolates = ABRAccess.get_xy_prediction_mats(drug, mapping={'0':0,'0.0':0,'1':1,'1.0':1})
         CHI2=Chi2Analysis(X_rep, Y, features)
-        CHI2.extract_features_fdr('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/feature_selection/chi2/'+drug++'_'.join(feature_list),-1)
+        CHI2.extract_features_fdr('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/feature_selection/chi2/'+drug+'_'.join(feature_list),-1)
 
