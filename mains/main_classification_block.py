@@ -13,8 +13,7 @@ from data_access.data_access_utility import ABRDataAccess
 from classifier.classical_classifiers import SVM, RFClassifier, KNN
 
 
-cvs=['block','standard']
-cv=cvs[0]
+cv='block'
 feature_lists=[['gpa_trimmed','gpa_roary']]
 
 errors=[]
