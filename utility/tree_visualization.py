@@ -8,7 +8,6 @@ __email__ = "asgari@berkeley.edu ehsaneddin.asgari@helmholtz-hzi.de"
 import random
 from ete3 import Tree, TreeStyle, NodeStyle, faces, AttrFace, CircleFace, TextFace, RectFace, random_color, ProfileFace
 import matplotlib.pyplot as plt
-import random
 import matplotlib.patches as mpatches
 
 
@@ -74,7 +73,7 @@ class VisualizeCircularTree(object):
         ts.show_branch_support = True
         ts.title.add_face(TextFace(title, fsize=20, ftype='Times'), column=15)
 
-        for k , (value, col) in enumerate(colors.items()):
+        for k , (value, col) in enumerate(class2color_dic.items()):
             x=RectFace(8,8, 'black', col)
             #x.opacity=0.5
             ts.legend.add_face(x, column=8)
@@ -82,10 +81,6 @@ class VisualizeCircularTree(object):
 
         t.render(filename+'.pdf',tree_style=ts,dpi=5000)
 
-
-    @staticmethod
-    def gen_hex_colour_code():
-        return '#'+''.join([random.choice('0123456789ABCDEF') for x in range(6)])
 
     @staticmethod
     def layout(node):
