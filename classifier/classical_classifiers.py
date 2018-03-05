@@ -72,10 +72,10 @@ class RFClassifier:
         :return:
         '''
         if params is None:
-            params = [{"n_estimators": [100, 200, 500, 1000],
-                       "criterion": ["entropy"],  # "gini",
-                       'max_features': ['sqrt'],  # 'auto',
-                       'min_samples_split': [5],  # 2,5,10
+            params = [{"n_estimators": [100, 200, 500, 1000, 2000],
+                       "criterion": ["entropy",'gini'],  # "gini",
+                       'max_features': ['sqrt','auto'],  # 'auto',
+                       'min_samples_split': [5,2,10],  # 2,5,10
                        'min_samples_leaf': [1]}]
         self.CV = KFoldCrossVal(self.X, self.Y, folds=10)
         self.CV.tune_and_evaluate(self.model, parameters=params, score='f1_macro', file_name=results_file + '_RF',
