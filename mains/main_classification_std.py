@@ -15,7 +15,7 @@ from utility.file_utility import FileUtility
 
 
 cv='standard'
-feature_lists=[['snps_nonsyn_trimmed','gpa_trimmed','gpa_roary'],['genexp','gpa_trimmed','gpa_roary'],['genexp','snps_nonsyn_trimmed'],['snps_nonsyn_trimmed','gpa_trimmed','gpa_roary','genexp']]
+feature_lists=[['snps_nonsyn_trimmed'],['gpa_trimmed','gpa_roary'],['genexp'],['snps_nonsyn_trimmed','gpa_trimmed','gpa_roary'],['genexp','gpa_trimmed','gpa_roary'],['genexp','snps_nonsyn_trimmed'],['snps_nonsyn_trimmed','gpa_trimmed','gpa_roary','genexp']]
 
 for feature_list in feature_lists:
     ABRAccess=ABRDataAccess('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/intermediate_reps/',feature_list)
