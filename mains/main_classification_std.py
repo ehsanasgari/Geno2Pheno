@@ -21,6 +21,7 @@ for feature_list in feature_lists:
     for drug in ABRAccess.BasicDataObj.drugs:
         print(drug , ' features ',' and '.join(feature_list), ' Random Forest ')
         X_rep, Y, features, final_isolates = ABRAccess.get_xy_prediction_mats(drug, mapping={'0':0,'0.0':0,'1':1,'1.0':1})
+        FileUtility.save_list('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list)+'_isolates',final_isolates)
         MRF = RFClassifier(X_rep, Y)
         MRF.tune_and_eval_predefined('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list),final_isolates,'/net/sgi/metagenomics/projects/pseudo_genomics/results/cv_folds/v2/standard_cv/'+drug+'_S-vs-R_folds.txt', feature_names=features)
         #print(drug , ' features ',' and '.join(feature_list), ' KNN')
