@@ -20,11 +20,7 @@ class VisualizeCircularTree(object):
         self.nwk=nwk_format
 
 
-    def creatCircle(self, filename, name2class_dic, class2color_dic, title, vector=None):
-        fg_color_map=['#e5bd89' , '#f8e076' , '#da4f38' , '#ffde3b' ,'#990f02' , '#fe7d68' ,'#66042d' , '#301131' ,'#281e5d' , '#042c36' , '#52b2c0' , '#74b62e' , '#32612d' ,'#522915' , '#2d1606' , '#7e7d9c' , '#f59bbf' , '#ffc30b' , '#fffada' , '#01381b' , '#e96210' , '#6c2d7e' , '#050100' , '#5d2c04' , '#6a6880']
-        bg_color_map=['#d5ba9c' , '#b79266' , '#9b7b55' , '#c97f80' , '#b75556' , '#ae4041' , '#fe664e' , '#cc4a34' , '#cf1d01' , '#ff9934' , '#e57100' , '#ff7f00' , '#d8d828' , '#ffff01' , '#ffff01' , '#355f3b' , '#4b6e50' , '#738f76' , '#aeadcd' , '#a4a3cd' , '#7b7a9a' , '#b28e98' , '#e5b6c6' , '#ffcada']
-        random.shuffle(bg_color_map)
-        random.shuffle(fg_color_map)
+    def create_circle(self, filename, title, name2color=None, name2class_dic=None, class2color_dic=None, vector=None, ignore_branch_length=True):
 
         plt.clf()
         axis_font = {'size':'3'}
@@ -32,31 +28,32 @@ class VisualizeCircularTree(object):
         plt.rc('ytick', labelsize=0.1)
         plt.rc({'font.size':0.1})
 
-
-        colors=dict()
-        leg=[]
-        for idx, value in enumerate(list(set(list(class2color_dic.values())))):
-            if value=='unknown' or value=='other':
-                colors[value]='white'
-            elif idx>= len(bg_color_map):
-                colors[value]=VisualizeCircularTree.gen_hex_colour_code()
-            else:
-                colors[value]=bg_color_map[idx]
-            leg.append(mpatches.Patch(color=colors[value], label=value))
+        # legend creation
+        if name2class_dic and class2color_dic:
+            leg=[]
+            for cls,color in class2color_dic.items():
+                leg.append(mpatches.Patch(color=color, label=cls))
 
         t = Tree(self.nwk)
         # iterate over tree leaves only
         for l in t.iter_leaves():
             ns = NodeStyle()
-            ns["bgcolor"] = class2color_dic[name2class_dic[l.name]] if l.name in name2class_dic else 'white'
+            if name2color:
+                ns["bgcolor"]=name2color[l.name] if l.name in name2color else 'white'
+            elif name2class_dic and class2color_dic:
+                ns["bgcolor"] = class2color_dic[name2class_dic[l.name]] if l.name in name2class_dic else 'white'
+            # Gray dashed branch lines
+            #ns["hz_line_type"] = 1
+            #ns["hz_line_color"] = "#cccccc"
+            #
             l.img_style = ns
             F=TextFace(l.name)
             F.ftype='Times'
-            if vector:
-                if l.name in vector:
-                    l.add_features(profile = vector[l.name])
-                    l.add_features(deviation = [0 for x in range(len(vector[l.name]))])
-                    l.add_face(ProfileFace(max_v=1, min_v=0.0, center_v=0.5, width=200, height=40, style='heatmap', colorscheme=5), column=0, position="aligned")
+            #if vector:
+            #    if l.name in vector:
+            l.add_features(profile = [random.random() for x in range(10)])#vector[l.name])
+            l.add_features(deviation = [0 for x in range(10)])#len(vector[l.name]))])
+            l.add_face(ProfileFace(max_v=1, min_v=0.0, center_v=0.5, width=200, height=40, style='heatmap', colorscheme=5), column=0, position='aligned')
         # Create an empty TreeStyle
         ts = TreeStyle()
 
@@ -71,13 +68,16 @@ class VisualizeCircularTree(object):
         # Show branch data
         ts.show_branch_length = True
         ts.show_branch_support = True
+        ts.force_topology=ignore_branch_length
         ts.title.add_face(TextFace(title, fsize=20, ftype='Times'), column=15)
 
-        for k , (value, col) in enumerate(class2color_dic.items()):
-            x=RectFace(8,8, 'black', col)
-            #x.opacity=0.5
-            ts.legend.add_face(x, column=8)
-            ts.legend.add_face(TextFace(' '+value+'   ', fsize=9,ftype='Times'), column=9)
+        # legend creation
+        if name2class_dic and class2color_dic:
+            for k , (cls, col) in enumerate(class2color_dic.items()):
+                x=RectFace(8,8, 'black', col)
+                #x.opacity=0.5
+                ts.legend.add_face(x, column=8)
+                ts.legend.add_face(TextFace(' '+cls+'   ', fsize=9,ftype='Times'), column=9)
 
         t.render(filename+'.pdf',tree_style=ts,dpi=5000)
 
