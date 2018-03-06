@@ -74,10 +74,18 @@ class PhyloChi2(object):
         for t in terminals:
             all_edges.append(PhyloChi2.get_path_edges(self.tree.get_path(t)))
         # check if the edge is meaningful (not having unknown differences)
-        self.all_edges = [(A, B) for A, B in list(itertools.chain(*all_edges)) if
+        all_edges = [(A, B) for A, B in list(itertools.chain(*all_edges)) if
                           len([x for x in B if x in self.isolates]) > 0 and len(
                               [x for x in A if x in self.isolates]) > 0 and (
                           not [x for x in A if x in self.isolates] == [x for x in B if x in self.isolates])]
+
+        temp=[]
+        self.all_edges=[]
+        for edge in all_edges:
+            strx='==>'.join(['###'.join(edge[0]),'###'.join(edge[1])])
+            if strx not in temp:
+                temp.append(strx)
+                self.all_edges.append(edge)
 
     @staticmethod
     def get_path_edges(node_seq):
@@ -182,6 +190,6 @@ class PhyloChi2(object):
 
 if __name__ == "__main__":
     PCh2 = PhyloChi2(feature_list=['gpa_trimmed', 'gpa_roary'],load=True)
-    #for i in range(0, 5):
-    #    PCh2.generate_parallel_gainloss_data_for_drug(i, 20)
+    for i in range(0, 5):
+        PCh2.generate_parallel_gainloss_data_for_drug(i, 20)
     PCh2.generate_features_chi2()
