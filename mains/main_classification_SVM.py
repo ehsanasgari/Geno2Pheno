@@ -24,7 +24,7 @@ for cv in ['block','standard']:
             FileUtility.save_list('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list)+'_isolates',final_isolates)
             print(drug , ' features ',' and '.join(feature_list), ' SVM')
             MLRG = SVM(X_rep, Y)
-            MLRG.tune_and_eval_predefined('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list),final_isolates,'../temp_configs/cv3/'+cv+'_cv/'+drug+'_S-vs-R_folds.txt',njobs=50)
+            MLRG.tune_and_eval_predefined('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list),final_isolates,'../temp_configs/cv3/'+cv+'_cv/'+drug+'_S-vs-R_folds.txt',njobs=40)
 
 
 
