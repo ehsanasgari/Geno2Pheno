@@ -32,6 +32,11 @@ class IntermediateRepCreate(object):
         if not os.path.exists(output_path):
             os.makedirs(output_path)
 
+
+    def create_table(self, path, name, feature_normalization):
+        GenotypeReader.create_read_tabular_file(path, save_pref=self.output_path+name, feature_normalization=feature_normalization)
+
+
     @staticmethod
     def create_feature_files(path):
         '''
@@ -71,5 +76,6 @@ class IntermediateRepCreate(object):
 
 if __name__ == "__main__":
     IC=IntermediateRepCreate('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/testingpack/intermediate_rep/')
-
+    IC.create_table('/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/non-syn_SNPs_final.tab','nonsynSNP','binary')
+    IC.create_table('/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/syn_SNPs_final.tab','synSNP','binary')
 
