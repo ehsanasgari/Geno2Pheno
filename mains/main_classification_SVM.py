@@ -22,9 +22,13 @@ for cv in ['block','standard']:
         for drug in ABRAccess.BasicDataObj.drugs:
             X_rep, Y, features, final_isolates = ABRAccess.get_xy_prediction_mats(drug, mapping={'0':0,'0.0':0,'1':1,'1.0':1})
             FileUtility.save_list('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list)+'_isolates',final_isolates)
-            print(drug , ' features ',' and '.join(feature_list), ' LR')
-            MLRG = LogRegression(X_rep, Y)
+            print(drug , ' features ',' and '.join(feature_list), ' SVM')
+            MLRG = SVM(X_rep, Y)
             MLRG.tune_and_eval_predefined('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/results/classifications_'+cv+'/'+drug+'_'.join(feature_list),final_isolates,'../temp_configs/cv3/'+cv+'_cv/'+drug+'_S-vs-R_folds.txt',njobs=50)
+
+
+
+
 
 
 
