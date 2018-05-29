@@ -151,8 +151,12 @@ class RFClassifier:
         self.CV.tune_and_evaluate(self.model, parameters=params, score='f1_macro', file_name=results_file + '_RF',
                                   n_jobs=njobs)
         if feature_names is not None:
-            [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
-             (y_predicted, Y, label_set)] = FileUtility.load_obj(results_file + '_RF.pickle')
+            try:
+                [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
+                 (y_predicted, Y, label_set)] = FileUtility.load_obj(results_file + '_RF.pickle')
+            except:
+                [label_set, best_score_, best_estimator_, cv_results_, best_params_,
+                 (Y, label_set)] = FileUtility.load_obj(results_file + '_RF.pickle')
             self.generate_RF_important_features(best_estimator_, feature_names, results_file, 500)
 
     def tune_and_eval_predefined(self, results_file, isolates, folds, params=None, feature_names=None, njobs=50):
@@ -175,8 +179,12 @@ class RFClassifier:
         self.CV.tune_and_evaluate(self.model, parameters=params, score='f1_macro', file_name=results_file + '_RF',
                                   n_jobs=njobs)
         if feature_names is not None:
-            [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
-             (y_predicted, Y, label_set)] = FileUtility.load_obj(results_file + '_RF.pickle')
+            try:
+                [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
+                 (y_predicted, Y, label_set)] = FileUtility.load_obj(results_file + '_RF.pickle')
+            except:
+                [label_set, best_score_, best_estimator_, cv_results_, best_params_,
+                 (Y, label_set)] = FileUtility.load_obj(results_file + '_RF.pickle')
             self.generate_RF_important_features(best_estimator_, feature_names, results_file, 1000)
 
     def generate_RF_important_features(self, clf_random_forest, feature_names, results_file, N):
