@@ -24,14 +24,18 @@ class Geno2Pheno:
             Geno2Pheno commandline use
         '''
         print('Geno2Pheno of Seq2Geno2Pheno 1.0.0')
-        '/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/testingpack/intermediate_rep/'
 
     @staticmethod
     def representation_creation(input_dir, output_dir, filetype):
-        IC = IntermediateRepCreate(output_dir)
+        IC = IntermediateRepCreate(output_dir+'/intermediate_representations/')
         files = FileUtility.recursive_glob(input_dir, '*' + filetype)
         for file in files:
             IC.create_table(file, file.split('/')[-1].replace('.' + filetype, ''), 'binary')
+
+    @staticmethod
+    def classification(output_dir,classifier='SVM'):
+        
+
 
 
 def checkArgs(args):
@@ -44,8 +48,13 @@ def checkArgs(args):
     # will be prompted
     parser = argparse.ArgumentParser()
 
+    # output #################################################################################################
+    parser.add_argument('--outdir', action='store', dest='output_dir', default=False, type=str,
+                        help='output directory')
+
     # top level ######################################################################################################
     parser.add_argument('--rep', action='store_true', help='Create representation from genotype tables')
+    ## normalizations need to be added
 
     # representation input #################################################################################################
     parser.add_argument('--indir', action='store', dest='input_dir', default=False, type=str,
@@ -55,9 +64,6 @@ def checkArgs(args):
     parser.add_argument('--filetype', action='store', dest='filetype', type=str, default='mat',
                         help='the suffix of input files', required='--indir' in sys.argv)
 
-    # representation output #################################################################################################
-    parser.add_argument('--outdir', action='store', dest='output_dir', default=False, type=str,
-                        help='output directory', required='--rep' in sys.argv)
 
     parsedArgs = parser.parse_args()
 
