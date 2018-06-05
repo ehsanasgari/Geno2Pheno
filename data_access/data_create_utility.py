@@ -45,7 +45,7 @@ class ABRDataCreate(object):
         '''
             This function load labels ZG02420619 ['1.0', '0.0', '0.0', '', '1.0']
         '''
-        label_file_address = '/mounts/data/proj/asgari/dissertation/git_repos/less_important/amrprediction/data_config/pheno_table_CLSI_S-vs-R.txt'#'/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt'#'/mounts/data/proj/asgari/dissertation/git_repos/amrprediction/data_config/pheno_table_CLSI_S-vs-R.txt'
+        label_file_address ='/net/sgi/metagenomics/projects/pseudo_genomics/data/K_pneumoniae/v2/list/phenotype_list' #'/mounts/data/proj/asgari/dissertation/git_repos/less_important/amrprediction/data_config/pheno_table_CLSI_S-vs-R.txt'#'/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt'#'/mounts/data/proj/asgari/dissertation/git_repos/amrprediction/data_config/pheno_table_CLSI_S-vs-R.txt'
         #'/mounts/data/proj/asgari/dissertation/git_repos/amrprediction/data_config/mic_bin_without_intermediate.txt'
         #'/net/sgi/metagenomics/projects/pseudo_genomics/data/MIC/v3/pheno_table_CLSI_S-vs-R.txt'
         rows = [l.replace('\n', '') for l in codecs.open(label_file_address, 'r', 'utf-8').readlines()]

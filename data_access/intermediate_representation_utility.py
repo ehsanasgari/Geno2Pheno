@@ -73,6 +73,6 @@ class IntermediateRepCreate(object):
 
 if __name__ == "__main__":
     IC=IntermediateRepCreate('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/testingpack/intermediate_rep/')
-           IC.create_table('/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/gpa.uniq.mat','uniqGPA','binary')
+    IC.create_table('/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/gpa.uniq.mat','uniqGPA','binary')
     IC.create_table('/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/non-syn_SNPs.uniq.mat','uniqNonsynSNP','binary')
     IC.create_table('/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/syn_SNPs.uniq.mat','uniqNonsynSNP','binary')
