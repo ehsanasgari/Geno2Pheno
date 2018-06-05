@@ -19,11 +19,14 @@ from utility.file_utility import FileUtility
 
 
 class Geno2Pheno:
-    def __init__(self):
+    def __init__(self,outdir, labels):
         '''
             Geno2Pheno commandline use
         '''
         print('Geno2Pheno of Seq2Geno2Pheno 1.0.0')
+        self.outdir=outdir
+        self.label_file=labels
+        self.labeling=dict([tuple(a.split()) for a in FileUtility.load_list(self.label_file)])
 
     @staticmethod
     def representation_creation(input_dir, output_dir, filetype):
@@ -34,7 +37,7 @@ class Geno2Pheno:
 
     @staticmethod
     def classification(output_dir,classifier='SVM'):
-        
+
 
 
 
@@ -48,9 +51,13 @@ def checkArgs(args):
     # will be prompted
     parser = argparse.ArgumentParser()
 
-    # output #################################################################################################
+    # primary #################################################################################################
     parser.add_argument('--outdir', action='store', dest='output_dir', default=False, type=str,
                         help='output directory')
+
+    parser.add_argument('--labels', action='store', dest='labels', default=False, type=str,
+                        help='label file')
+
 
     # top level ######################################################################################################
     parser.add_argument('--rep', action='store_true', help='Create representation from genotype tables')
@@ -67,6 +74,22 @@ def checkArgs(args):
 
     parsedArgs = parser.parse_args()
 
+    try:
+        os.stat(parsedArgs.output_dir)
+    except:
+
+        os.mkdir(parsedArgs.output_dir)
+
+    if (not os.access(parsedArgs.labels, os.F_OK)):
+        err = err + "\nError: Permission denied or could not find the labels!"
+        return err
+
+    G2P=Geno2Pheno(parsedArgs.output_dir, parsedArgs.labels)
+
+
+
+
+
     if parsedArgs.rep:
         '''
             bootstrapping functionality
@@ -76,12 +99,6 @@ def checkArgs(args):
             err = err + "\nError: Permission denied or could not find the directory!"
             return err
         else:
-            try:
-                os.stat(parsedArgs.output_dir)
-            except:
-
-                os.mkdir(parsedArgs.output_dir)
-
             if len(FileUtility.recursive_glob(parsedArgs.input_dir, '*' + parsedArgs.filetype)) == 0:
                 err = err + "\nThe filetype " + parsedArgs.filetype + " could not find the directory!"
                 return err
