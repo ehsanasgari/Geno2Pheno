@@ -72,8 +72,8 @@ class Geno2Pheno:
         # load sequences
         sequences = xmldoc.getElementsByTagName('sequence')
         for sequence in sequences:
-            path = sequences.attributes['path'].value
-            kmer = int(sequences.attributes['kmer'].value)
+            path = sequence.attributes['path'].value
+            kmer = int(sequence.attributes['kmer'].value)
             log=IC.create_kmer_table(path,kmer)
             log_info.append(log)
 

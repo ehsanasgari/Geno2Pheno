@@ -45,37 +45,37 @@ class GenotypeReader(object):
         :return:
         '''
         print ('Start creating ', save_pref)
-
-        rows = [l.strip() for l in codecs.open(path, 'r', 'utf-8').readlines()]
-        tf_vec = sparse.csr_matrix(
-            [[GenotypeReader.get_float_or_zero(x) for x in entry.split('\t')[1::]] for entry in rows[1::]])
-
-        if transpose:
-            tf_vec = sparse.csr_matrix(tf_vec.toarray().T)
-            isolates = [feat.replace(' ', '') for feat in rows[0].rstrip().split('\t')]
-            feature_names = [row.split()[0] for row in rows[1::]]
-        else:
-            isolates = [row.split()[0] for row in rows[1::]]
-            feature_names = [feat.replace(' ', '') for feat in rows[0].rstrip().split('\t')]
-
-        # normalizer / discretizer
-        if feature_normalization:
-            if feature_normalization == 'binary':
-                tf_vec = np.round(MaxAbsScaler().fit_transform(tf_vec))
-
-            elif feature_normalization == '01':
-                tf_vec = MaxAbsScaler().fit_transform(tf_vec)
-            elif feature_normalization == 'percent':
-                tf_vec = np.round(MaxAbsScaler().fit_transform(tf_vec) * 100)
-            elif feature_normalization == 'zu':
-                tf_vec = sparse.csr_matrix(preprocessing.StandardScaler().fit_transform(tf_vec.toarray()))
-
         if override  or not os.path.exists('_'.join([save_pref, 'feature', 'vect.npz'])):
-            FileUtility.save_sparse_csr('_'.join([save_pref, 'feature', 'vect.npz']), tf_vec)
-            FileUtility.save_list('_'.join([save_pref, 'feature', 'list.txt']), feature_names)
-            FileUtility.save_list('_'.join([save_pref, 'isolates', 'list.txt']), isolates)
-            print (save_pref, ' created successfully containing ', str(len(isolates)), ' strains and ', str(len(feature_names)), ' features')
-            return (''.join([save_pref, ' created successfully containing ', str(len(isolates)), ' strains and ', str(len(feature_names)), ' features']))
+            rows = [l.strip() for l in codecs.open(path, 'r', 'utf-8').readlines()]
+            tf_vec = sparse.csr_matrix(
+                [[GenotypeReader.get_float_or_zero(x) for x in entry.split('\t')[1::]] for entry in rows[1::]])
+
+            if transpose:
+                tf_vec = sparse.csr_matrix(tf_vec.toarray().T)
+                isolates = [feat.replace(' ', '') for feat in rows[0].rstrip().split('\t')]
+                feature_names = [row.split()[0] for row in rows[1::]]
+            else:
+                isolates = [row.split()[0] for row in rows[1::]]
+                feature_names = [feat.replace(' ', '') for feat in rows[0].rstrip().split('\t')]
+
+            # normalizer / discretizer
+            if feature_normalization:
+                if feature_normalization == 'binary':
+                    tf_vec = np.round(MaxAbsScaler().fit_transform(tf_vec))
+
+                elif feature_normalization == '01':
+                    tf_vec = MaxAbsScaler().fit_transform(tf_vec)
+                elif feature_normalization == 'percent':
+                    tf_vec = np.round(MaxAbsScaler().fit_transform(tf_vec) * 100)
+                elif feature_normalization == 'zu':
+                    tf_vec = sparse.csr_matrix(preprocessing.StandardScaler().fit_transform(tf_vec.toarray()))
+
+
+                FileUtility.save_sparse_csr('_'.join([save_pref, 'feature', 'vect.npz']), tf_vec)
+                FileUtility.save_list('_'.join([save_pref, 'feature', 'list.txt']), feature_names)
+                FileUtility.save_list('_'.join([save_pref, 'isolates', 'list.txt']), isolates)
+                print (save_pref, ' created successfully containing ', str(len(isolates)), ' strains and ', str(len(feature_names)), ' features')
+                return (''.join([save_pref, ' created successfully containing ', str(len(isolates)), ' strains and ', str(len(feature_names)), ' features']))
         else:
             print (save_pref, ' already exist ')
             return (''.join([save_pref, ' already exist ']))
