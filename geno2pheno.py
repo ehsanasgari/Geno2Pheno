@@ -43,7 +43,7 @@ class Geno2Pheno:
 
         log_file = output + '/' + 'logfile'
         log_info = ['Project ' + project_name]
-        log_info.append('')
+
 
         representation_path = output + '/intermediate_rep/'
         IC = IntermediateRepCreate(representation_path)
