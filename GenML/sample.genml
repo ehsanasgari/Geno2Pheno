@@ -1,0 +1,11 @@
+<project output="" name="">
+<genotype>
+    <table path="" normalization="">
+        name
+    </table>
+</genotype>
+<phenotype path=""></phenotype>
+<phylogentictree path="">
+    name
+</phylogentictree>
+</project>
