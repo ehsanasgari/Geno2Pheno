@@ -37,7 +37,8 @@ class IntermediateRepCreate(object):
         return GenotypeReader.create_read_tabular_file(path, save_pref=self.output_path + name,
                                                        feature_normalization=feature_normalization, override=override)
 
-    def _get_kmer_rep(self, strain, seq, k):
+    def _get_kmer_rep(self, strain, seq_file, k):
+        seq=FileUtility.read_fasta_sequences(seq_file)
         vec, vocab = GenotypeReader.get_nuc_kmer_distribution(seq, k)
         return strain, vec, vocab
 
@@ -47,7 +48,7 @@ class IntermediateRepCreate(object):
         files.sort()
         input_tuples = []
         for file in files:
-            input_tuples.append((file.split('/')[-1].split('.')[0], FileUtility.read_fasta_sequences(file), k))
+            input_tuples.append((file.split('/')[-1].split('.')[0], file, k))
 
         strains = []
         mat = []
