@@ -63,9 +63,11 @@ class GenotypeReader(object):
             FileUtility.save_sparse_csr('_'.join([save_pref, 'feature', 'vect.npz']), tf_vec)
             FileUtility.save_list('_'.join([save_pref, 'feature', 'list.txt']), feature_names)
             FileUtility.save_list('_'.join([save_pref, 'isolates', 'list.txt']), isolates)
-            print (save_pref, ' created successfully containing ', str(len(isolates)), ' isolates and ', str(len(feature_names)), ' features')
+            print (save_pref, ' created successfully containing ', str(len(isolates)), ' strains and ', str(len(feature_names)), ' features')
+            return (save_pref, ' created successfully containing ', str(len(isolates)), ' strains and ', str(len(feature_names)), ' features')
         else:
             print (save_pref, ' already exist ')
+            return (save_pref, ' already exist ')
 
     @staticmethod
     def get_float_or_zero(value):

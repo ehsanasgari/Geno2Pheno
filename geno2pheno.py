@@ -57,8 +57,8 @@ class Geno2Pheno:
             if len(prefix) == 1:
                 prefix = ''
             for file in FileUtility.recursive_glob(path, '*'):
-                IC.create_table(file, prefix + file.split('/')[-1], normalization, override)
-                log_info.append(prefix + file.split('/')[-1] + ' created, where override is '+ str(override))
+                log=IC.create_table(file, prefix + file.split('/')[-1], normalization, override)
+                log_info.append(log)
 
         tables = xmldoc.getElementsByTagName('table')
         for table in tables:
@@ -67,8 +67,8 @@ class Geno2Pheno:
             prefix = tables.firstChild.nodeValue.strip() + '_'
             if len(prefix) == 1:
                 prefix = ''
-            IC.create_table(path, prefix + path.split('/')[-1], normalization, override)
-            log_info.append(prefix + path.split('/')[-1] + ' created, where override is ' + str(override))
+            log=IC.create_table(path, prefix + path.split('/')[-1], normalization, override)
+            log_info.append(log)
 
         ## Adding metadata
         metadata_path = output + '/metadata/'
