@@ -33,8 +33,9 @@ class IntermediateRepCreate(object):
             os.makedirs(output_path)
 
 
-    def create_table(self, path, name, feature_normalization):
-        GenotypeReader.create_read_tabular_file(path, save_pref=self.output_path+name, feature_normalization=feature_normalization)
+    def create_table(self, path, name, feature_normalization,override=False):
+
+        GenotypeReader.create_read_tabular_file(path, save_pref=self.output_path+name, feature_normalization=feature_normalization,override=override)
 
 
 

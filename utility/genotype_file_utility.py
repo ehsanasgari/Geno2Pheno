@@ -14,6 +14,7 @@ from scipy import sparse
 from sklearn.preprocessing import MaxAbsScaler
 from utility.file_utility import FileUtility
 from sklearn import preprocessing
+import os
 
 class GenotypeReader(object):
     '''
@@ -24,7 +25,7 @@ class GenotypeReader(object):
         print('Genotype reader object created..')
 
     @staticmethod
-    def create_read_tabular_file(path, save_pref='_', feature_normalization=None, transpose=False):
+    def create_read_tabular_file(path, save_pref='_', feature_normalization=None, transpose=False, override=False):
         '''
         :param path:
         :param save_pref:
@@ -58,10 +59,13 @@ class GenotypeReader(object):
             elif feature_normalization == 'zu':
                 tf_vec = sparse.csr_matrix(preprocessing.StandardScaler().fit_transform(tf_vec.toarray()))
 
-        FileUtility.save_sparse_csr('_'.join([save_pref, 'feature', 'vect.npz']), tf_vec)
-        FileUtility.save_list('_'.join([save_pref, 'feature', 'list.txt']), feature_names)
-        FileUtility.save_list('_'.join([save_pref, 'isolates', 'list.txt']), isolates)
-        print (save_pref, ' created successfully containing ', str(len(isolates)), ' isolates and ', str(len(feature_names)), ' features')
+        if override  or not os.path.exists('_'.join([save_pref, 'feature', 'vect.npz'])):
+            FileUtility.save_sparse_csr('_'.join([save_pref, 'feature', 'vect.npz']), tf_vec)
+            FileUtility.save_list('_'.join([save_pref, 'feature', 'list.txt']), feature_names)
+            FileUtility.save_list('_'.join([save_pref, 'isolates', 'list.txt']), isolates)
+            print (save_pref, ' created successfully containing ', str(len(isolates)), ' isolates and ', str(len(feature_names)), ' features')
+        else:
+            print (save_pref, ' already exist ')
 
     @staticmethod
     def get_float_or_zero(value):

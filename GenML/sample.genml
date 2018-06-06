@@ -1,11 +1,12 @@
-<project output="" name="">
+<project output="/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/K_pneumoniae" name="Kpneumoniae_packagetesting">
 <genotype>
-    <table path="" normalization="">
-        name
-    </table>
+    <tables path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/" normalization="binary" transpose="False">
+kpneumoniae
+    </tables>
+    <sequence path="">
+    </sequence>
 </genotype>
-<phenotype path=""></phenotype>
-<phylogentictree path="">
-    name
-</phylogentictree>
+<phenotype path="/net/sgi/metagenomics/projects/pseudo_genomics/data/K_pneumoniae/list/phenotype_list">
+</phenotype>
+<phylogentictree path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/phylogeny/OneLarge.gapReplaced.var2.gt90.fasttree"></phylogentictree>
 </project>

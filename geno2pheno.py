@@ -16,28 +16,68 @@ import sys
 
 from data_access.intermediate_representation_utility import IntermediateRepCreate
 from utility.file_utility import FileUtility
-
+from xml.dom import minidom
+import shutil
 
 class Geno2Pheno:
-    def __init__(self,outdir, labels):
+    def __init__(self, genml_path, override=False):
         '''
             Geno2Pheno commandline use
         '''
         print('Geno2Pheno of Seq2Geno2Pheno 1.0.0')
-        self.outdir=outdir
-        self.label_file=labels
-        self.labeling=dict([tuple(a.split()) for a in FileUtility.load_list(self.label_file)])
 
-    @staticmethod
-    def representation_creation(input_dir, output_dir, filetype):
-        IC = IntermediateRepCreate(output_dir+'/intermediate_representations/')
-        files = FileUtility.recursive_glob(input_dir, '*' + filetype)
-        for file in files:
-            IC.create_table(file, file.split('/')[-1].replace('.' + filetype, ''), 'binary')
+        xmldoc = minidom.parse(genml_path)
 
-    @staticmethod
-    def classification(output_dir,classifier='SVM'):
+        # parse project part
+        project = xmldoc.getElementsByTagName('project')
+        output=project[0].attributes['output'].value
+        project_name=project[0].attributes['name'].value
 
+        if override:
+            var = input("Delete existing files at the output path? (y/n)")
+            if var =='y':
+                shutil.rmtree(output)
+        if not os.path.exists(output):
+            os.makedirs(output)
+
+        log_file=output+'/'+'logfile'
+        log_info=['Project '+project_name]
+        log_info.append('')
+
+        representation_path=output+'/intermediate_rep/'
+        IC=IntermediateRepCreate(representation_path)
+
+        # load tables
+        tabless = xmldoc.getElementsByTagName('tables')
+        for tables in tabless:
+            path=tables.attributes['path'].value
+            normalization=tables.attributes['normalization'].value
+            prefix=tables.firstChild.nodeValue.strip()
+            for file in FileUtility.recursive_glob(path,'*'):
+                IC.create_table(file,prefix+file.split('/')[-1],normalization, override)
+                log_info.append(prefix+file.split('/')[-1], ' created, where override is ',override)
+
+        tables = xmldoc.getElementsByTagName('table')
+        for table in tables:
+            path=table.attributes['path'].value
+            normalization=table.attributes['normalization'].value
+            prefix=tables.firstChild.nodeValue.strip()
+            IC.create_table(path,prefix+path.split('/')[-1],normalization, override)
+            log_info.append(prefix+path.split('/')[-1], ' created, where override is ',override)
+
+        ## Adding metadata
+        metadata_path=output+'/metadata/'
+        if not os.path.exists(metadata_path):
+            os.makedirs(metadata_path)
+        # phenotype
+        phenotype = xmldoc.getElementsByTagName('phenotype')
+        if not os.path.exists(metadata_path + 'phenotypes.txt') or override:
+            FileUtility.save_list(metadata_path + 'phenotypes.txt', FileUtility.load_list(phenotype[0].attributes['path'].value))
+
+        # tree
+        phylogentictree = xmldoc.getElementsByTagName('phylogentictree')
+        if not os.path.exists(metadata_path + 'phylogentictree.txt') or override:
+            FileUtility.save_list(metadata_path +'phylogentictree.txt', FileUtility.load_list(phylogentictree[0].attributes['path'].value))
 
 
 
@@ -52,62 +92,19 @@ def checkArgs(args):
     parser = argparse.ArgumentParser()
 
     # primary #################################################################################################
-    parser.add_argument('--outdir', action='store', dest='output_dir', default=False, type=str,
-                        help='output directory')
+    parser.add_argument('--genoparse', action='store', dest='genml_path', default=False, type=str,
+                        help='GENML file to be parsed')
 
-    parser.add_argument('--labels', action='store', dest='labels', default=False, type=str,
-                        help='label file')
-
-
-    # top level ######################################################################################################
-    parser.add_argument('--rep', action='store_true', help='Create representation from genotype tables')
-    ## normalizations need to be added
-
-    # representation input #################################################################################################
-    parser.add_argument('--indir', action='store', dest='input_dir', default=False, type=str,
-                        help='input directory', required='--rep' in sys.argv)
-
-    # general to bootstrap  and rep ##################################################################################
-    parser.add_argument('--filetype', action='store', dest='filetype', type=str, default='mat',
-                        help='the suffix of input files', required='--indir' in sys.argv)
-
+    parser.add_argument('--override', action='store_true',
+                        help='GENML file to be parsed', required='--genoparse' in sys.argv)
 
     parsedArgs = parser.parse_args()
 
-    try:
-        os.stat(parsedArgs.output_dir)
-    except:
-
-        os.mkdir(parsedArgs.output_dir)
-
-    if (not os.access(parsedArgs.labels, os.F_OK)):
+    if (not os.access(parsedArgs.genml_path, os.F_OK)):
         err = err + "\nError: Permission denied or could not find the labels!"
         return err
 
-    G2P=Geno2Pheno(parsedArgs.output_dir, parsedArgs.labels)
-
-
-
-
-
-    if parsedArgs.rep:
-        '''
-            bootstrapping functionality
-        '''
-        print('Bootstrapping requested..\n')
-        if (not os.access(parsedArgs.input_dir, os.F_OK)):
-            err = err + "\nError: Permission denied or could not find the directory!"
-            return err
-        else:
-            if len(FileUtility.recursive_glob(parsedArgs.input_dir, '*' + parsedArgs.filetype)) == 0:
-                err = err + "\nThe filetype " + parsedArgs.filetype + " could not find the directory!"
-                return err
-            Geno2Pheno.representation_creation(parsedArgs.input_dir, parsedArgs.output_dir, parsedArgs.filetype)
-        return False
-
-    else:
-        err = err + "\nError: You need to specify a valid command!"
-        print('others')
+    G2P=Geno2Pheno(parsedArgs.genml_path, parsedArgs.override)
 
     return False
 
