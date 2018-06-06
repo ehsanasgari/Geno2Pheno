@@ -3,7 +3,7 @@
     <tables path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/" normalization="binary" transpose="False">
 kpneumoniae
     </tables>
-    <sequence path="">
+    <sequence path="/net/sgi/metagenomics/projects/pseudo_genomics/results/assembly/v2/spades_renamed/" kmer='6'>
     </sequence>
 </genotype>
 <phenotype path="/net/sgi/metagenomics/projects/pseudo_genomics/data/K_pneumoniae/v2/list/phenotype_list">

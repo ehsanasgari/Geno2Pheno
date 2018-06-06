@@ -19,7 +19,6 @@ from xml.dom import minidom
 from data_access.intermediate_representation_utility import IntermediateRepCreate
 from utility.file_utility import FileUtility
 
-
 class Geno2Pheno:
     def __init__(self, genml_path, override=False):
         '''
@@ -68,6 +67,14 @@ class Geno2Pheno:
             if len(prefix) == 1:
                 prefix = ''
             log=IC.create_table(path, prefix + path.split('/')[-1], normalization, override)
+            log_info.append(log)
+
+        # load sequences
+        sequences = xmldoc.getElementsByTagName('sequence')
+        for sequence in sequences:
+            path = sequences.attributes['path'].value
+            kmer = int(sequences.attributes['kmer'].value)
+            log=IC.create_kmer_table(path,kmer)
             log_info.append(log)
 
         ## Adding metadata

@@ -15,6 +15,8 @@ from utility.file_utility import FileUtility
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import os
+import tqdm
+from scipy import sparse
 
 
 class IntermediateRepCreate(object):
@@ -37,7 +39,22 @@ class IntermediateRepCreate(object):
 
         return GenotypeReader.create_read_tabular_file(path, save_pref=self.output_path+name, feature_normalization=feature_normalization,override=override)
 
-
+    def create_kmer_table(self, path, k):
+        files=FileUtility.recursive_glob(path, '*')
+        files.sort()
+        strains=[]
+        mat=[]
+        for file in tqdm.tqdm(files):
+            strains.append(file.split('/')[-1].split('.')[0])
+            sequences=FileUtility.read_fasta_sequences(file)
+            vec,vocab=GenotypeReader.get_nuc_kmer_distribution(sequences,k)
+            mat.append(vec)
+        mat=sparse.csc_matrix(mat)
+        save_path=self.output_path+'sequence_'+str(k)+'mer'
+        FileUtility.save_sparse_csr(save_path,mat)
+        FileUtility.save_list('_'.join([save_path, 'strains', 'list.txt']), strains)
+        FileUtility.save_list('_'.join([save_path, 'features', 'list.txt']), vocab)
+        return ('_'.join([save_path])+' created')
 
 if __name__ == "__main__":
     IC=IntermediateRepCreate('/net/sgi/metagenomics/projects/pseudo_genomics/results/amr_toolkit/testingpack/intermediate_rep/')

@@ -15,6 +15,8 @@ from sklearn.preprocessing import MaxAbsScaler
 from utility.file_utility import FileUtility
 from sklearn import preprocessing
 import os
+from sklearn.feature_extraction.text import TfidfVectorizer
+import itertools
 
 class GenotypeReader(object):
     '''
@@ -23,6 +25,15 @@ class GenotypeReader(object):
 
     def __init__(self):
         print('Genotype reader object created..')
+
+    @staticmethod
+    def get_nuc_kmer_distribution(sequences,k):
+        vocab = [''.join(xs) for xs in itertools.product('atcg', repeat=k)]
+        vocab.sort()
+        vectorizer = TfidfVectorizer(use_idf=False, vocabulary=vocab, analyzer='char', ngram_range=(k, k),
+                                          norm='l1', stop_words=[], lowercase=True, binary=False)
+        return (np.mean(vectorizer.fit_transform([sequences]).toarray(), axis=0),vocab)
+
 
     @staticmethod
     def create_read_tabular_file(path, save_pref='_', feature_normalization=None, transpose=False, override=False):
