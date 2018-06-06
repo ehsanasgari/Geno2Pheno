@@ -20,7 +20,7 @@ from data_access.intermediate_representation_utility import IntermediateRepCreat
 from utility.file_utility import FileUtility
 
 class Geno2Pheno:
-    def __init__(self, genml_path, override=1):
+    def __init__(self, genml_path, override=1, cores=4):
         '''
             Geno2Pheno commandline use
         '''
@@ -74,7 +74,7 @@ class Geno2Pheno:
         for sequence in sequences:
             path = sequence.attributes['path'].value
             kmer = int(sequence.attributes['kmer'].value)
-            log=IC.create_kmer_table(path,kmer)
+            log=IC.create_kmer_table(path,kmer,cores=cores)
             log_info.append(log)
 
         ## Adding metadata
@@ -110,7 +110,10 @@ def checkArgs(args):
                         help='GENML file to be parsed')
 
     parser.add_argument('--override', action='store', dest='override',default=1, type=int,
-                        help='GENML file to be parsed', required='--genoparse' in sys.argv)
+                        help='Override the existing files?', required='--genoparse' in sys.argv)
+
+    parser.add_argument('--cores', action='store', dest='cores',default=4, type=int,
+                        help='Number of cores to be used')
 
     parsedArgs = parser.parse_args()
 
@@ -118,7 +121,7 @@ def checkArgs(args):
         err = err + "\nError: Permission denied or could not find the labels!"
         return err
 
-    G2P = Geno2Pheno(parsedArgs.genml_path, parsedArgs.override)
+    G2P = Geno2Pheno(parsedArgs.genml_path, parsedArgs.override, parsedArgs.cores)
 
     return False
 
