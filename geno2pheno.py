@@ -115,6 +115,8 @@ def checkArgs(args):
     parser.add_argument('--cores', action='store', dest='cores',default=4, type=int,
                         help='Number of cores to be used')
 
+    # svm ######################################################################################################
+
     parsedArgs = parser.parse_args()
 
     if (not os.access(parsedArgs.genml_path, os.F_OK)):
