@@ -20,7 +20,7 @@ from data_access.intermediate_representation_utility import IntermediateRepCreat
 from utility.file_utility import FileUtility
 
 class Geno2Pheno:
-    def __init__(self, genml_path, override=False):
+    def __init__(self, genml_path, override=1):
         '''
             Geno2Pheno commandline use
         '''
@@ -109,7 +109,7 @@ def checkArgs(args):
     parser.add_argument('--genoparse', action='store', dest='genml_path', default=False, type=str,
                         help='GENML file to be parsed')
 
-    parser.add_argument('--override', action='store_true',
+    parser.add_argument('--override', action='store', dest='override',default=1, type=int,
                         help='GENML file to be parsed', required='--genoparse' in sys.argv)
 
     parsedArgs = parser.parse_args()
