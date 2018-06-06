@@ -47,7 +47,7 @@ class IntermediateRepCreate(object):
         files.sort()
         input_tuples = []
         for file in files:
-            input_tuples.appned((file.split('/')[-1].split('.')[0], FileUtility.read_fasta_sequences(file), k))
+            input_tuples.append((file.split('/')[-1].split('.')[0], FileUtility.read_fasta_sequences(file), k))
 
         strains = []
         mat = []
