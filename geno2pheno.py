@@ -33,7 +33,7 @@ class Geno2Pheno:
         output=project[0].attributes['output'].value
         project_name=project[0].attributes['name'].value
 
-        if override:
+        if override and os.path.exists(output):
             var = input("Delete existing files at the output path? (y/n)")
             if var =='y':
                 shutil.rmtree(output)
