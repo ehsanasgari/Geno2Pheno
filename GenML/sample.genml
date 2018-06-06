@@ -6,7 +6,7 @@ kpneumoniae
     <sequence path="">
     </sequence>
 </genotype>
-<phenotype path="/net/sgi/metagenomics/projects/pseudo_genomics/data/K_pneumoniae/list/phenotype_list">
+<phenotype path="/net/sgi/metagenomics/projects/pseudo_genomics/data/K_pneumoniae/v2/list/phenotype_list">
 </phenotype>
 <phylogentictree path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/phylogeny/OneLarge.gapReplaced.var2.gt90.fasttree"></phylogentictree>
 </project>
