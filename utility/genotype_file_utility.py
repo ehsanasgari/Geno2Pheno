@@ -32,7 +32,7 @@ class GenotypeReader(object):
         vocab.sort()
         vectorizer = TfidfVectorizer(use_idf=False, vocabulary=vocab, analyzer='char', ngram_range=(k, k),
                                           norm='l1', stop_words=[], lowercase=True, binary=False)
-        return (np.mean(vectorizer.fit_transform([sequences]).toarray(), axis=0),vocab)
+        return (np.mean(vectorizer.fit_transform(sequences).toarray(), axis=0),vocab)
 
 
     @staticmethod
