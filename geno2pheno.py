@@ -58,7 +58,7 @@ class Geno2Pheno:
                 prefix = ''
             for file in FileUtility.recursive_glob(path, '*'):
                 IC.create_table(file, prefix + file.split('/')[-1], normalization, override)
-                log_info.append(prefix + file.split('/')[-1] + ' created, where override is ', str(override))
+                log_info.append(prefix + file.split('/')[-1] + ' created, where override is '+ str(override))
 
         tables = xmldoc.getElementsByTagName('table')
         for table in tables:
