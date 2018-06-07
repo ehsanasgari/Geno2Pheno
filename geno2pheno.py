@@ -123,7 +123,7 @@ def checkArgs(args):
         err = err + "\nError: Permission denied or could not find the labels!"
         return err
 
-    if parsedArgs.genoparse:
+    if parsedArgs.genml_path:
         G2P = Geno2Pheno(parsedArgs.genml_path, parsedArgs.override, parsedArgs.cores)
 
 
