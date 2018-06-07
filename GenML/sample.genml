@@ -3,9 +3,11 @@
     <tables path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/" normalization="binary" transpose="False">
 kpneumoniae
     </tables>
-    <sequence path="/net/sgi/metagenomics/projects/pseudo_genomics/results/assembly/v2/spades_renamed/" kmer='5'>
+    <sequence path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/assemblies_renamed/" kmer='4'>kpneumoniae
     </sequence>
-    <sequence path="/net/sgi/metagenomics/projects/pseudo_genomics/results/assembly/v2/spades_renamed/" kmer='4'>
+    <sequence path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/assemblies_renamed/" kmer='5'>kpneumoniae
+    </sequence>
+    <sequence path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/assemblies_renamed/" kmer='6'>kpneumoniae
     </sequence>
 </genotype>
 <phenotype path="/net/sgi/metagenomics/projects/pseudo_genomics/data/K_pneumoniae/v2/list/phenotype_list">

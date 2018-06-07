@@ -105,7 +105,7 @@ def checkArgs(args):
     # will be prompted
     parser = argparse.ArgumentParser()
 
-    # primary #################################################################################################
+    # parse #################################################################################################
     parser.add_argument('--genoparse', action='store', dest='genml_path', default=False, type=str,
                         help='GENML file to be parsed')
 
@@ -123,7 +123,9 @@ def checkArgs(args):
         err = err + "\nError: Permission denied or could not find the labels!"
         return err
 
-    G2P = Geno2Pheno(parsedArgs.genml_path, parsedArgs.override, parsedArgs.cores)
+    if parsedArgs.genoparse:
+        G2P = Geno2Pheno(parsedArgs.genml_path, parsedArgs.override, parsedArgs.cores)
+
 
     return False
 
