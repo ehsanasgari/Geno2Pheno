@@ -164,3 +164,7 @@ class GenotypePhenotypeAccess(object):
         X = sparse.csr_matrix(X)
         Y = [mapping_isolate_label[strain] for strain in final_strains]
         return X, Y, feature_names, final_strains
+
+if __name__ == "__main__":
+    GPA=GenotypePhenotypeAccess('/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/K_pneumoniae/')
+    print(GPA.phenotype2labeled_strains_mapping)
