@@ -42,6 +42,14 @@ class GenotypePhenotypeAccess(object):
         self.phenotypes = list()
         self.phenotype2labeled_strains_mapping = dict()
 
+        ## matrix creation variables
+        # dictionary of feature types
+        self.X = dict()
+        # dictionary of feature names
+        self.feature_names = dict()
+        # dictionary of isolates
+        self.strains = dict()
+
         # basic loading
         self.make_labels(mapping)
 
