@@ -24,15 +24,21 @@ class Geno2Pheno:
             Geno2Pheno commandline use
         '''
         print('Geno2Pheno of Seq2Geno2Pheno 1.0.0')
+        self.genml_path=genml_path
+        self.override=1
+        self.cores=4
+        self.read_data()
 
-        xmldoc = minidom.parse(genml_path)
+    def read_data(self):
+
+        xmldoc = minidom.parse(self.genml_path)
 
         # parse project part
         project = xmldoc.getElementsByTagName('project')
         output = project[0].attributes['output'].value
         project_name = project[0].attributes['name'].value
 
-        if override and os.path.exists(output):
+        if self.override and os.path.exists(output):
             var = input("Delete existing files at the output path? (y/n)")
             if var == 'y':
                 shutil.rmtree(output)
@@ -55,7 +61,7 @@ class Geno2Pheno:
             if len(prefix) == 1:
                 prefix = ''
             for file in FileUtility.recursive_glob(path, '*'):
-                log=IC.create_table(file, prefix + file.split('/')[-1], normalization, override)
+                log=IC.create_table(file, prefix + file.split('/')[-1], normalization, self.override)
                 log_info.append(log)
 
         tables = xmldoc.getElementsByTagName('table')
@@ -65,7 +71,7 @@ class Geno2Pheno:
             prefix = tables.firstChild.nodeValue.strip() + '_'
             if len(prefix) == 1:
                 prefix = ''
-            log=IC.create_table(path, prefix + path.split('/')[-1], normalization, override)
+            log=IC.create_table(path, prefix + path.split('/')[-1], normalization, self.override)
             log_info.append(log)
 
         # load sequences
@@ -73,7 +79,7 @@ class Geno2Pheno:
         for sequence in sequences:
             path = sequence.attributes['path'].value
             kmer = int(sequence.attributes['kmer'].value)
-            log=IC.create_kmer_table(path,kmer,cores=cores)
+            log=IC.create_kmer_table(path,kmer,cores=min(self.cores,4))
             log_info.append(log)
 
         ## Adding metadata
@@ -82,13 +88,13 @@ class Geno2Pheno:
             os.makedirs(metadata_path)
         # phenotype
         phenotype = xmldoc.getElementsByTagName('phenotype')
-        if not os.path.exists(metadata_path + 'phenotypes.txt') or override:
+        if not os.path.exists(metadata_path + 'phenotypes.txt') or self.override:
             FileUtility.save_list(metadata_path + 'phenotypes.txt',
                                   FileUtility.load_list(phenotype[0].attributes['path'].value))
 
         # tree
         phylogentictree = xmldoc.getElementsByTagName('phylogentictree')
-        if not os.path.exists(metadata_path + 'phylogentictree.txt') or override:
+        if not os.path.exists(metadata_path + 'phylogentictree.txt') or self.override:
             FileUtility.save_list(metadata_path + 'phylogentictree.txt',
                                   FileUtility.load_list(phylogentictree[0].attributes['path'].value))
         FileUtility.save_list(log_file, log_info)

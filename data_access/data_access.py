@@ -17,7 +17,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.feature_extraction.text import TfidfTransformer
 import numpy as np
 from scipy import sparse
-
+import itertools
 
 class GenotypePhenotypeAccess(object):
     '''
@@ -63,7 +63,9 @@ class GenotypePhenotypeAccess(object):
         if mode=='singles':
             prefix_list=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
             print(prefix_list)
-        #elif mode=='pairs':
+        elif mode=='pairs':
+            prefix_list=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
+            prefix_list=[list(x) for x in list(itertools.combinations(prefix_list,2))]
         #elif mode=='multi':
         #else:
 
