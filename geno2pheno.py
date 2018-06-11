@@ -15,7 +15,6 @@ import os.path
 import shutil
 import sys
 from xml.dom import minidom
-
 from data_access.intermediate_representation_utility import IntermediateRepCreate
 from utility.file_utility import FileUtility
 
@@ -94,9 +93,6 @@ class Geno2Pheno:
                                   FileUtility.load_list(phylogentictree[0].attributes['path'].value))
         FileUtility.save_list(log_file, log_info)
 
-    def svm(self):
-
-
 
 
 
@@ -128,10 +124,8 @@ def checkArgs(args):
     if (not os.access(parsedArgs.genml_path, os.F_OK)):
         err = err + "\nError: Permission denied or could not find the labels!"
         return err
-
     G2P = Geno2Pheno(parsedArgs.genml_path, parsedArgs.override, parsedArgs.cores)
     return False
-
 
 if __name__ == '__main__':
     err = checkArgs(sys.argv)
