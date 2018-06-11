@@ -122,17 +122,6 @@ def checkArgs(args):
     parser.add_argument('--cores', action='store', dest='cores',default=4, type=int,
                         help='Number of cores to be used')
 
-    # svm ######################################################################################################
-    parser.add_argument('--svm', action='store', dest='svm', default=False, type=str,
-                        help='perform SVM', required='--pos' in sys.argv and '--neg' in sys.argv)
-
-    parser.add_argument('--pos', action='store', dest='pos', default=False, type=str,
-                        help='positive label')
-
-    parser.add_argument('--neg', action='store', dest='neg', default=False, type=str,
-                        help='negative label')
-
-
 
     parsedArgs = parser.parse_args()
 
@@ -140,12 +129,7 @@ def checkArgs(args):
         err = err + "\nError: Permission denied or could not find the labels!"
         return err
 
-
     G2P = Geno2Pheno(parsedArgs.genml_path, parsedArgs.override, parsedArgs.cores)
-
-    if parsedArgs.svm:
-        G2P.svm()
-
     return False
 
 
