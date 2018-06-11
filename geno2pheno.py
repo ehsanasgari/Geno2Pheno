@@ -16,7 +16,9 @@ import shutil
 import sys
 from xml.dom import minidom
 from data_access.intermediate_representation_utility import IntermediateRepCreate
+from data_access.data_access import GenotypePhenotypeAccess
 from utility.file_utility import FileUtility
+from classifier.classical_classifiers import SVM, RFClassifier, KNN, LogRegression
 
 class Geno2Pheno:
     def __init__(self, genml_path, override=1, cores=4):
@@ -28,32 +30,33 @@ class Geno2Pheno:
         self.override=1
         self.cores=4
         self.read_data()
+        self.predict_block()
 
     def read_data(self):
 
-        xmldoc = minidom.parse(self.genml_path)
+        self.xmldoc = minidom.parse(self.genml_path)
 
         # parse project part
-        project = xmldoc.getElementsByTagName('project')
-        output = project[0].attributes['output'].value
-        project_name = project[0].attributes['name'].value
+        self.project = self.xmldoc.getElementsByTagName('project')
+        self.output = self.project[0].attributes['output'].value
+        self.project_name = self.project[0].attributes['name'].value
 
-        if self.override and os.path.exists(output):
+        if self.override and os.path.exists(self.output):
             var = input("Delete existing files at the output path? (y/n)")
             if var == 'y':
-                shutil.rmtree(output)
-        if not os.path.exists(output):
-            os.makedirs(output)
+                shutil.rmtree(self.output)
+        if not os.path.exists(self.output):
+            os.makedirs(self.output)
 
-        log_file = output + '/' + 'logfile'
-        log_info = ['Project ' + project_name]
+        log_file = self.output + '/' + 'logfile'
+        log_info = ['Project ' + self.project_name]
 
 
-        representation_path = output + '/intermediate_rep/'
+        representation_path = self.output + '/intermediate_rep/'
         IC = IntermediateRepCreate(representation_path)
 
         # load tables
-        tabless = xmldoc.getElementsByTagName('tables')
+        tabless = self.xmldoc.getElementsByTagName('tables')
         for tables in tabless:
             path = tables.attributes['path'].value
             normalization = tables.attributes['normalization'].value
@@ -64,7 +67,7 @@ class Geno2Pheno:
                 log=IC.create_table(file, prefix + file.split('/')[-1], normalization, self.override)
                 log_info.append(log)
 
-        tables = xmldoc.getElementsByTagName('table')
+        tables = self.xmldoc.getElementsByTagName('table')
         for table in tables:
             path = table.attributes['path'].value
             normalization = table.attributes['normalization'].value
@@ -75,7 +78,7 @@ class Geno2Pheno:
             log_info.append(log)
 
         # load sequences
-        sequences = xmldoc.getElementsByTagName('sequence')
+        sequences = self.xmldoc.getElementsByTagName('sequence')
         for sequence in sequences:
             path = sequence.attributes['path'].value
             kmer = int(sequence.attributes['kmer'].value)
@@ -83,25 +86,61 @@ class Geno2Pheno:
             log_info.append(log)
 
         ## Adding metadata
-        metadata_path = output + '/metadata/'
+        metadata_path = self.output + '/metadata/'
         if not os.path.exists(metadata_path):
             os.makedirs(metadata_path)
         # phenotype
-        phenotype = xmldoc.getElementsByTagName('phenotype')
+        phenotype = self.xmldoc.getElementsByTagName('phenotype')
         if not os.path.exists(metadata_path + 'phenotypes.txt') or self.override:
             FileUtility.save_list(metadata_path + 'phenotypes.txt',
                                   FileUtility.load_list(phenotype[0].attributes['path'].value))
 
         # tree
-        phylogentictree = xmldoc.getElementsByTagName('phylogentictree')
+        phylogentictree = self.xmldoc.getElementsByTagName('phylogentictree')
         if not os.path.exists(metadata_path + 'phylogentictree.txt') or self.override:
             FileUtility.save_list(metadata_path + 'phylogentictree.txt',
                                   FileUtility.load_list(phylogentictree[0].attributes['path'].value))
         FileUtility.save_list(log_file, log_info)
 
+    def predict_block(self):
+        '''
+        :return:
+        '''
+        predict_blocks = self.xmldoc.getElementsByTagName('predict')
+        predict_path=self.output+'classifications/'
+        for predict in predict_blocks:
+            if not os.path.exists(predict_path):
+                os.makedirs(predict_path)
+            subdir=predict_path+predict.attributes['name'].value+'/'
+            if not os.path.exists(subdir):
+                os.makedirs(subdir)
+            labels = self.xmldoc.getElementsByTagName('label')
+            mapping=dict()
+            for label in labels:
+                val=label[0].attributes['value'].value
+                phenotype=label.firstChild.nodeValue.strip()
+                mapping[phenotype]=int(val)
+
+            GPA=GenotypePhenotypeAccess(self.output)
+
+            for phenotype in GPA.phenotypes:
+                if not os.path.exists(subdir+phenotype):
+                    os.makedirs(subdir+phenotype)
+                features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
+                for feature in features:
+                    X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats([feature], mapping, phenotype)
+                    Model = SVM(X, Y)
+                    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
 
 
 
+
+
+#elif mode=='pairs':
+#
+#            prefix_list=[list(x) for x in list(itertools.combinations(prefix_list,2))]
+#        #elif mode=='multi':
+#        #else:
 
 
 def checkArgs(args):

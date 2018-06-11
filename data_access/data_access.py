@@ -60,7 +60,7 @@ class GenotypePhenotypeAccess(object):
         :param features_for_idf: if needed..
         :return:
         '''
-        if mode=='singles':
+        if mode=='all':
             prefix_list=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
 
         self.load_data(prefix_list)
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     print(GPA.strain2labelvector)
     print(GPA.phenotypes)
     print(GPA.phenotype2labeled_strains_mapping)
-    X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats('singles',GPA.phenotypes[0])
+    X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats('all',GPA.phenotypes[0])
     print (X.shape)
     print (len(Y))
     print(len(feature_names))

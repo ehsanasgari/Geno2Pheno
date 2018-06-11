@@ -10,25 +10,17 @@ kpneumoniae
 </phenotype>
 <phylogentictree path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/phylogeny/OneLarge.gapReplaced.var2.gt90.fasttree"></phylogentictree>
 <predict name="infection_vs_carriage">
+    <optimize>macrof1</optimize>
+    <fold>10</fold>
     <labels>
-        <pos></pos>
-        <neg></neg>
-        <multiclass/>
-        <map>
-            <labal name=""></labal>
-            <labal name=""></labal>
-            <labal name=""></labal>
-        </map>
+            <labal value="1">Human_infection</labal>
+            <labal value="1">Human_invasive</labal>
+            <labal value="0">Human_carriage</labal>
     </labels>
-    <features>
-        <singles/>
-        <pairs/>
-        <all/>
-    </features>
-    <mode>
+    <model>
         <svm/>
         <rf/>
         <lr/>
-    </mode>
+    </model>
 </predict>
 </project>
