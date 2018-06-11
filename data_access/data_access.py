@@ -62,13 +62,6 @@ class GenotypePhenotypeAccess(object):
         '''
         if mode=='singles':
             prefix_list=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
-            print(prefix_list)
-        elif mode=='pairs':
-            prefix_list=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
-            prefix_list=[list(x) for x in list(itertools.combinations(prefix_list,2))]
-        #elif mode=='multi':
-        #else:
-
 
         self.load_data(prefix_list)
         ## find a mapping from strains to the phenotypes
@@ -194,4 +187,14 @@ if __name__ == "__main__":
     print(GPA.strain2labelvector)
     print(GPA.phenotypes)
     print(GPA.phenotype2labeled_strains_mapping)
-    GPA.get_xy_prediction_mats('singles',GPA.phenotypes[0])
+    X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats('singles',GPA.phenotypes[0])
+    print (X.shape)
+    print (len(Y))
+    print(len(feature_names))
+    print(len(final_strains))
+
+#elif mode=='pairs':
+#            prefix_list=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
+#            prefix_list=[list(x) for x in list(itertools.combinations(prefix_list,2))]
+#        #elif mode=='multi':
+#        #else:
