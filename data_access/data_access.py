@@ -62,6 +62,8 @@ class GenotypePhenotypeAccess(object):
         '''
         if mode=='all':
             prefix_list=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
+        else:
+            prefix_list=mode
 
         self.load_data(prefix_list)
         ## find a mapping from strains to the phenotypes
