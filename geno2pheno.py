@@ -132,7 +132,7 @@ def checkArgs(args):
     parser.add_argument('--neg', action='store', dest='neg', default=False, type=str,
                         help='negative label')
 
-    
+
 
     parsedArgs = parser.parse_args()
 
