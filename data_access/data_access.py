@@ -168,4 +168,5 @@ class GenotypePhenotypeAccess(object):
 if __name__ == "__main__":
     GPA=GenotypePhenotypeAccess('/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/K_pneumoniae/')
     print(GPA.strain2labelvector)
+    print(GPA.phenotypes)
     print(GPA.phenotype2labeled_strains_mapping)
