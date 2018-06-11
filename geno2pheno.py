@@ -52,8 +52,8 @@ class Geno2Pheno:
         log_info = ['Project ' + self.project_name]
 
 
-        representation_path = self.output + '/intermediate_rep/'
-        IC = IntermediateRepCreate(representation_path)
+        self.representation_path = self.output + '/intermediate_rep/'
+        IC = IntermediateRepCreate(self.representation_path)
 
         # load tables
         tabless = self.xmldoc.getElementsByTagName('tables')
