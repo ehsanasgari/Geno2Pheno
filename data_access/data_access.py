@@ -53,7 +53,7 @@ class GenotypePhenotypeAccess(object):
         # basic loading
         self.make_labels(mapping)
 
-    def get_xy_prediction_mats(self, mode, phenotype, mapping={'0':0,'1':1}, features_for_idf=[]):
+    def get_xy_prediction_mats(self, mode, phenotype, mapping=None, features_for_idf=[]):
         '''
         :param phenotype:
         :param mapping:
@@ -65,7 +65,10 @@ class GenotypePhenotypeAccess(object):
 
         self.load_data(prefix_list)
         ## find a mapping from strains to the phenotypes
-        mapping_isolate_label = dict(self.get_new_labeling(mapping)[phenotype])
+        if mapping:
+            mapping_isolate_label = dict(self.get_new_labeling(mapping)[phenotype])
+        else:
+            mapping_isolate_label = self.phenotype2labeled_strains_mapping[phenotype]
 
         # get common strains
         list_of_list_of_strains= list(self.strains.values())
