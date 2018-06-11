@@ -95,6 +95,19 @@ class GenotypePhenotypeAccess(object):
         Y = [mapping_isolate_label[strain] for strain in final_strains]
         return X, Y, feature_names, final_strains
 
+    def load_data(self, prefix_list=None):
+        '''
+        Load list of features
+        :param dir:
+        :param prefix_list:
+        :return:
+        '''
+        for save_pref in prefix_list:
+            print ('@@@'+'_'.join([self.representation_path + save_pref, 'feature', 'vect.npz']))
+            self.X[save_pref] = FileUtility.load_sparse_csr('_'.join([self.representation_path + save_pref, 'feature', 'vect.npz']))
+            self.feature_names[save_pref] = FileUtility.load_list('_'.join([self.representation_path + save_pref, 'feature', 'list.txt']))
+            self.strains[save_pref] = FileUtility.load_list('_'.join([self.representation_path + save_pref, 'isolates', 'list.txt']))
+
     def make_labels(self, mapping=None):
         '''
             This function load labels mapping from strain to phenotypes
@@ -163,18 +176,7 @@ class GenotypePhenotypeAccess(object):
         common_strains.sort()
         return common_strains
 
-    def load_data(self, prefix_list=None):
-        '''
-        Load list of features
-        :param dir:
-        :param prefix_list:
-        :return:
-        '''
-        for save_pref in prefix_list:
-            print ('@@@'+'_'.join([dir + save_pref, 'feature', 'vect.npz']))
-            self.X[save_pref] = FileUtility.load_sparse_csr('_'.join([dir + save_pref, 'feature', 'vect.npz']))
-            self.feature_names[save_pref] = FileUtility.load_list('_'.join([dir + save_pref, 'feature', 'list.txt']))
-            self.strains[save_pref] = FileUtility.load_list('_'.join([dir + save_pref, 'isolates', 'list.txt']))
+
 
 
 if __name__ == "__main__":
