@@ -14,7 +14,9 @@ from scipy.sparse import csr_matrix
 from utility.file_utility import FileUtility
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-
+from sklearn.feature_extraction.text import TfidfTransformer
+import numpy as np
+from scipy import sparse
 
 
 class GenotypePhenotypeAccess(object):
@@ -25,10 +27,10 @@ class GenotypePhenotypeAccess(object):
     def __init__(self, project_path):
         '''
         To creat the ABD DATA
-         self.isolate2label_vec_mapping  ZG02420619 ['1.0', '0.0', '0.0', '', '1.0']
+         self.strain2labelvector  iso1 ['1.0', '0.0', '0.0', '', '1.0']
          self.drugs
-         self.labeled_isolates: list of sorted isolates
-         self.drug2labeledisolates_mapping : {'Ceftazidim': {'BK1496/1': 0, 'BK2061/1': 0, 'CF561_Iso4': 1, 'CF577_Iso7': 1, 'CF590_Iso5': 0.5 ..
+         self.labeled_strains: list of sorted strains
+         self.phenotype2labeled_strains_mapping : {'phenotype': {'iso1':0, ..
         '''
 
         self.project_path=project_path
@@ -95,7 +97,7 @@ class GenotypePhenotypeAccess(object):
         return {k: ''.join([mapping[x] for x in list(v)]) for k, v in self.strain2labelvector.items()}
 
     @staticmethod
-    def get_common_isolates(list_of_list_of_strains):
+    def get_common_strains(list_of_list_of_strains):
         '''
         :param list_of_list_of_strains:
         :return:
@@ -106,3 +108,59 @@ class GenotypePhenotypeAccess(object):
         common_strains = list(common_strains)
         common_strains.sort()
         return common_strains
+
+    def load_data(self, prefix_list=None):
+        '''
+        Load list of features
+        :param dir:
+        :param prefix_list:
+        :return:
+        '''
+        for save_pref in prefix_list:
+            print ('@@@'+'_'.join([dir + save_pref, 'feature', 'vect.npz']))
+            self.X[save_pref] = FileUtility.load_sparse_csr('_'.join([dir + save_pref, 'feature', 'vect.npz']))
+            self.feature_names[save_pref] = FileUtility.load_list('_'.join([dir + save_pref, 'feature', 'list.txt']))
+            self.strains[save_pref] = FileUtility.load_list('_'.join([dir + save_pref, 'isolates', 'list.txt']))
+
+    def get_xy_prediction_mats(self, prefix_list, phenotype, mapping={'0':0,'1':1}, features_for_idf=[]):
+        '''
+        :param phenotype:
+        :param mapping:
+        :param features_for_idf: if needed..
+        :return:
+        '''
+
+        self.load_data(prefix_list)
+        ## find a mapping from strains to the phenotypes
+        mapping_isolate_label = dict(self.get_new_labeling(mapping)[phenotype])
+
+        # get common strains
+        list_of_list_of_strains= list(self.strains.values())
+        list_of_list_of_strains.append(list(mapping_isolate_label.keys()))
+        final_strains = GenotypePhenotypeAccess.get_common_strains(list_of_list_of_strains)
+        final_strains.sort()
+
+        # feature types
+        feature_types = list(self.X.keys())
+
+        # to apply idf if necessary
+        if len(features_for_idf) > 0:
+            tf = TfidfTransformer(norm=None, use_idf=True, smooth_idf=True)
+
+        feature_names = []
+        feature_matrices = []
+        for feature_type in feature_types:
+            if feature_type in features_for_idf:
+                tf.fit(self.X[feature_type])
+                temp = tf.transform(self.X[feature_type])
+            else:
+                temp = self.X[feature_type]
+            idx = [self.strains[feature_type].index(strain) for strain in final_strains]
+            temp = temp[idx, :]
+            feature_matrices.append(temp.toarray())
+            feature_names += ['##'.join([feature_type, x]) for x in self.feature_names[feature_type]]
+
+        X = np.concatenate(tuple(feature_matrices), axis=1)
+        X = sparse.csr_matrix(X)
+        Y = [mapping_isolate_label[strain] for strain in final_strains]
+        return X, Y, feature_names, final_strains
