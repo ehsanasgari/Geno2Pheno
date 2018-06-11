@@ -60,7 +60,7 @@ class IntermediateRepCreate(object):
             mat.append(vec)
         pool.close()
         mat = sparse.csc_matrix(mat)
-        save_path = self.output_path + 'sequence_' + str(k) + 'mer'
+        save_path = self.output_path + 'sequence_' + str(k) + 'mer_feature_vect'
         FileUtility.save_sparse_csr(save_path, mat)
         FileUtility.save_list('_'.join([save_path, 'strains', 'list.txt']), strains)
         FileUtility.save_list('_'.join([save_path, 'features', 'list.txt']), vocab)
