@@ -52,11 +52,12 @@ class GenotypePhenotypeAccess(object):
         label_file_address =self.metadata_path + 'phenotypes.txt'
         rows = FileUtility.load_list(label_file_address)
         self.strain2labelvector = {
-            str(entry.split('\t')[0]): [str(x) for idx, x in enumerate(entry.split('\t')[1::])] for entry in rows[1::]}
+            str(entry.split()[0]): [str(x) for idx, x in enumerate(entry.split('\t')[1::])] for entry in rows[1::]}
         self.labeled_strains = list(self.strain2labelvector)
         self.labeled_strains.sort()
-        print(rows[0])
-        self.phenotypes = [x for x in rows[0].rstrip().split('\t')[1::]]
+
+        self.phenotypes = [x for x in rows[0].rstrip().split()[1::]]
+        print(self.phenotypes)
         # init
         for phenotype in self.phenotypes:
             self.phenotype2labeled_strains_mapping[phenotype] = []
