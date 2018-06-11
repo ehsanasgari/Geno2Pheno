@@ -27,8 +27,8 @@ class Geno2Pheno:
         '''
         print('Geno2Pheno of Seq2Geno2Pheno 1.0.0')
         self.genml_path=genml_path
-        self.override=1
-        self.cores=4
+        self.override=override
+        self.cores=cores
         self.read_data()
         self.predict_block()
 
