@@ -24,7 +24,7 @@ class GenotypePhenotypeAccess(object):
         This class is written to handle genotype phenotype access
     '''
 
-    def __init__(self, project_path):
+    def __init__(self, project_path, mapping=None):
         '''
         To creat the ABD DATA
          self.strain2labelvector  iso1 ['1.0', '0.0', '0.0', '', '1.0']
@@ -43,9 +43,9 @@ class GenotypePhenotypeAccess(object):
         self.phenotype2labeled_strains_mapping = dict()
 
         # basic loading
-        self.make_labels()
+        self.make_labels(mapping)
 
-    def make_labels(self, pos=['1'], neg=['0']):
+    def make_labels(self, mapping=None):
         '''
             This function load labels mapping from strain to phenotypes
         '''
@@ -57,30 +57,29 @@ class GenotypePhenotypeAccess(object):
         self.labeled_strains.sort()
 
         self.phenotypes = [x for x in rows[0].rstrip().split()[1::]]
-        print(self.phenotypes)
         # init
         for phenotype in self.phenotypes:
             self.phenotype2labeled_strains_mapping[phenotype] = []
-        mapping = dict([(x,1) for x in pos])
-        mapping.update([(x,0) for x in neg])
+
         # only consider non-empty values
         for strain, phenotype_vec in self.strain2labelvector.items():
             for idx, val in enumerate(phenotype_vec):
-                if val in mapping:
-                    self.phenotype2labeled_strains_mapping[self.phenotypes[idx]].append((strain, mapping[val]))
+                if mapping:
+                    if val in mapping:
+                        self.phenotype2labeled_strains_mapping[self.phenotypes[idx]].append((strain, mapping[val]))
+                else:
+                    self.phenotype2labeled_strains_mapping[self.phenotypes[idx]].append((strain, val))
         # generate dict of labels for each class
         for phenotype in self.phenotypes:
             self.phenotype2labeled_strains_mapping[phenotype] = dict(self.phenotype2labeled_strains_mapping[phenotype])
 
-    def get_new_labeling(self, pos=['1'], neg=['0']):
+    def get_new_labeling(self, mapping):
         '''
         Get new labeling
         Load labels
         :param mapping:
         :return:
         '''
-        mapping = dict([(x,1) for x in pos])
-        mapping.update([(x,0) for x in neg])
         new_phenotype2labeled_strain_mapping = dict()
         for drug in self.phenotypes:
             new_phenotype2labeled_strain_mapping[drug] = []
@@ -88,15 +87,18 @@ class GenotypePhenotypeAccess(object):
         for strain, pheno_vec in self.strain2labelvector.items():
             for idx, val in enumerate(pheno_vec):
                 if val in mapping:
-                    new_phenotype2labeled_strain_mapping[self.phenotypes[idx]].append((strain, mapping[val]))
+                        new_phenotype2labeled_strain_mapping[self.phenotypes[idx]].append((strain, mapping[val]))
         return new_phenotype2labeled_strain_mapping
 
 
-    def get_multilabel_label_dic(self, mapping = {'0':'F','1':'T'}):
+    def get_multilabel_label_dic(self, mapping=None):
         '''
             Phenotype multilabel
         '''
-        return {k: ''.join([mapping[x] for x in list(v)]) for k, v in self.strain2labelvector.items()}
+        if mapping:
+            return {k: ''.join([mapping[x] for x in list(v)]) for k, v in self.strain2labelvector.items()}
+        else:
+            return {k: ''.join([x for x in list(v)]) for k, v in self.strain2labelvector.items()}
 
     @staticmethod
     def get_common_strains(list_of_list_of_strains):
