@@ -13,4 +13,26 @@ kpneumoniae
 <phenotype path="/net/sgi/metagenomics/projects/pseudo_genomics/data/K_pneumoniae/v2/list/phenotype_list">
 </phenotype>
 <phylogentictree path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/phylogeny/OneLarge.gapReplaced.var2.gt90.fasttree"></phylogentictree>
+<predict name="infection_vs_carriage">
+    <labels>
+        <pos></pos>
+        <neg></neg>
+        <multiclass/>
+        <map>
+            <labal name=""></labal>
+            <labal name=""></labal>
+            <labal name=""></labal>
+        </map>
+    </labels>
+    <features>
+        <singles/>
+        <pairs/>
+        <all/>
+    </features>
+    <mode>
+        <svm/>
+        <rf/>
+        <lr/>
+    </mode>
+</predict>
 </project>

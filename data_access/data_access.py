@@ -45,6 +45,56 @@ class GenotypePhenotypeAccess(object):
         # basic loading
         self.make_labels(mapping)
 
+    def get_xy_prediction_mats(self, mode, phenotype, mapping={'0':0,'1':1}, features_for_idf=[]):
+        '''
+        :param phenotype:
+        :param mapping:
+        :param features_for_idf: if needed..
+        :return:
+        '''
+        if mode=='singles':
+            prefix_list=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
+            print(prefix_list)
+        #elif mode=='pairs':
+        #elif mode=='multi':
+        #else:
+
+
+        self.load_data(prefix_list)
+        ## find a mapping from strains to the phenotypes
+        mapping_isolate_label = dict(self.get_new_labeling(mapping)[phenotype])
+
+        # get common strains
+        list_of_list_of_strains= list(self.strains.values())
+        list_of_list_of_strains.append(list(mapping_isolate_label.keys()))
+        final_strains = GenotypePhenotypeAccess.get_common_strains(list_of_list_of_strains)
+        final_strains.sort()
+
+        # feature types
+        feature_types = list(self.X.keys())
+
+        # to apply idf if necessary
+        if len(features_for_idf) > 0:
+            tf = TfidfTransformer(norm=None, use_idf=True, smooth_idf=True)
+
+        feature_names = []
+        feature_matrices = []
+        for feature_type in feature_types:
+            if feature_type in features_for_idf:
+                tf.fit(self.X[feature_type])
+                temp = tf.transform(self.X[feature_type])
+            else:
+                temp = self.X[feature_type]
+            idx = [self.strains[feature_type].index(strain) for strain in final_strains]
+            temp = temp[idx, :]
+            feature_matrices.append(temp.toarray())
+            feature_names += ['##'.join([feature_type, x]) for x in self.feature_names[feature_type]]
+
+        X = np.concatenate(tuple(feature_matrices), axis=1)
+        X = sparse.csr_matrix(X)
+        Y = [mapping_isolate_label[strain] for strain in final_strains]
+        return X, Y, feature_names, final_strains
+
     def make_labels(self, mapping=None):
         '''
             This function load labels mapping from strain to phenotypes
@@ -126,51 +176,10 @@ class GenotypePhenotypeAccess(object):
             self.feature_names[save_pref] = FileUtility.load_list('_'.join([dir + save_pref, 'feature', 'list.txt']))
             self.strains[save_pref] = FileUtility.load_list('_'.join([dir + save_pref, 'isolates', 'list.txt']))
 
-    def get_xy_prediction_mats(self, prefix_list, phenotype, mapping={'0':0,'1':1}, features_for_idf=[]):
-        '''
-        :param phenotype:
-        :param mapping:
-        :param features_for_idf: if needed..
-        :return:
-        '''
-
-        self.load_data(prefix_list)
-        ## find a mapping from strains to the phenotypes
-        mapping_isolate_label = dict(self.get_new_labeling(mapping)[phenotype])
-
-        # get common strains
-        list_of_list_of_strains= list(self.strains.values())
-        list_of_list_of_strains.append(list(mapping_isolate_label.keys()))
-        final_strains = GenotypePhenotypeAccess.get_common_strains(list_of_list_of_strains)
-        final_strains.sort()
-
-        # feature types
-        feature_types = list(self.X.keys())
-
-        # to apply idf if necessary
-        if len(features_for_idf) > 0:
-            tf = TfidfTransformer(norm=None, use_idf=True, smooth_idf=True)
-
-        feature_names = []
-        feature_matrices = []
-        for feature_type in feature_types:
-            if feature_type in features_for_idf:
-                tf.fit(self.X[feature_type])
-                temp = tf.transform(self.X[feature_type])
-            else:
-                temp = self.X[feature_type]
-            idx = [self.strains[feature_type].index(strain) for strain in final_strains]
-            temp = temp[idx, :]
-            feature_matrices.append(temp.toarray())
-            feature_names += ['##'.join([feature_type, x]) for x in self.feature_names[feature_type]]
-
-        X = np.concatenate(tuple(feature_matrices), axis=1)
-        X = sparse.csr_matrix(X)
-        Y = [mapping_isolate_label[strain] for strain in final_strains]
-        return X, Y, feature_names, final_strains
 
 if __name__ == "__main__":
     GPA=GenotypePhenotypeAccess('/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/K_pneumoniae/')
     print(GPA.strain2labelvector)
     print(GPA.phenotypes)
     print(GPA.phenotype2labeled_strains_mapping)
+    GPA.get_xy_prediction_mats('singles',GPA.phenotypes[0])
