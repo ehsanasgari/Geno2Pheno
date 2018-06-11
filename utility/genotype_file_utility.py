@@ -73,7 +73,7 @@ class GenotypeReader(object):
 
                 FileUtility.save_sparse_csr('_'.join([save_pref, 'feature', 'vect.npz']), tf_vec)
                 FileUtility.save_list('_'.join([save_pref, 'feature', 'list.txt']), feature_names)
-                FileUtility.save_list('_'.join([save_pref, 'isolates', 'list.txt']), isolates)
+                FileUtility.save_list('_'.join([save_pref, 'strains', 'list.txt']), isolates)
                 print (save_pref, ' created successfully containing ', str(len(isolates)), ' strains and ', str(len(feature_names)), ' features')
                 return (''.join([save_pref, ' created successfully containing ', str(len(isolates)), ' strains and ', str(len(feature_names)), ' features']))
         else:
