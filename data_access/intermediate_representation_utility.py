@@ -43,27 +43,30 @@ class IntermediateRepCreate(object):
         vec, vocab = GenotypeReader.get_nuc_kmer_distribution(seq, k)
         return strain, vec, vocab
 
-    def create_kmer_table(self, path, k, cores=4):
+    def create_kmer_table(self, path, k, cores=4, override=False):
 
-        files = FileUtility.recursive_glob(path, '*')
-        files.sort()
-        input_tuples = []
-        for file in files:
-            input_tuples.append((file.split('/')[-1].split('.')[0], file, k))
-
-        strains = []
-        mat = []
-        pool = Pool(processes=cores)
-        for strain, vec, vocab in tqdm.tqdm(pool.imap_unordered(self._get_kmer_rep, input_tuples, chunksize=cores),
-                                            total=len(input_tuples)):
-            strains.append(strain)
-            mat.append(vec)
-        pool.close()
-        mat = sparse.csr_matrix(mat)
         save_path = self.output_path + 'sequence_' + str(k) + 'mer'
-        FileUtility.save_sparse_csr(save_path+'_feature_vect', mat)
-        FileUtility.save_list('_'.join([save_path, 'strains', 'list.txt']), strains)
-        FileUtility.save_list('_'.join([save_path, 'features', 'list.txt']), vocab)
+
+        if override  or not os.path.exists('_'.join([save_path, 'feature', 'vect.npz'])):
+            files = FileUtility.recursive_glob(path, '*')
+            files.sort()
+            input_tuples = []
+            for file in files:
+                input_tuples.append((file.split('/')[-1].split('.')[0], file, k))
+
+            strains = []
+            mat = []
+            pool = Pool(processes=cores)
+            for strain, vec, vocab in tqdm.tqdm(pool.imap_unordered(self._get_kmer_rep, input_tuples, chunksize=cores),
+                                                total=len(input_tuples)):
+                strains.append(strain)
+                mat.append(vec)
+            pool.close()
+            mat = sparse.csr_matrix(mat)
+
+            FileUtility.save_sparse_csr(save_path+'_feature_vect', mat)
+            FileUtility.save_list('_'.join([save_path, 'strains', 'list.txt']), strains)
+            FileUtility.save_list('_'.join([save_path, 'features', 'list.txt']), vocab)
         return ('_'.join([save_path]) + ' created')
 
 

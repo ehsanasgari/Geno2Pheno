@@ -82,7 +82,7 @@ class Geno2Pheno:
         for sequence in sequences:
             path = sequence.attributes['path'].value
             kmer = int(sequence.attributes['kmer'].value)
-            log=IC.create_kmer_table(path,kmer,cores=min(self.cores,4))
+            log=IC.create_kmer_table(path,kmer,cores=min(self.cores,4),override=self.override)
             log_info.append(log)
 
         ## Adding metadata
