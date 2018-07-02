@@ -121,7 +121,7 @@ class Geno2Pheno:
             labels=predict.getElementsByTagName('labels')[0].getElementsByTagName('label')
             mapping=dict()
             for label in labels:
-                val=label[0].attributes['value'].value
+                val=label.attributes['value'].value
                 phenotype=label.firstChild.nodeValue.strip()
                 mapping[phenotype]=int(val)
 
