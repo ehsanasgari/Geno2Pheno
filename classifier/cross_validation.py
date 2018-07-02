@@ -149,7 +149,7 @@ class KFoldCrossVal(CrossValidator):
         '''
         # greed_search
         self.greed_search = GridSearchCV(estimator=estimator, param_grid=parameters, cv=self.cv, scoring=self.scoring,
-                                         refit=score, error_score=0, n_jobs=n_jobs)
+                                         refit=score, error_score=0, n_jobs=n_jobs,verbose=0)
 
         label_set = list(set(self.Y))
         # fitting

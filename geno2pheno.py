@@ -137,7 +137,8 @@ class Geno2Pheno:
             GPA=GenotypePhenotypeAccess(self.output)
             ## iterate over phenotypes if there exist more than one
             for phenotype in GPA.phenotypes:
-                FileUtility.ensure_dir(subdir+phenotype)
+                print ('working on phenotype ',phenotype)
+                FileUtility.ensure_dir(subdir+phenotype+'/')
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
                 ## iterate over feature sets
                 for feature in features:
