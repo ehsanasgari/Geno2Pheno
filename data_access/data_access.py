@@ -68,6 +68,7 @@ class GenotypePhenotypeAccess(object):
         self.load_data(prefix_list)
         ## find a mapping from strains to the phenotypes
         if mapping:
+            print (mapping)
             mapping_isolate_label = dict(self.get_new_labeling(mapping)[phenotype])
         else:
             mapping_isolate_label = self.phenotype2labeled_strains_mapping[phenotype]
