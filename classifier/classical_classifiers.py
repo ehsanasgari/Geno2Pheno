@@ -87,7 +87,7 @@ class SVM:
                  (Y, label_set)] = FileUtility.load_obj(results_file + '_SVM.pickle')
             self.generate_SVM_important_features(best_estimator_, feature_names, results_file)
 
-    def generate_SVM_important_features(self, clf_LR, feature_names, results_file, N=1000):
+    def generate_SVM_important_features(self, clf_SVM, feature_names, results_file, N=1000):
         '''
         :param clf_SVM:
         :param feature_names:
@@ -100,12 +100,12 @@ class SVM:
         FileUtility.ensure_dir(results_file)
         file_name = results_file + '_SVM'
 
-        idxs=argsort(np.abs(clf_LR.coef_.tolist()[0]).tolist(),rev=True)[0:N]
+        idxs=argsort(np.abs(clf_SVM.coef_.tolist()[0]).tolist(),rev=True)[0:N]
 
         f = codecs.open(file_name, 'w')
         f.write('\t'.join(['feature', 'score']) + '\n')
         for idx in idxs:
-            f.write('\t'.join([feature_names[idx], str(clf_LR.coef_[idx])]) + '\n')
+            f.write('\t'.join([feature_names[idx], str(clf_SVM.coef_.tolist()[0][idx])]) + '\n')
         f.close()
 
 
@@ -193,7 +193,7 @@ class LogRegression:
         f = codecs.open(file_name, 'w')
         f.write('\t'.join(['feature', 'score']) + '\n')
         for idx in idxs:
-            f.write('\t'.join([feature_names[idx], str(clf_LR.coef_[idx])]) + '\n')
+            f.write('\t'.join([feature_names[idx], str(clf_LR.coef_.tolist()[0][idx])]) + '\n')
         f.close()
 
 
