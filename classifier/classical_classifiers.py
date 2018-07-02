@@ -97,8 +97,8 @@ class SVM:
         '''
 
         results_file=results_file.replace('/classifications/','/feature_selection/classifications/')
-        FileUtility.ensure_dir('/'.join(results_file.split('/')[0:-1]))
-        file_name = results_file + '_LR'
+        FileUtility.ensure_dir(results_file)
+        file_name = results_file + '_SVM'
 
         idxs=argsort(np.abs(clf_LR.coef_.tolist()[0]).tolist(),rev=True)[0:N]
 
@@ -185,7 +185,7 @@ class LogRegression:
         '''
 
         results_file=results_file.replace('/classifications/','/feature_selection/classifications/')
-        FileUtility.ensure_dir('/'.join(results_file.split('/')[0:-1]))
+        FileUtility.ensure_dir(results_file)
         file_name = results_file + '_LR'
 
         idxs=argsort(np.abs(clf_LR.coef_.tolist()[0]).tolist(),rev=True)[0:N]
@@ -275,7 +275,7 @@ class RFClassifier:
         '''
 
         results_file=results_file.replace('/classifications/','/feature_selection/classifications/')
-        FileUtility.ensure_dir('/'.join(results_file.split('/')[0:-1]))
+        FileUtility.ensure_dir(results_file)
         file_name = results_file + '_RF'
         clf_random_forest.fit(self.X, self.Y)
         std = np.std([tree.feature_importances_ for tree in clf_random_forest.estimators_], axis=0)
