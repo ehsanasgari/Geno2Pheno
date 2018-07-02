@@ -146,7 +146,7 @@ class Geno2Pheno:
                         for x in model.childNodes:
                             if not x.nodeName=="#text":
                                 classifiers.append(x.nodeName)
-                    X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats([feature], mapping, phenotype)
+                    X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats([feature], phenotype, mapping)
 
                     ## iterate over classifiers
                     for classifier in tqdm.tqdm(classifiers):

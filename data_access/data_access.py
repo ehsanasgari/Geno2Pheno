@@ -53,23 +53,16 @@ class GenotypePhenotypeAccess(object):
         # basic loading
         self.make_labels(mapping)
 
-    def get_xy_prediction_mats(self, mode, phenotype, mapping=None, features_for_idf=[]):
+    def get_xy_prediction_mats(self, prefix_list, phenotype, mapping=None, features_for_idf=[]):
         '''
         :param phenotype:
         :param mapping:
         :param features_for_idf: if needed..
         :return:
         '''
-        if mode=='all':
-            prefix_list=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
-        else:
-            prefix_list=mode
-
         self.load_data(prefix_list)
         ## find a mapping from strains to the phenotypes
         if mapping:
-            print (mapping.keys())
-            print (mapping.values())
             mapping_isolate_label = dict(self.get_new_labeling(mapping)[phenotype])
         else:
             mapping_isolate_label = self.phenotype2labeled_strains_mapping[phenotype]
