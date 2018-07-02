@@ -118,7 +118,7 @@ class Geno2Pheno:
             FileUtility.ensure_dir(subdir)
 
             ## label mapping
-            labels=predict.getElementsByTagName('labels')[0]
+            labels=predict.getElementsByTagName('labels')[0].getElementsByTagName('label')
             mapping=dict()
             for label in labels:
                 val=label[0].attributes['value'].value
