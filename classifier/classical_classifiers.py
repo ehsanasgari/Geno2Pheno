@@ -124,7 +124,7 @@ class LogRegression:
         self.model = LogisticRegression(C=1.0)
         self.X = X
         self.Y = Y
-        self.parameter_tuning=[{'C': [1000, 500, 200, 100, 50, 20, 10, 5, 2, 1, 0.2, 0.5, 0.01, 0.02, 0.05, 0.001],
+        LogRegression.parameter_tuning=[{'C': [1000, 500, 200, 100, 50, 20, 10, 5, 2, 1, 0.2, 0.5, 0.01, 0.02, 0.05, 0.001],
                                'penalty': ['l1'], "tol": [1e-06, 1e-04], 'dual': [False, True], "fit_intercept": [True],
                                'class_weight': ['balanced', None], 'solver': ['liblinear']}]
 
