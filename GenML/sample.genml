@@ -1,4 +1,4 @@
-<project output="/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/K_pneumoniae" name="Kpneumoniae_packagetesting">
+<project output="/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/K_pneumoniae/" name="Kpneumoniae_packagetesting">
 <genotype>
     <tables path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/genotables/" normalization="binary" transpose="False">
 kpneumoniae
@@ -13,9 +13,9 @@ kpneumoniae
     <optimize>macrof1</optimize>
     <fold>10</fold>
     <labels>
-            <labal value="1">Human_infection</labal>
-            <labal value="1">Human_invasive</labal>
-            <labal value="0">Human_carriage</labal>
+            <label value="1">Human_infection</label>
+            <label value="1">Human_invasive</label>
+            <label value="0">Human_carriage</label>
     </labels>
     <model>
         <svm/>

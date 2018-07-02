@@ -209,3 +209,18 @@ class FileUtility(object):
         for cur_record in SeqIO.parse(file_name, "fasta"):
                 corpus[str(cur_record.id)]=(str(cur_record.seq).lower(),str(cur_record.description))
         return corpus
+
+
+    @staticmethod
+    def ensure_dir(file_path):
+        directory = os.path.dirname(file_path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+    @staticmethod
+    def exists(file_path):
+        return os.path.exists(file_path)
+
+    @staticmethod
+    def remove(file_path):
+        os.remove(file_path)

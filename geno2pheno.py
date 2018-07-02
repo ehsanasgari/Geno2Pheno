@@ -19,6 +19,7 @@ from data_access.intermediate_representation_utility import IntermediateRepCreat
 from data_access.data_access import GenotypePhenotypeAccess
 from utility.file_utility import FileUtility
 from classifier.classical_classifiers import SVM, RFClassifier, KNN, LogRegression
+import tqdm
 
 class Geno2Pheno:
     def __init__(self, genml_path, override=1, cores=4):
@@ -107,30 +108,61 @@ class Geno2Pheno:
         :return:
         '''
         predict_blocks = self.xmldoc.getElementsByTagName('predict')
-        predict_path=self.output+'classifications/'
+
+        # iterate over predict block
         for predict in predict_blocks:
-            if not os.path.exists(predict_path):
-                os.makedirs(predict_path)
+            predict_path=self.output+'/classifications/'
+            # Sub prediction
+            FileUtility.ensure_dir(predict_path)
             subdir=predict_path+predict.attributes['name'].value+'/'
-            if not os.path.exists(subdir):
-                os.makedirs(subdir)
-            labels = self.xmldoc.getElementsByTagName('label')
+            FileUtility.ensure_dir(subdir)
+
+            ## label mapping
+            labels=predict.getElementsByTagName('labels')[0]
             mapping=dict()
             for label in labels:
                 val=label[0].attributes['value'].value
                 phenotype=label.firstChild.nodeValue.strip()
                 mapping[phenotype]=int(val)
 
-            GPA=GenotypePhenotypeAccess(self.output)
+            ## optimizing for ..
+            optimization=predict.getElementsByTagName('optimize')[0].firstChild.nodeValue.strip()
+            ## number of folds
+            folds=predict.getElementsByTagName('fold')[0].firstChild.nodeValue.strip()
 
+            if optimization not in ['accuracy','scores_r_1','scores_f1_1','scores_f1_0','f1_macro','f1_micro']:
+                print ('Error in choosing optimization score')
+
+            ## Genotype tables
+            GPA=GenotypePhenotypeAccess(self.output)
+            ## iterate over phenotypes if there exist more than one
             for phenotype in GPA.phenotypes:
-                if not os.path.exists(subdir+phenotype):
-                    os.makedirs(subdir+phenotype)
+                FileUtility.ensure_dir(subdir+phenotype)
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
+                ## iterate over feature sets
                 for feature in features:
+                    classifiers=[]
+                    for model in predict.getElementsByTagName('model'):
+                        for x in model.childNodes:
+                            if not x.nodeName=="#text":
+                                classifiers.append(x.nodeName)
                     X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats([feature], mapping, phenotype)
-                    Model = SVM(X, Y)
-                    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
+
+                    ## iterate over classifiers
+                    for classifier in tqdm.tqdm(classifiers):
+                        if classifier.lower()=='svm':
+                            Model = SVM(X, Y)
+                            Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=folds, feature_names=feature_names)
+                        if classifier.lower()=='rf':
+                            Model = RFClassifier(X, Y)
+                            Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=folds, feature_names=feature_names)
+                        if classifier.lower()=='lr':
+                            Model = LogRegression(X, Y)
+                            Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=folds, feature_names=feature_names)
+
+                        #if classifier.lower()=='dnn':
+                        #    Model = DNN(X, Y)
+                        #    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
 
 
 
