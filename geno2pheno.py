@@ -128,7 +128,7 @@ class Geno2Pheno:
             ## optimizing for ..
             optimization=predict.getElementsByTagName('optimize')[0].firstChild.nodeValue.strip()
             ## number of folds
-            folds=predict.getElementsByTagName('fold')[0].firstChild.nodeValue.strip()
+            folds=int(predict.getElementsByTagName('fold')[0].firstChild.nodeValue.strip())
 
             if optimization not in ['accuracy','scores_r_1','scores_f1_1','scores_f1_0','f1_macro','f1_micro']:
                 print ('Error in choosing optimization score')
