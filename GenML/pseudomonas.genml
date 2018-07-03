@@ -1,6 +1,6 @@
 <project output="/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/Pseudogenomics/" name="pseudogenomics">
 <genotype>
-    <sequence path="/net/sgi/metagenomics/projects/pseudo_genomics/results/assembly/v2/spades_renamed/" kmer='6'>
+    <sequence path="/net/sgi/metagenomics/projects/pseudo_genomics/results/assembly/v2/spades_renamed/" kmer='6'></sequence>
 </genotype>
 <phenotype path="data_config/pheno_table_CLSI_S-vs-R.txt">
 </phenotype>
