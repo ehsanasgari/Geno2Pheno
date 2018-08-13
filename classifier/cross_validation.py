@@ -225,12 +225,12 @@ class PredefinedFoldCrossVal(CrossValidator):
         test_idx = [map_to_idx[test] for test in FileUtility.load_list(test_file)[0].split() if test in map_to_idx]
 
         self.X_test=X[test_idx,:]
-        self.Y_test=Y[test_idx,:]
+        self.Y_test=[Y[idy,:] for idy in test_idx]
 
         train_idx=list(set(map_to_idx.values())-set(test_idx))
 
         X=X[train_idx,:]
-        Y=Y[train_idx,:]
+        Y=[Y[idy,:] for idy in train_idx]
 
         isolate_list=[isolate_list[idx] for idx in train_idx]
         map_to_idx = {isolate: idx for idx, isolate in enumerate(isolate_list)}
