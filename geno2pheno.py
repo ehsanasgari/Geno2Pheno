@@ -208,7 +208,8 @@ def checkArgs(args):
                         help='GENML file to be parsed')
 
     parser.add_argument('--override', action='store', dest='override',default=1, type=int,
-                        help='Override the existing files?', required='--genoparse' in sys.argv)
+                        help='Override the existing files?')
+    # required='--genoparse' in sys.argv
 
     parser.add_argument('--cores', action='store', dest='cores',default=4, type=int,
                         help='Number of cores to be used')
