@@ -146,14 +146,20 @@ class Geno2Pheno:
 
                 ## create cross-validation
                 FileUtility.ensure_dir(subdir+phenotype+'/cv/')
+                cv_file=''
+                cv_test_file=''
                 if self.cvbasis=='tree':
                     FileUtility.ensure_dir(subdir+phenotype+'/cv/tree/')
                     if self.override or not FileUtility.exists(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
                         GPA.create_treefold(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt']), folds, test_ratio, phenotype, mapping)
+                        cv_file=subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt'])
+                        cv_test_file=subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_test.txt'])
                 else:
                     FileUtility.ensure_dir(subdir+phenotype+'/cv/rand/')
                     if self.override or not FileUtility.exists(subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
                         GPA.create_randfold(subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt']), folds, test_ratio, phenotype, mapping)
+                        cv_file=subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt'])
+                        cv_test_file=subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_test.txt'])
 
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
                 ## iterate over feature sets
@@ -169,13 +175,13 @@ class Geno2Pheno:
                     for classifier in tqdm.tqdm(classifiers):
                         if classifier.lower()=='svm':
                             Model = SVM(X, Y)
-                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=folds, feature_names=feature_names)
+                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]), folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
                         if classifier.lower()=='rf':
                             Model = RFClassifier(X, Y)
-                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=folds, feature_names=feature_names)
+                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]), folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
                         if classifier.lower()=='lr':
                             Model = LogRegression(X, Y)
-                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=folds, feature_names=feature_names)
+                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]), folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
 
                         #if classifier.lower()=='dnn':
                         #    Model = DNN(X, Y)
