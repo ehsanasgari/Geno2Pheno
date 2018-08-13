@@ -175,13 +175,13 @@ class Geno2Pheno:
                     for classifier in tqdm.tqdm(classifiers):
                         if classifier.lower()=='svm':
                             Model = SVM(X, Y)
-                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]), folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]),final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
                         if classifier.lower()=='rf':
                             Model = RFClassifier(X, Y)
-                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]), folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]),final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
                         if classifier.lower()=='lr':
                             Model = LogRegression(X, Y)
-                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]), folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                            Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([feature]),final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
 
                         #if classifier.lower()=='dnn':
                         #    Model = DNN(X, Y)
