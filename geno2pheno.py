@@ -114,7 +114,9 @@ class Geno2Pheno:
             predict_path=self.output+'/classifications/'
             # Sub prediction
             FileUtility.ensure_dir(predict_path)
-            subdir=predict_path+predict.attributes['name'].value+'/'
+            setting_name=predict.attributes['name'].value
+            subdir=predict_path+setting_name+'/'
+
             FileUtility.ensure_dir(subdir)
 
             ## label mapping
@@ -128,7 +130,9 @@ class Geno2Pheno:
             ## optimizing for ..
             optimization=predict.getElementsByTagName('optimize')[0].firstChild.nodeValue.strip()
             ## number of folds
-            folds=int(predict.getElementsByTagName('fold')[0].firstChild.nodeValue.strip())
+            self.cvbasis=predict.getElementsByTagName('eval')[0].firstChild.nodeValue.strip()
+            folds=int(predict.getElementsByTagName('eval')[0].attributes['folds'].value)
+            test_ratio=float(predict.getElementsByTagName('eval')[0].attributes['test'].value)
 
             if optimization not in ['accuracy','scores_r_1','scores_f1_1','scores_f1_0','f1_macro','f1_micro']:
                 print ('Error in choosing optimization score')
@@ -139,6 +143,20 @@ class Geno2Pheno:
             for phenotype in GPA.phenotypes:
                 print ('working on phenotype ',phenotype)
                 FileUtility.ensure_dir(subdir+phenotype+'/')
+
+                ## create cross-validation
+                FileUtility.ensure_dir(subdir+phenotype+'/cv/')
+                if self.cvbasis=='tree':
+                    FileUtility.ensure_dir(subdir+phenotype+'/cv/tree/')
+                    if not FileUtility.exists(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
+                        GPA.create_treefold(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt']), folds, test_ratio, phenotype, mapping)
+                else:
+                    FileUtility.ensure_dir(subdir+phenotype+'/cv/rand/')
+                    if not FileUtility.exists(subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
+                        GPA.create_randfold(subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt']), folds, test_ratio, phenotype, mapping)
+
+
+
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
                 ## iterate over feature sets
                 for feature in features:

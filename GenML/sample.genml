@@ -11,7 +11,7 @@ kpneumoniae
 <phylogentictree path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/K_pneumoniae/phylogeny/OneLarge.gapReplaced.var2.gt90.fasttree"></phylogentictree>
 <predict name="infection_vs_carriage">
     <optimize>scores_f1_1</optimize>
-    <fold>10</fold>
+    <eval folds="10" test="0.1">tree</eval>
     <labels>
             <label value="1">Human_infection</label>
             <label value="1">Human_invasive</label>

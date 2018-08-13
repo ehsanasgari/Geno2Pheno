@@ -7,17 +7,14 @@ __project__ = "GENO2PHENO of SEQ2GENO2PHENO"
 __website__ = ""
 
 import sys
+
 sys.path.append('../')
-import codecs
-from utility.genotype_file_utility import GenotypeReader
-from scipy.sparse import csr_matrix
 from utility.file_utility import FileUtility
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.feature_extraction.text import TfidfTransformer
 import numpy as np
 from scipy import sparse
-import itertools
+from sklearn.model_selection import train_test_split, StratifiedKFold
+
 
 class GenotypePhenotypeAccess(object):
     '''
@@ -33,7 +30,7 @@ class GenotypePhenotypeAccess(object):
          self.phenotype2labeled_strains_mapping : {'phenotype': {'iso1':0, ..
         '''
 
-        self.project_path=project_path
+        self.project_path = project_path
         self.metadata_path = self.project_path + '/metadata/'
         self.representation_path = self.project_path + '/intermediate_rep/'
         # init
@@ -68,7 +65,7 @@ class GenotypePhenotypeAccess(object):
             mapping_isolate_label = self.phenotype2labeled_strains_mapping[phenotype]
 
         # get common strains
-        list_of_list_of_strains= list(self.strains.values())
+        list_of_list_of_strains = list(self.strains.values())
         list_of_list_of_strains.append(list(mapping_isolate_label.keys()))
         final_strains = GenotypePhenotypeAccess.get_common_strains(list_of_list_of_strains)
         final_strains.sort()
@@ -106,16 +103,19 @@ class GenotypePhenotypeAccess(object):
         :return:
         '''
         for save_pref in prefix_list:
-            print ('@@@'+'_'.join([self.representation_path + save_pref, 'feature', 'vect.npz']))
-            self.X[save_pref] = FileUtility.load_sparse_csr('_'.join([self.representation_path + save_pref, 'feature', 'vect.npz']))
-            self.feature_names[save_pref] = FileUtility.load_list('_'.join([self.representation_path + save_pref, 'feature', 'list.txt']))
-            self.strains[save_pref] = FileUtility.load_list('_'.join([self.representation_path + save_pref, 'strains', 'list.txt']))
+            print('@@@' + '_'.join([self.representation_path + save_pref, 'feature', 'vect.npz']))
+            self.X[save_pref] = FileUtility.load_sparse_csr(
+                '_'.join([self.representation_path + save_pref, 'feature', 'vect.npz']))
+            self.feature_names[save_pref] = FileUtility.load_list(
+                '_'.join([self.representation_path + save_pref, 'feature', 'list.txt']))
+            self.strains[save_pref] = FileUtility.load_list(
+                '_'.join([self.representation_path + save_pref, 'strains', 'list.txt']))
 
     def make_labels(self, mapping=None):
         '''
             This function load labels mapping from strain to phenotypes
         '''
-        label_file_address =self.metadata_path + 'phenotypes.txt'
+        label_file_address = self.metadata_path + 'phenotypes.txt'
         rows = FileUtility.load_list(label_file_address)
         self.strain2labelvector = {
             str(entry.split()[0]): [str(x) for idx, x in enumerate(entry.split('\t')[1::])] for entry in rows[1::]}
@@ -153,9 +153,8 @@ class GenotypePhenotypeAccess(object):
         for strain, pheno_vec in self.strain2labelvector.items():
             for idx, val in enumerate(pheno_vec):
                 if val in mapping:
-                        new_phenotype2labeled_strain_mapping[self.phenotypes[idx]].append((strain, mapping[val]))
+                    new_phenotype2labeled_strain_mapping[self.phenotypes[idx]].append((strain, mapping[val]))
         return new_phenotype2labeled_strain_mapping
-
 
     def get_multilabel_label_dic(self, mapping=None):
         '''
@@ -165,6 +164,56 @@ class GenotypePhenotypeAccess(object):
             return {k: ''.join([mapping[x] for x in list(v)]) for k, v in self.strain2labelvector.items()}
         else:
             return {k: ''.join([x for x in list(v)]) for k, v in self.strain2labelvector.items()}
+
+    def create_randfold(self, path, cv, test_ratio, phenotype, mapping=None):
+
+        ## find a mapping from strains to the phenotypes
+        if mapping:
+            mapping_isolate_label = dict(self.get_new_labeling(mapping)[phenotype])
+        else:
+            mapping_isolate_label = self.phenotype2labeled_strains_mapping[phenotype]
+
+        # get common strains
+        list_of_list_of_strains = list(self.strains.values())
+        list_of_list_of_strains.append(list(mapping_isolate_label.keys()))
+        final_strains = GenotypePhenotypeAccess.get_common_strains(list_of_list_of_strains)
+        final_strains.sort()
+
+        # prepare test
+        Y = [mapping_isolate_label[strain] for strain in final_strains]
+        X_train, X_test, y_train, _ = train_test_split(final_strains, Y, test_size=test_ratio, random_state=0, stratify=Y)
+        FileUtility.save_list(path.replace('_folds.txt', '_test.txt'), ['\t'.join(X_test)])
+
+        # prepare train
+        spliter=StratifiedKFold(cv)
+        folds=['\t'.join([final_strains[x] for x in fold.tolist()]) for _,fold in  list(spliter.split(X_train,y_train))]
+        FileUtility.save_list(path, folds)
+
+
+    def create_treefold(self, path, cv, test_ratio, phenotype, mapping=None):
+
+        ## find a mapping from strains to the phenotypes
+        if mapping:
+            mapping_isolate_label = dict(self.get_new_labeling(mapping)[phenotype])
+        else:
+            mapping_isolate_label = self.phenotype2labeled_strains_mapping[phenotype]
+
+        # get common strains
+        list_of_list_of_strains = list(self.strains.values())
+        list_of_list_of_strains.append(list(mapping_isolate_label.keys()))
+        final_strains = GenotypePhenotypeAccess.get_common_strains(list_of_list_of_strains)
+        final_strains.sort()
+
+        # prepare test
+        Y = [mapping_isolate_label[strain] for strain in final_strains]
+        X_train, X_test, y_train, _ = train_test_split(final_strains, Y, test_size=test_ratio, random_state=0, stratify=Y)
+        FileUtility.save_list(path.replace('_folds.txt', '_test.txt'), ['\t'.join(X_test)])
+
+        # prepare train ### needtobefixed
+        spliter=StratifiedKFold(cv)
+        folds=['\t'.join([final_strains[x] for x in fold.tolist()]) for _,fold in  list(spliter.split(X_train,y_train))]
+        FileUtility.save_list(path, folds)
+
 
     @staticmethod
     def get_common_strains(list_of_list_of_strains):
@@ -180,21 +229,14 @@ class GenotypePhenotypeAccess(object):
         return common_strains
 
 
-
-
 if __name__ == "__main__":
-    GPA=GenotypePhenotypeAccess('/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/K_pneumoniae/')
+    GPA = GenotypePhenotypeAccess(
+        '/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/K_pneumoniae/')
     print(GPA.strain2labelvector)
     print(GPA.phenotypes)
     print(GPA.phenotype2labeled_strains_mapping)
-    X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats('all',GPA.phenotypes[0])
-    print (X.shape)
-    print (len(Y))
+    X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats('all', GPA.phenotypes[0])
+    print(X.shape)
+    print(len(Y))
     print(len(feature_names))
     print(len(final_strains))
-
-#elif mode=='pairs':
-#            prefix_list=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
-#            prefix_list=[list(x) for x in list(itertools.combinations(prefix_list,2))]
-#        #elif mode=='multi':
-#        #else:
