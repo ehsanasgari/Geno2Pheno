@@ -225,7 +225,6 @@ class PredefinedFoldCrossVal(CrossValidator):
 
         test_idx = [map_to_idx[test] for test in FileUtility.load_list(test_file)[0].split() if test in map_to_idx]
 
-        print(test_idx)
 
         self.X_test=X[test_idx,:]
         self.Y_test=[Y[idy] for idy in test_idx]
