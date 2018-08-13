@@ -148,13 +148,12 @@ class Geno2Pheno:
                 FileUtility.ensure_dir(subdir+phenotype+'/cv/')
                 if self.cvbasis=='tree':
                     FileUtility.ensure_dir(subdir+phenotype+'/cv/tree/')
-                    if not FileUtility.exists(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
+                    if self.override or not FileUtility.exists(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
                         GPA.create_treefold(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt']), folds, test_ratio, phenotype, mapping)
                 else:
                     FileUtility.ensure_dir(subdir+phenotype+'/cv/rand/')
-                    if not FileUtility.exists(subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
+                    if self.override or not FileUtility.exists(subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
                         GPA.create_randfold(subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt']), folds, test_ratio, phenotype, mapping)
-
 
 
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
