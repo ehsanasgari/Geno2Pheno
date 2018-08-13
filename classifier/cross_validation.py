@@ -15,7 +15,7 @@ from utility.file_utility import FileUtility
 from sklearn.metrics import confusion_matrix, roc_auc_score
 from sklearn.metrics.classification import precision_recall_fscore_support
 from sklearn.metrics.scorer import make_scorer
-
+from sklearn.metrics import f1_score
 
 class CrossValidator(object):
     '''
@@ -209,7 +209,7 @@ class PredefinedFoldCrossVal(CrossValidator):
         Predefined folds
     '''
 
-    def __init__(self, X, Y, isolate_list, fold_file):
+    def __init__(self, X, Y, isolate_list, fold_file, test_file):
         '''
         :param X:
         :param Y:
@@ -218,9 +218,25 @@ class PredefinedFoldCrossVal(CrossValidator):
         '''
         CrossValidator.__init__(self, X, Y)
 
+
+
+        map_to_idx = {isolate: idx for idx, isolate in enumerate(isolate_list)}
+
+        test_idx = [map_to_idx[test] for test in FileUtility.load_list(test_file)[0].split() if test in map_to_idx]
+
+        self.X_test=X[test_idx,:]
+        self.Y_test=Y[test_idx,:]
+
+        train_idx=list(set(map_to_idx.values())-set(test_idx))
+
+        X=X[train_idx,:]
+        Y=Y[train_idx,:]
+
+        isolate_list=[isolate_list[idx] for idx in train_idx]
         map_to_idx = {isolate: idx for idx, isolate in enumerate(isolate_list)}
         splits = [[map_to_idx[item] for item in fold_list.split() if item in map_to_idx] for fold_list in
                   FileUtility.load_list(fold_file)]
+
         new_splits = []
         for i in range(len(splits)):
             train = [j for i in splits[:i] + splits[i + 1:] for j in i]
@@ -246,14 +262,21 @@ class PredefinedFoldCrossVal(CrossValidator):
         label_set = list(set(self.Y))
         # fitting
         self.greed_search.fit(X=self.X, y=self.Y)
+
+        Y_test_pred=self.greed_search.best_estimator_.predict(self.X_test)
+
+        f1_test=f1_score(self.Y_test,Y_test_pred)
+
+
         try:
             y_predicted = cross_val_predict(self.greed_search.best_estimator_, self.X, self.Y,  cv=self.cv)
+            f1_val= f1_score(self.Y,label_set,y_predicted)
             conf = confusion_matrix(self.Y, y_predicted, labels=label_set)
             # save in file
             FileUtility.save_obj(file_name,
                                  [label_set, conf, self.greed_search.best_score_, self.greed_search.best_estimator_,
-                                  self.greed_search.cv_results_, self.greed_search.best_params_,  (y_predicted, self.Y,label_set )])
+                                  self.greed_search.cv_results_, self.greed_search.best_params_,  (y_predicted, self.Y,label_set ), (Y_test_pred, self.Y_test) ])
         except:
             FileUtility.save_obj(file_name,
                                  [label_set, self.greed_search.best_score_, self.greed_search.best_estimator_,
-                                  self.greed_search.cv_results_, self.greed_search.best_params_,  (self.Y,label_set )])
+                                  self.greed_search.cv_results_, self.greed_search.best_params_,  (self.Y,label_set ),  (Y_test_pred, self.Y_test)])

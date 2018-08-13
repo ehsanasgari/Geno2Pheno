@@ -64,7 +64,7 @@ class SVM:
                  (Y, label_set)] = FileUtility.load_obj(results_file + '_SVM.pickle')
             self.generate_SVM_important_features(best_estimator_, feature_names, results_file)
 
-    def tune_and_eval_predefined(self, results_file, isolates, folds, params=None, njobs=50,feature_names=None, optimized_for='f1_macro'):
+    def tune_and_eval_predefined(self, results_file, isolates, folds_file, test_file, params=None, njobs=50,feature_names=None, optimized_for='f1_macro'):
         '''
         :param results_file:
         :param isolates:
@@ -75,16 +75,16 @@ class SVM:
         '''
         if params==None:
             params=SVM.params_tuning
-        self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds)
+        self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds_file, test_file)
         self.CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_SVM',
                                   n_jobs=njobs)
         if feature_names is not None:
             try:
                 [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
-                 (y_predicted, Y, label_set)] = FileUtility.load_obj(results_file + '_SVM.pickle')
+                 (y_predicted, Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_SVM.pickle')
             except:
                 [label_set, best_score_, best_estimator_, cv_results_, best_params_,
-                 (Y, label_set)] = FileUtility.load_obj(results_file + '_SVM.pickle')
+                 (Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_SVM.pickle')
             self.generate_SVM_important_features(best_estimator_, feature_names, results_file)
 
     def generate_SVM_important_features(self, clf_SVM, feature_names, results_file, N=1000):
@@ -151,7 +151,7 @@ class LogRegression:
                  (Y, label_set)] = FileUtility.load_obj(results_file + '_LR.pickle')
             self.generate_LR_important_features(best_estimator_, feature_names, results_file)
 
-    def tune_and_eval_predefined(self, results_file, isolates, folds, params=None, njobs=50, feature_names=None, optimized_for='f1_macro'):
+    def tune_and_eval_predefined(self, results_file, isolates, folds_file, test_file, params=None, njobs=50, feature_names=None, optimized_for='f1_macro'):
         '''
         :param results_file:
         :param isolates:
@@ -162,17 +162,17 @@ class LogRegression:
         '''
         if params==None:
             params=LogRegression.params_tuning
-        self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds)
+        self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds_file, test_file)
         self.CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_LR',
                                   n_jobs=njobs)
 
         if feature_names is not None:
             try:
                 [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
-                 (y_predicted, Y, label_set)] = FileUtility.load_obj(results_file + '_LR.pickle')
+                 (y_predicted, Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_LR.pickle')
             except:
                 [label_set, best_score_, best_estimator_, cv_results_, best_params_,
-                 (Y, label_set)] = FileUtility.load_obj(results_file + '_LR.pickle')
+                 (Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_LR.pickle')
             self.generate_LR_important_features(best_estimator_, feature_names, results_file)
 
     def generate_LR_important_features(self, clf_LR, feature_names, results_file, N=1000):
@@ -241,7 +241,7 @@ class RFClassifier:
                  (Y, label_set)] = FileUtility.load_obj(results_file + '_RF.pickle')
             self.generate_RF_important_features(best_estimator_, feature_names, results_file)
 
-    def tune_and_eval_predefined(self, results_file, isolates, folds, params=None, feature_names=None, njobs=50, optimized_for='f1_macro'):
+    def tune_and_eval_predefined(self, results_file, isolates, folds_file, test_file, params=None, feature_names=None, njobs=50, optimized_for='f1_macro'):
         '''
         :param results_file:
         :param isolates:
@@ -253,16 +253,16 @@ class RFClassifier:
         '''
         if params is None:
             params=RFClassifier.params_tuning
-        self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds)
+        self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds_file, test_file)
         self.CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_RF',
                                   n_jobs=njobs)
         if feature_names is not None:
             try:
                 [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
-                 (y_predicted, Y, label_set)] = FileUtility.load_obj(results_file + '_RF.pickle')
+                 (y_predicted, Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_RF.pickle')
             except:
                 [label_set, best_score_, best_estimator_, cv_results_, best_params_,
-                 (Y, label_set)] = FileUtility.load_obj(results_file + '_RF.pickle')
+                 (Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_RF.pickle')
             self.generate_RF_important_features(best_estimator_, feature_names, results_file)
 
     def generate_RF_important_features(self, clf_random_forest, feature_names, results_file, N=1000):
@@ -322,7 +322,7 @@ class KNN:
         self.CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_KNN',
                                   n_jobs=njobs)
 
-    def tune_and_eval_predefined(self, results_file, isolates, folds, params=None, njobs=50, optimized_for='f1_macro'):
+    def tune_and_eval_predefined(self, results_file, isolates, folds_file, test_file, params=None, njobs=50, optimized_for='f1_macro'):
         '''
         :param results_file:
         :param isolates:
@@ -333,6 +333,6 @@ class KNN:
         '''
         if params is None:
             params = KNN.parameter_tuning
-        self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds)
+        self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds_file, test_file)
         self.CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_KNN',
                                   n_jobs=njobs)
