@@ -34,31 +34,9 @@ class CrossValidator(object):
                         'scores_f1_0': make_scorer(self.f1_0),
                         'scores_p_0': make_scorer(self.precision_0),
                         'scores_r_0': make_scorer(self.recall_0),
-                        'tnr': make_scorer(self.TNR),
                         'precision_micro': 'precision_micro',
                         'precision_macro': 'precision_macro', 'recall_macro': 'recall_macro',
                         'recall_micro': 'recall_micro', 'f1_macro': 'f1_macro', 'f1_micro': 'f1_micro'}
-
-    def TNR(self, y_true, y_pred):
-        '''
-        :param y_true:
-        :param y_pred:
-        :return: True-negative rate
-        '''
-        TP = 0
-        FP = 0
-        TN = 0
-        FN = 0
-        for i in range(len(y_pred)):
-            if (y_true[i] == y_pred[i]) and y_pred[i] == 1:
-                TP += 1
-            if y_pred[i] == 1 and (y_true[i] != y_pred[i]):
-                FP += 1
-            if y_true[i] == y_pred[i] and y_pred[i] == 0:
-                TN += 1
-            if y_pred[i] == 0 and y_true[i] != y_pred[i]:
-                FN += 1
-        return float(TN / (TN + FP))
 
     def roc_auc_macro(self, y_true, y_score):
         return roc_auc_score(y_true, y_score, average="macro")
@@ -259,14 +237,12 @@ class PredefinedFoldCrossVal(CrossValidator):
         '''
         # greed_search
         self.greed_search = GridSearchCV(estimator=estimator, param_grid=parameters, cv=self.cv, scoring=self.scoring,
-                                         refit=score, error_score=0, n_jobs=n_jobs)
+                                         refit=score, error_score=0, n_jobs=n_jobs,verbose=0)
 
         label_set = list(set(self.Y))
         # fitting
         self.greed_search.fit(X=self.X, y=self.Y)
 
-        print ('inja')
-        exit()
         Y_test_pred=self.greed_search.best_estimator_.predict(self.X_test)
 
         f1_test=f1_score(self.Y_test,Y_test_pred)
