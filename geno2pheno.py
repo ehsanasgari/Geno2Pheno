@@ -173,17 +173,16 @@ class Geno2Pheno:
 
                     ## iterate over classifiers
                     for classifier in tqdm.tqdm(classifiers):
-                        basename=subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis
-                        print(basename)
-                        #if classifier.lower()=='svm':
-                        #    Model = SVM(X, Y)
-                        #    Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
-                        #if classifier.lower()=='rf':
-                        #    Model = RFClassifier(X, Y)
-                        #    Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
-                        #if classifier.lower()=='lr':
-                        #    Model = LogRegression(X, Y)
-                        #    Model.tune_and_eval_predefined(subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                        basepath_cls=subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis
+                        if classifier.lower()=='svm' and (not FileUtility.exists(basepath_cls+'_SVM.pickle') or self.override):
+                            Model = SVM(X, Y)
+                            Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                        if classifier.lower()=='rf' and  (not FileUtility.exists(basepath_cls+'_RF.pickle') or self.override):
+                            Model = RFClassifier(X, Y)
+                            Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                        if classifier.lower()=='lr' and (not FileUtility.exists(basepath_cls+'_LR.pickle') or self.override):
+                            Model = LogRegression(X, Y)
+                            Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
 
                         #if classifier.lower()=='dnn':
                         #    Model = DNN(X, Y)
