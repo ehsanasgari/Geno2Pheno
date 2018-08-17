@@ -263,6 +263,8 @@ class PredefinedFoldCrossVal(CrossValidator):
 
         label_set = list(set(self.Y))
         # fitting
+        print ('inja')
+        exit()
         self.greed_search.fit(X=self.X, y=self.Y)
 
         Y_test_pred=self.greed_search.best_estimator_.predict(self.X_test)
