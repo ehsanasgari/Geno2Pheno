@@ -248,8 +248,8 @@ class PredefinedFoldCrossVal(CrossValidator):
         f1_test=f1_score(self.Y_test,Y_test_pred)
 
 
+        y_predicted = cross_val_predict(self.greed_search.best_estimator_, self.X, self.Y,  cv=self.cv)
         try:
-            y_predicted = cross_val_predict(self.greed_search.best_estimator_, self.X, self.Y,  cv=self.cv)
             f1_val= f1_score(self.Y,label_set,y_predicted)
             conf = confusion_matrix(self.Y, y_predicted, labels=label_set)
             # save in file
