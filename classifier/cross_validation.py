@@ -259,4 +259,4 @@ class PredefinedFoldCrossVal(CrossValidator):
         except:
             FileUtility.save_obj(file_name,
                                  [label_set, self.greed_search.best_score_, self.greed_search.best_estimator_,
-                                  self.greed_search.cv_results_, self.greed_search.best_params_,  (self.Y,label_set ),  (Y_test_pred, self.Y_test)])
+                                  self.greed_search.cv_results_, self.greed_search.best_params_,  (self.Y,label_set ), (y_predicted, self.Y,label_set ),  (Y_test_pred, self.Y_test)])
