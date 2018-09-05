@@ -66,7 +66,7 @@ class IntermediateRepCreate(object):
 
             FileUtility.save_sparse_csr(save_path+'_feature_vect', mat)
             FileUtility.save_list('_'.join([save_path, 'strains', 'list.txt']), strains)
-            FileUtility.save_list('_'.join([save_path, 'features', 'list.txt']), vocab)
+            FileUtility.save_list('_'.join([save_path, 'feature', 'list.txt']), vocab)
         return ('_'.join([save_path]) + ' created')
 
 
