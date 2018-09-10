@@ -57,6 +57,13 @@ class GenotypePhenotypeAccess(object):
         :param features_for_idf: if needed..
         :return:
         '''
+        ## reset
+        # dictionary of feature types
+        self.X = dict()
+        # dictionary of feature names
+        self.feature_names = dict()
+        # dictionary of isolates
+        self.strains = dict()
         self.load_data(prefix_list)
         ## find a mapping from strains to the phenotypes
         if mapping:
@@ -72,7 +79,6 @@ class GenotypePhenotypeAccess(object):
 
         # feature types
         feature_types = list(self.X.keys())
-        print ('here x features', feature_types)
         # to apply idf if necessary
         if len(features_for_idf) > 0:
             tf = TfidfTransformer(norm=None, use_idf=True, smooth_idf=True)
@@ -89,7 +95,6 @@ class GenotypePhenotypeAccess(object):
             temp = temp[idx, :]
             feature_matrices.append(temp.toarray())
             feature_names += ['##'.join([feature_type, x]) for x in self.feature_names[feature_type]]
-        print (feature_names[0:10])
 
         X = np.concatenate(tuple(feature_matrices), axis=1)
         X = sparse.csr_matrix(X)
@@ -107,10 +112,8 @@ class GenotypePhenotypeAccess(object):
             print('@@@' + '_'.join([self.representation_path + save_pref, 'feature', 'vect.npz']))
             self.X[save_pref] = FileUtility.load_sparse_csr(
                 '_'.join([self.representation_path + save_pref, 'feature', 'vect.npz']))
-            print('@@@' + '_'.join([self.representation_path + save_pref, 'feature', 'list.txt']))
             self.feature_names[save_pref] = FileUtility.load_list(
                 '_'.join([self.representation_path + save_pref, 'feature', 'list.txt']))
-            print('@@@' + '_'.join([self.representation_path + save_pref, 'strains', 'list.txt']))
             self.strains[save_pref] = FileUtility.load_list(
                 '_'.join([self.representation_path + save_pref, 'strains', 'list.txt']))
 
