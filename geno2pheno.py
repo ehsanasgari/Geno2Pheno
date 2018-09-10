@@ -20,6 +20,7 @@ from data_access.data_access import GenotypePhenotypeAccess
 from utility.file_utility import FileUtility
 from classifier.classical_classifiers import SVM, RFClassifier, KNN, LogRegression
 import tqdm
+import warnings
 
 class Geno2Pheno:
     def __init__(self, genml_path, override=1, cores=4):
@@ -31,6 +32,7 @@ class Geno2Pheno:
         self.override=override
         self.cores=cores
         self.read_data()
+        warnings.filterwarnings('ignore')
         self.predict_block()
 
     def read_data(self):
