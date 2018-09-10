@@ -106,8 +106,10 @@ class GenotypePhenotypeAccess(object):
             print('@@@' + '_'.join([self.representation_path + save_pref, 'feature', 'vect.npz']))
             self.X[save_pref] = FileUtility.load_sparse_csr(
                 '_'.join([self.representation_path + save_pref, 'feature', 'vect.npz']))
+            print('@@@' + '_'.join([self.representation_path + save_pref, 'feature', 'list.txt']))
             self.feature_names[save_pref] = FileUtility.load_list(
                 '_'.join([self.representation_path + save_pref, 'feature', 'list.txt']))
+            print('@@@' + '_'.join([self.representation_path + save_pref, 'strains', 'list.txt']))
             self.strains[save_pref] = FileUtility.load_list(
                 '_'.join([self.representation_path + save_pref, 'strains', 'list.txt']))
 
