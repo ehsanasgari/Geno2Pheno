@@ -164,25 +164,27 @@ class Geno2Pheno:
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
                 ## iterate over feature sets
                 for feature in features:
+                    print (feature)
                     classifiers=[]
                     for model in predict.getElementsByTagName('model'):
                         for x in model.childNodes:
                             if not x.nodeName=="#text":
                                 classifiers.append(x.nodeName)
                     X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats([feature], phenotype, mapping)
+                    print (feature_names[0:100])
 
                     ## iterate over classifiers
-                    for classifier in tqdm.tqdm(classifiers):
-                        basepath_cls=subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis
-                        if classifier.lower()=='svm' and (not FileUtility.exists(basepath_cls+'_SVM.pickle') or self.override):
-                            Model = SVM(X, Y)
-                            Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
-                        if classifier.lower()=='rf' and  (not FileUtility.exists(basepath_cls+'_RF.pickle') or self.override):
-                            Model = RFClassifier(X, Y)
-                            Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
-                        if classifier.lower()=='lr' and (not FileUtility.exists(basepath_cls+'_LR.pickle') or self.override):
-                            Model = LogRegression(X, Y)
-                            Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                    # for classifier in tqdm.tqdm(classifiers):
+                    #     basepath_cls=subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis
+                    #     if classifier.lower()=='svm' and (not FileUtility.exists(basepath_cls+'_SVM.pickle') or self.override):
+                    #         Model = SVM(X, Y)
+                    #         Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                    #     if classifier.lower()=='rf' and  (not FileUtility.exists(basepath_cls+'_RF.pickle') or self.override):
+                    #         Model = RFClassifier(X, Y)
+                    #         Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                    #     if classifier.lower()=='lr' and (not FileUtility.exists(basepath_cls+'_LR.pickle') or self.override):
+                    #         Model = LogRegression(X, Y)
+                    #         Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
 
                         #if classifier.lower()=='dnn':
                         #    Model = DNN(X, Y)
