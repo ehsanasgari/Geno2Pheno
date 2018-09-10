@@ -72,7 +72,7 @@ class GenotypePhenotypeAccess(object):
 
         # feature types
         feature_types = list(self.X.keys())
-
+        print ('here x features', feature_types)
         # to apply idf if necessary
         if len(features_for_idf) > 0:
             tf = TfidfTransformer(norm=None, use_idf=True, smooth_idf=True)
@@ -89,6 +89,7 @@ class GenotypePhenotypeAccess(object):
             temp = temp[idx, :]
             feature_matrices.append(temp.toarray())
             feature_names += ['##'.join([feature_type, x]) for x in self.feature_names[feature_type]]
+        print (feature_names[0:10])
 
         X = np.concatenate(tuple(feature_matrices), axis=1)
         X = sparse.csr_matrix(X)
