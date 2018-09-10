@@ -162,16 +162,16 @@ class Geno2Pheno:
                     cv_test_file=subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_test.txt'])
 
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
+                print (features)
                 ## iterate over feature sets
                 for feature in features:
-                    print (feature)
                     classifiers=[]
                     for model in predict.getElementsByTagName('model'):
                         for x in model.childNodes:
                             if not x.nodeName=="#text":
                                 classifiers.append(x.nodeName)
                     X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats([feature], phenotype, mapping)
-                    print (feature_names[0:100])
+                    print (feature_names[0:10])
 
                     ## iterate over classifiers
                     # for classifier in tqdm.tqdm(classifiers):
