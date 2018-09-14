@@ -227,8 +227,9 @@ class PredefinedFoldCrossVal(CrossValidator):
             train = [j for i in splits[:i] + splits[i + 1:] for j in i]
             test = splits[i]
             new_splits.append([train, test])
-        print (new_splits)
-        self.cv = splits
+
+        self.cvs = new_splits
+        self.cv=splits
         self.X = X
         self.Y = Y
 
@@ -242,7 +243,7 @@ class PredefinedFoldCrossVal(CrossValidator):
         :return:
         '''
         # greed_search
-        self.greed_search = GridSearchCV(estimator=estimator, param_grid=parameters, cv=self.cv, scoring=self.scoring,
+        self.greed_search = GridSearchCV(estimator=estimator, param_grid=parameters, cv=self.cvs, scoring=self.scoring,
                                          refit=score, error_score=0, n_jobs=n_jobs,verbose=0)
 
         label_set = list(set(self.Y))
