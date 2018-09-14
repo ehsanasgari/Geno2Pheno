@@ -205,10 +205,14 @@ class PredefinedFoldCrossVal(CrossValidator):
         test_idx = [map_to_idx[test] for test in FileUtility.load_list(test_file)[0].split() if test in map_to_idx]
 
 
+        print (X.shape, ' X shape')
+
         self.X_test=X[test_idx,:]
         self.Y_test=[Y[idy] for idy in test_idx]
 
+        print (self.X_test.shape, ' X_test shape')
         train_idx=list(set(map_to_idx.values())-set(test_idx))
+        print (len(train_idx))
 
         X=X[train_idx,:]
         Y=[Y[idy] for idy in train_idx]
@@ -218,11 +222,13 @@ class PredefinedFoldCrossVal(CrossValidator):
         splits = [[map_to_idx[item] for item in fold_list.split() if item in map_to_idx] for fold_list in
                   FileUtility.load_list(fold_file)]
 
+        print (splits)
         new_splits = []
         for i in range(len(splits)):
             train = [j for i in splits[:i] + splits[i + 1:] for j in i]
             test = splits[i]
             new_splits.append([train, test])
+        print (new_splits)
         self.cv = new_splits
         self.X = X
         self.Y = Y
