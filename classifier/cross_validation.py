@@ -228,8 +228,7 @@ class PredefinedFoldCrossVal(CrossValidator):
             test = splits[i]
             new_splits.append([train, test])
 
-        self.cvs = new_splits
-        self.cv=splits
+        self.cv = new_splits
         self.X = X
         self.Y = Y
 
@@ -243,7 +242,7 @@ class PredefinedFoldCrossVal(CrossValidator):
         :return:
         '''
         # greed_search
-        self.greed_search = GridSearchCV(estimator=estimator, param_grid=parameters, cv=self.cvs, scoring=self.scoring,
+        self.greed_search = GridSearchCV(estimator=estimator, param_grid=parameters, cv=self.cv, scoring=self.scoring,
                                          refit=score, error_score=0, n_jobs=n_jobs,verbose=0)
 
         label_set = list(set(self.Y))
@@ -254,9 +253,8 @@ class PredefinedFoldCrossVal(CrossValidator):
 
         f1_test=f1_score(self.Y_test,Y_test_pred)
 
-
-
         y_predicted = cross_val_predict(self.greed_search.best_estimator_, self.X, self.Y,  cv=self.cv)
+
         f1_val= f1_score(self.Y,label_set,y_predicted)
         conf = confusion_matrix(self.Y, y_predicted, labels=label_set)
         # save in file
