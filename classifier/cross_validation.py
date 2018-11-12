@@ -205,14 +205,10 @@ class PredefinedFoldCrossVal(CrossValidator):
         test_idx = [map_to_idx[test] for test in FileUtility.load_list(test_file)[0].split() if test in map_to_idx]
 
 
-        print (X.shape, ' X shape')
-
         self.X_test=X[test_idx,:]
         self.Y_test=[Y[idy] for idy in test_idx]
 
-        print (self.X_test.shape, ' X_test shape')
         train_idx=list(set(map_to_idx.values())-set(test_idx))
-        print (len(train_idx))
 
         X=X[train_idx,:]
         Y=[Y[idy] for idy in train_idx]
@@ -253,7 +249,7 @@ class PredefinedFoldCrossVal(CrossValidator):
 
         f1_test=f1_score(self.Y_test,Y_test_pred)
 
-        y_predicted = self.greed_search.best_estimator_.best_estimator_.predict(self.X)
+        y_predicted = self.greed_search.best_estimator_.predict(self.X)
 
         f1_cv= f1_score(self.Y,label_set,y_predicted)
         conf = confusion_matrix(self.Y, y_predicted, labels=label_set)
