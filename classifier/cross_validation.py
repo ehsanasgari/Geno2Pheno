@@ -244,16 +244,16 @@ class PredefinedFoldCrossVal(CrossValidator):
                                          refit=score, error_score=0, n_jobs=n_jobs,verbose=0)
 
         label_set = list(set(self.Y))
+        label_set.sort()
         # fitting
         self.greed_search.fit(X=self.X, y=self.Y)
 
-        Y_test_pred=self.greed_search.best_estimator_.predict(self.X_test)
+        y_predicted = self.greed_search.best_estimator_.predict(self.X)
+        f1_cv= f1_score(self.Y,y_predicted)
 
+        Y_test_pred=self.greed_search.best_estimator_.predict(self.X_test)
         f1_test=f1_score(self.Y_test,Y_test_pred)
 
-        y_predicted = self.greed_search.best_estimator_.predict(self.X)
-
-        f1_cv= f1_score(self.Y,label_set,y_predicted)
         conf = confusion_matrix(self.Y, y_predicted, labels=label_set)
         # save in file
         FileUtility.save_obj(file_name,
