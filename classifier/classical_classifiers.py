@@ -56,12 +56,8 @@ class SVM:
         CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_SVM',
                              n_jobs=njobs)
         if feature_names is not None:
-            try:
-                [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
-                 (y_predicted, Y, label_set)] = FileUtility.load_obj(results_file + '_SVM.pickle')
-            except:
-                [label_set, best_score_, best_estimator_, cv_results_, best_params_,
-                 (Y, label_set)] = FileUtility.load_obj(results_file + '_SVM.pickle')
+            [label_set, conf, label_set, best_score_, best_estimator_,
+                              cv_results_, best_params_,  (cv_predictions_pred,cv_predictions_trues ), (Y_test_pred, Y_test) ] = FileUtility.load_obj(results_file + '_SVM.pickle')
             self.generate_SVM_important_features(best_estimator_, feature_names, results_file)
 
     def tune_and_eval_predefined(self, results_file, isolates, folds_file, test_file, params=None, njobs=50,feature_names=None, optimized_for='f1_macro'):
@@ -79,12 +75,8 @@ class SVM:
         self.CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_SVM',
                                   n_jobs=njobs)
         if feature_names is not None:
-            try:
-                [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
-                 (y_predicted, Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_SVM.pickle')
-            except:
-                [label_set, best_score_, best_estimator_, cv_results_, best_params_,
-                 (Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_SVM.pickle')
+            [label_set, conf, label_set, best_score_, best_estimator_,
+                              cv_results_, best_params_,  (cv_predictions_pred,cv_predictions_trues ), (Y_test_pred, Y_test) ] = FileUtility.load_obj(results_file + '_SVM.pickle')
             self.generate_SVM_important_features(best_estimator_, feature_names, results_file)
 
     def generate_SVM_important_features(self, clf_SVM, feature_names, results_file, N=1000):
@@ -143,12 +135,8 @@ class LogRegression:
         CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_LR',
                              n_jobs=njobs)
         if feature_names is not None:
-            try:
-                [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
-                 (y_predicted, Y, label_set)] = FileUtility.load_obj(results_file + '_LR.pickle')
-            except:
-                [label_set, best_score_, best_estimator_, cv_results_, best_params_,
-                 (Y, label_set)] = FileUtility.load_obj(results_file + '_LR.pickle')
+            [label_set, conf, label_set, best_score_, best_estimator_,
+                              cv_results_, best_params_,  (cv_predictions_pred,cv_predictions_trues ), (Y_test_pred, Y_test) ] = FileUtility.load_obj(results_file + '_LR.pickle')
             self.generate_LR_important_features(best_estimator_, feature_names, results_file)
 
     def tune_and_eval_predefined(self, results_file, isolates, folds_file, test_file, params=None, njobs=50, feature_names=None, optimized_for='f1_macro'):
@@ -167,12 +155,8 @@ class LogRegression:
                                   n_jobs=njobs)
 
         if feature_names is not None:
-            try:
-                [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
-                 (y_predicted, Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_LR.pickle')
-            except:
-                [label_set, best_score_, best_estimator_, cv_results_, best_params_,
-                 (Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_LR.pickle')
+            [label_set, conf, label_set, best_score_, best_estimator_,
+                              cv_results_, best_params_,  (cv_predictions_pred,cv_predictions_trues ), (Y_test_pred, Y_test) ] = FileUtility.load_obj(results_file + '_LR.pickle')
             self.generate_LR_important_features(best_estimator_, feature_names, results_file)
 
     def generate_LR_important_features(self, clf_LR, feature_names, results_file, N=1000):
@@ -233,12 +217,8 @@ class RFClassifier:
         self.CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_RF',
                                   n_jobs=njobs)
         if feature_names is not None:
-            try:
-                [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
-                 (y_predicted, Y, label_set)] = FileUtility.load_obj(results_file + '_RF.pickle')
-            except:
-                [label_set, best_score_, best_estimator_, cv_results_, best_params_,
-                 (Y, label_set)] = FileUtility.load_obj(results_file + '_RF.pickle')
+            [label_set, conf, label_set, best_score_, best_estimator_,
+                              cv_results_, best_params_,  (cv_predictions_pred,cv_predictions_trues ), (Y_test_pred, Y_test) ] = FileUtility.load_obj(results_file + '_RF.pickle')
             self.generate_RF_important_features(best_estimator_, feature_names, results_file)
 
     def tune_and_eval_predefined(self, results_file, isolates, folds_file, test_file, params=None, feature_names=None, njobs=50, optimized_for='f1_macro'):
@@ -257,12 +237,8 @@ class RFClassifier:
         self.CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_RF',
                                   n_jobs=njobs)
         if feature_names is not None:
-            try:
-                [label_set, conf, best_score_, best_estimator_, cv_results_, best_params_,
-                 (y_predicted, Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_RF.pickle')
-            except:
-                [label_set, best_score_, best_estimator_, cv_results_, best_params_,
-                 (Y, label_set),(Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_RF.pickle')
+            [label_set, conf, label_set, best_score_, best_estimator_,
+                              cv_results_, best_params_,  (cv_predictions_pred,cv_predictions_trues ), (Y_test_pred, Y_test) ]= FileUtility.load_obj(results_file + '_RF.pickle')
             self.generate_RF_important_features(best_estimator_, feature_names, results_file)
 
     def generate_RF_important_features(self, clf_random_forest, feature_names, results_file, N=1000):
