@@ -188,6 +188,7 @@ class Geno2Pheno:
                             Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
 
                     FileUtility.ensure_dir(basepath_cls+'/final_results/')
+                    print(basepath_cls)
                     create_excell_file(basepath_cls, basepath_cls+'/final_results/classification_res.xlsx')
                         #if classifier.lower()=='dnn':
                         #    Model = DNN(X, Y)
