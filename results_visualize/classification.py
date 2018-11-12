@@ -16,7 +16,8 @@ def create_excell_file(input_path, output_path):
 
     import warnings
     warnings.filterwarnings('ignore')
-
+    df1=[]
+    df2=[]
     for file in files_cv:
         [label_set, conf, label_set, best_score_, best_estimator_,
          cv_results_, best_params_, (cv_predictions_pred, cv_predictions_trues),
