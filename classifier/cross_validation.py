@@ -246,10 +246,11 @@ class PredefinedFoldCrossVal(CrossValidator):
         # fitting
         self.greed_search.fit(X=self.X, y=self.Y)
 
+        # get the cv results
         cv_predictions=[]
         for train, test in self.cv:
-            self.greed_search.best_estimator_.fit(self.X[train],self.Y[train])
-            cv_predictions.append(self.greed_search.best_estimator_.predict(self.X[test]),self.Y[test])
+            self.greed_search.best_estimator_.fit(self.X[train,:],[self.Y[idx] for idx in train])
+            cv_predictions.append(self.greed_search.best_estimator_.predict(self.X[test,:]),[self.Y[idx] for idx in test])
 
 
         Y_test_pred=self.greed_search.best_estimator_.predict(self.X_test)
