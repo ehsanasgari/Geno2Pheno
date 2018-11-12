@@ -210,9 +210,7 @@ class PredefinedFoldCrossVal(CrossValidator):
 
         train_idx=list(set(map_to_idx.values())-set(test_idx))
 
-        print(X.shape)
         X=X[train_idx,:]
-        print(X.shape)
         Y=[Y[idy] for idy in train_idx]
 
         isolate_list=[isolate_list[idx] for idx in train_idx]
@@ -248,14 +246,17 @@ class PredefinedFoldCrossVal(CrossValidator):
         # fitting
         self.greed_search.fit(X=self.X, y=self.Y)
 
-        y_predicted = self.greed_search.best_estimator_.predict(self.X)
-        f1_cv= f1_score(self.Y,y_predicted)
+        cv_predictions=[]
+        for train, test in self.cv:
+            self.greed_search.best_estimator_.fit(self.X[train],self.Y[train])
+            cv_predictions.append(self.greed_search.best_estimator_.predict(self.X[test]),self.Y[test])
+
 
         Y_test_pred=self.greed_search.best_estimator_.predict(self.X_test)
         f1_test=f1_score(self.Y_test,Y_test_pred)
 
-        conf = confusion_matrix(self.Y, y_predicted, labels=label_set)
+        #conf = confusion_matrix(self.Y, y_predicted, labels=label_set)
         # save in file
         FileUtility.save_obj(file_name,
-                             [label_set, conf, self.greed_search.best_score_, self.greed_search.best_estimator_,
-                              self.greed_search.cv_results_, self.greed_search.best_params_,  (y_predicted, self.Y,label_set ), (Y_test_pred, self.Y_test) ])
+                             [label_set, self.greed_search.best_score_, self.greed_search.best_estimator_,
+                              self.greed_search.cv_results_, self.greed_search.best_params_,  (cv_predictions,label_set ), (Y_test_pred, self.Y_test) ])
