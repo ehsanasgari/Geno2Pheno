@@ -21,6 +21,7 @@ from utility.file_utility import FileUtility
 from classifier.classical_classifiers import SVM, RFClassifier, KNN, LogRegression
 import tqdm
 import warnings
+from results_visualize.classification import create_excell_file
 
 class Geno2Pheno:
     def __init__(self, genml_path, override=1, cores=4):
@@ -186,6 +187,8 @@ class Geno2Pheno:
                             Model = LogRegression(X, Y)
                             Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
 
+                    FileUtility.ensure_dir(basepath_cls+'/final_results/')
+                    create_excell_file(basepath_cls, basepath_cls+'/final_results/classification_res.xlsx')
                         #if classifier.lower()=='dnn':
                         #    Model = DNN(X, Y)
                         #    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
