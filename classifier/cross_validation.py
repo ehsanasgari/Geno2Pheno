@@ -210,7 +210,9 @@ class PredefinedFoldCrossVal(CrossValidator):
 
         train_idx=list(set(map_to_idx.values())-set(test_idx))
 
+        print(X.shape)
         X=X[train_idx,:]
+        print(X.shape)
         Y=[Y[idy] for idy in train_idx]
 
         isolate_list=[isolate_list[idx] for idx in train_idx]

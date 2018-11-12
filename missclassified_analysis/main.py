@@ -43,7 +43,7 @@ def getIvalue(drug,mode,delta=0.005):
     #plt.show()
     ###
 
-    dfmiss=pd.read_table('/mounts/data/proj/asgari/final_proj/Geno2Pheno/notebooks/miscl_all.txt')
+    dfmiss=pd.read_table('/mounts/data/proj/asgari/final_proj/Geno2Pheno/data_config/miscl_single.txt')
     dfmiss=dfmiss[dfmiss['mode']==mode]
     dfmiss=dfmiss[dfmiss['drug']==drugs_name[idx]]
 
