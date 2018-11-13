@@ -1,4 +1,4 @@
-final all	Tobramycin_S-vs-R	Ceftazidim_S-vs-R	Ciprofloxacin_S-vs-R	Meropenem_S-vs-R	Colistin_S-vs-R
+final_all	Tobramycin_S-vs-R	Ceftazidim_S-vs-R	Ciprofloxacin_S-vs-R	Meropenem_S-vs-R	Colistin_S-vs-R
 CF592_Iso2	0.0	1.0	0.0		0
 CF609_Iso3		1.0	0.0	1.0	0
 CH2500	0.0	0.0	1.0	0.0	0
