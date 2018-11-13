@@ -56,17 +56,19 @@ class IntermediateRepCreate(object):
 
             strains = []
             mat = []
+            kmers=[]
             pool = Pool(processes=cores)
             for strain, vec, vocab in tqdm.tqdm(pool.imap_unordered(self._get_kmer_rep, input_tuples, chunksize=cores),
                                                 total=len(input_tuples)):
                 strains.append(strain)
                 mat.append(vec)
+                kmers=vocab
             pool.close()
             mat = sparse.csr_matrix(mat)
 
             FileUtility.save_sparse_csr(save_path+'_feature_vect', mat)
             FileUtility.save_list('_'.join([save_path, 'strains', 'list.txt']), strains)
-            FileUtility.save_list('_'.join([save_path, 'feature', 'list.txt']), vocab)
+            FileUtility.save_list('_'.join([save_path, 'feature', 'list.txt']), kmers)
         return ('_'.join([save_path]) + ' created')
 
 
