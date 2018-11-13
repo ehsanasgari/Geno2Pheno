@@ -190,8 +190,8 @@ class Geno2Pheno:
                             Model = LogRegression(X, Y)
                             Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
 
-                    FileUtility.ensure_dir(subdir+phenotype+'/'+'final_results/')
-                    create_excell_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
+                FileUtility.ensure_dir(subdir+phenotype+'/'+'final_results/')
+                create_excell_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
                         #if classifier.lower()=='dnn':
                         #    Model = DNN(X, Y)
                         #    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
