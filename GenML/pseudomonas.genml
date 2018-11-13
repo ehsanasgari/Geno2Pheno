@@ -1,8 +1,34 @@
-<project output="/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/Pseudogenomics/" name="pseudogenomics">
+<project output="/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/Pseudogenomics/" name="pseudogenomics_infection">
 <genotype>
     <sequence path="/net/sgi/metagenomics/projects/pseudo_genomics/results/assembly/v2/spades_renamed/" kmer='6'></sequence>
 </genotype>
 <phenotype path="data_config/pheno_table_CLSI_S-vs-R.txt">
 </phenotype>
 <phylogentictree path="data_config/mitip_422_gt90.fasttree"></phylogentictree>
+<predict name="S_vs_R">
+    <optimize>scores_f1_1</optimize>
+    <eval folds="10" test="0.1">tree</eval>
+    <labels>
+            <label value="1">1</label>
+            <label value="0">0</label>
+    </labels>
+    <model>
+        <svm/>
+        <rf/>
+        <lr/>
+    </model>
+</predict>
+<predict name="S_vs_R">
+    <optimize>scores_f1_1</optimize>
+    <eval folds="10" test="0.1">rand</eval>
+    <labels>
+            <label value="1">1</label>
+            <label value="0">0</label>
+    </labels>
+    <model>
+        <svm/>
+        <rf/>
+        <lr/>
+    </model>
+</predict>
 </project>
