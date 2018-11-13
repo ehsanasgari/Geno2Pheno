@@ -105,7 +105,7 @@ class Geno2Pheno:
         if not os.path.exists(self.metadata_path + 'phylogentictree.txt') or self.override:
             FileUtility.save_list(self.metadata_path + 'phylogentictree.txt',
                                   FileUtility.load_list(phylogentictree[0].attributes['path'].value))
-            tree2mat_group(self.metadata_path + 'phylogentictree.txt',n_group=20)
+        tree2mat_group(self.metadata_path + 'phylogentictree.txt',n_group=20)
 
         FileUtility.save_list(log_file, log_info)
 
