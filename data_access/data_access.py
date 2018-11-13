@@ -217,7 +217,7 @@ class GenotypePhenotypeAccess(object):
 
         groups=[int(isolate_to_group[iso]) for iso in final_strains]
 
-        group_kfold = GroupKFold(n_splits=round(len(final_strains)/test_ratio))
+        group_kfold = GroupKFold(n_splits=round(1/test_ratio))
         for train_index, test_index in group_kfold.split(final_strains, Y, groups):
             X_test=[final_strains for x in test_index]
             FileUtility.save_list(path.replace('_folds.txt', '_test.txt'), ['\t'.join(X_test)])
