@@ -14,7 +14,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 import numpy as np
 from scipy import sparse
 from sklearn.model_selection import train_test_split, StratifiedKFold
-
+from sklearn.model_selection import GroupKFold
 
 class GenotypePhenotypeAccess(object):
     '''
@@ -196,7 +196,7 @@ class GenotypePhenotypeAccess(object):
         FileUtility.save_list(path, folds)
 
 
-    def create_treefold(self, path, cv, test_ratio, phenotype, mapping=None):
+    def create_treefold(self, path, tree_addr, cv, test_ratio, phenotype, mapping=None):
 
         ## find a mapping from strains to the phenotypes
         if mapping:
@@ -212,12 +212,23 @@ class GenotypePhenotypeAccess(object):
 
         # prepare test
         Y = [mapping_isolate_label[strain] for strain in final_strains]
-        X_train, X_test, y_train, _ = train_test_split(final_strains, Y, test_size=test_ratio, random_state=0, stratify=Y)
-        FileUtility.save_list(path.replace('_folds.txt', '_test.txt'), ['\t'.join(X_test)])
 
-        # prepare train ### needtobefixed
-        spliter=StratifiedKFold(cv)
-        folds=['\t'.join([final_strains[x] for x in fold.tolist()]) for _,fold in  list(spliter.split(X_train,y_train))]
+        isolate_to_group=dict([tuple(l.split('\t')) for l in FileUtility.load_list(tree_addr.replace(tree_addr.split('/')[-1], 'phylogenetic_nodes_and_clusters.txt'))])
+
+        groups=[int(isolate_to_group[iso]) for iso in final_strains]
+
+        group_kfold = GroupKFold(n_splits=round(len(final_strains)/test_ratio))
+        for train_index, test_index in group_kfold.split(final_strains, Y, groups):
+            X_test=[final_strains for x in test_index]
+            FileUtility.save_list(path.replace('_folds.txt', '_test.txt'), ['\t'.join(X_test)])
+            break
+
+        group_kfold = GroupKFold(n_splits=cv)
+
+        folds=[]
+        for train_index, test_index in group_kfold.split(train_index, [Y[idx] for idx in train_index],  [groups[idx] for idx in train_index]):
+            folds.append(test_index)
+        folds=['\t'.join([final_strains[x] for x in fold.tolist()]) for fold in  folds]
         FileUtility.save_list(path, folds)
 
 

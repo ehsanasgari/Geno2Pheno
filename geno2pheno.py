@@ -22,6 +22,7 @@ from classifier.classical_classifiers import SVM, RFClassifier, KNN, LogRegressi
 import tqdm
 import warnings
 from results_visualize.classification import create_excell_file
+from clustering.newick_clustering import tree2mat_group
 
 class Geno2Pheno:
     def __init__(self, genml_path, override=1, cores=4):
@@ -90,20 +91,22 @@ class Geno2Pheno:
             log_info.append(log)
 
         ## Adding metadata
-        metadata_path = self.output + '/metadata/'
-        if not os.path.exists(metadata_path):
-            os.makedirs(metadata_path)
+        self.metadata_path = self.output + '/metadata/'
+        if not os.path.exists(self.metadata_path):
+            os.makedirs(self.metadata_path)
         # phenotype
         phenotype = self.xmldoc.getElementsByTagName('phenotype')
-        if not os.path.exists(metadata_path + 'phenotypes.txt') or self.override:
-            FileUtility.save_list(metadata_path + 'phenotypes.txt',
+        if not os.path.exists(self.metadata_path + 'phenotypes.txt') or self.override:
+            FileUtility.save_list(self.metadata_path + 'phenotypes.txt',
                                   FileUtility.load_list(phenotype[0].attributes['path'].value))
 
         # tree
         phylogentictree = self.xmldoc.getElementsByTagName('phylogentictree')
-        if not os.path.exists(metadata_path + 'phylogentictree.txt') or self.override:
-            FileUtility.save_list(metadata_path + 'phylogentictree.txt',
+        if not os.path.exists(self.metadata_path + 'phylogentictree.txt') or self.override:
+            FileUtility.save_list(self.metadata_path + 'phylogentictree.txt',
                                   FileUtility.load_list(phylogentictree[0].attributes['path'].value))
+            tree2mat_group(self.metadata_path + 'phylogentictree.txt',n_group=20)
+
         FileUtility.save_list(log_file, log_info)
 
     def predict_block(self):
@@ -154,7 +157,7 @@ class Geno2Pheno:
                 if self.cvbasis=='tree':
                     FileUtility.ensure_dir(subdir+phenotype+'/cv/tree/')
                     if self.override or not FileUtility.exists(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
-                        GPA.create_treefold(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt']), folds, test_ratio, phenotype, mapping)
+                        GPA.create_treefold(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt']), self.metadata_path + 'phylogentictree.txt', folds, test_ratio, phenotype, mapping)
                     cv_file=subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt'])
                     cv_test_file=subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_test.txt'])
                 else:
