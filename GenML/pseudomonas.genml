@@ -9,10 +9,10 @@
     <optimize>scores_f1_1</optimize>
     <eval folds="10" test="0.1">tree</eval>
     <labels>
-            <label value="1.0">1</label>
             <label value="1">1</label>
-            <label value="0.0">0</label>
+            <label value="1">1.0</label>
             <label value="0">0</label>
+            <label value="0">0.0</label>
     </labels>
     <model>
         <svm/>
@@ -24,10 +24,10 @@
     <optimize>scores_f1_1</optimize>
     <eval folds="10" test="0.1">rand</eval>
     <labels>
-            <label value="1.0">1</label>
             <label value="1">1</label>
-            <label value="0.0">0</label>
+            <label value="1">1.0</label>
             <label value="0">0</label>
+            <label value="0">0.0</label>
     </labels>
     <model>
         <svm/>
