@@ -17,13 +17,13 @@ prev=''
 new_list=[]
 for file in files:
     if not prev =='':
-        new_list=dict([(file.split('_')[-1],file])
+        new_list=dict([(file.split('_')[-1],file)])
         prev=file
     elif ''.join(file.split('_')[0:-1])==''.join(prev.split('_')[0:-1]):
         new_list[file.split('_')[-1]]=file
     else:
         file_list.append(new_list)
-        new_list=dict([(file.split('_')[-1],file])
+        new_list=dict([(file.split('_')[-1],file)])
         prev=file
 
 print (new_list)
