@@ -38,10 +38,13 @@ class IntermediateRepCreate(object):
                                                        feature_normalization=feature_normalization, override=override)
 
     def _get_kmer_rep(self, inp):
-        strain, seq_file, k=inp
-        seq=FileUtility.read_fasta_sequences(seq_file)
-        vec, vocab = GenotypeReader.get_nuc_kmer_distribution(seq, k)
-        return strain, vec, vocab
+        try:
+            strain, seq_file, k=inp
+            seq=FileUtility.read_fasta_sequences(seq_file)
+            vec, vocab = GenotypeReader.get_nuc_kmer_distribution(seq, k)
+            return strain, vec, vocab
+        except:
+            return False, False, False,
 
     def create_kmer_table(self, path, k, cores=4, override=False):
 
@@ -60,9 +63,10 @@ class IntermediateRepCreate(object):
             pool = Pool(processes=cores)
             for strain, vec, vocab in tqdm.tqdm(pool.imap_unordered(self._get_kmer_rep, input_tuples, chunksize=cores),
                                                 total=len(input_tuples)):
-                strains.append(strain)
-                mat.append(vec)
-                kmers=vocab
+                if not strain and not vec and not vocab:
+                    strains.append(strain)
+                    mat.append(vec)
+                    kmers=vocab
             pool.close()
             mat = sparse.csr_matrix(mat)
 
