@@ -26,7 +26,7 @@ for file in files:
         new_list=dict([(file.split('_')[-1],file)])
         prev=file
 
-print (new_list)
+print (file_list)
 
 # features_addresses={'Random Forest':'../../amr_results/5_3_2017/classifications_standard/##drug##gpa_trimmed_gpa_roaryRF_features', 'Chi2':'../../amr_results/res_before_5_3_2017/results/feature_selection/chi2/##drug##gpa_trimmed_gpa_roary','PhyloChi':'/mounts/data/proj/asgari/dissertation/git_repos/amr_results/features/phylochi2/gpa_trimmed_gpa_roary##drug##.txt','SVM':'../../amr_results/features/gpa/##drug##_S-vs-R_non-zero+weights.txt','Treewas':'../../amr_results/features/treewas/gpa/##drug##_S.vs.R_terminal_p-vals_name.txt'}
 #
