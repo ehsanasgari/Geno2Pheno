@@ -20,7 +20,7 @@
         <lr/>
     </model>
 </predict>
-    
+
 <predict name="S_vs_R">
     <optimize>scores_f1_1</optimize>
     <eval folds="10" test="0.1">tree</eval>
