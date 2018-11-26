@@ -245,11 +245,6 @@ class PredefinedFoldCrossVal(CrossValidator):
         label_set = list(set(self.Y))
         label_set.sort()
 
-        print (len(self.Y))
-        print (np.sum(self.Y))
-        print (self.X.shape)
-        print (np.min(self.X))
-        print (np.max(self.X))
         # fitting
         self.greed_search.fit(X=self.X, y=self.Y)
 
