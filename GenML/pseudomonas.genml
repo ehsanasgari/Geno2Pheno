@@ -5,9 +5,10 @@
 <phenotype path="data_config/pheno_table_CLSI_S-vs-R.txt">
 </phenotype>
 <phylogentictree path="data_config/mitip_422_gt90.fasttree"></phylogentictree>
-<predict name="S_vs_R">
+
+<predict name="S_vs_R_tree_cv">
     <optimize>scores_f1_1</optimize>
-    <eval folds="10" test="0.1">rand</eval>
+    <eval folds="10" test="0.1">tree</eval>
     <labels>
             <label value="1">1</label>
             <label value="1">1.0</label>
@@ -21,9 +22,9 @@
     </model>
 </predict>
 
-<predict name="S_vs_R">
+<predict name="S_vs_R_std_cv">
     <optimize>scores_f1_1</optimize>
-    <eval folds="10" test="0.1">tree</eval>
+    <eval folds="10" test="0.1">rand</eval>
     <labels>
             <label value="1">1</label>
             <label value="1">1.0</label>
