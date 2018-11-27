@@ -12,7 +12,9 @@ import numpy as np
 files=FileUtility.recursive_glob('/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/K_pneumoniae/feature_selection/classifications/infection_vs_carriage/Human_invasive/','*')
 files.sort()
 
-file_list=[]
+print (files)
+
+categorized_files=[]
 prev=''
 new_list=[]
 for file in files:
