@@ -1,5 +1,6 @@
 <project output="/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/Pseudogenomics/" name="pseudogenomics_infection">
 <genotype>
+    <sequence path="/net/sgi/metagenomics/projects/pseudo_genomics/forRuben/genomes/" kmer='6'></sequence>
      <table path="/net/sgi/metagenomics/projects/pseudo_genomics/data/gene_expression/v2/rpg_414_log.txt"  normalization="zu" transpose="False">
 genexp
     </table>
@@ -12,7 +13,7 @@ gpa
     <table path="/net/sgi/metagenomics/projects/pseudo_genomics/results/assembly/v2/roary/v5/out_95/indels/indel_annot.txt" normalization="binary" transpose="False">
 roary
     </table>
-    <sequence path="/net/sgi/metagenomics/projects/pseudo_genomics/forRuben/genomes/" kmer='6'></sequence>
+
 </genotype>
 <phenotype path="data_config/pheno_table_CLSI_S-vs-R.txt">
 </phenotype>
