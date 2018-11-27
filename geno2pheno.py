@@ -76,7 +76,7 @@ class Geno2Pheno:
         for table in tables:
             path = table.attributes['path'].value
             normalization = table.attributes['normalization'].value
-            prefix = tables.firstChild.nodeValue.strip() + '_'
+            prefix = table.firstChild.nodeValue.strip() + '_'
             if len(prefix) == 1:
                 prefix = ''
             log=IC.create_table(path, prefix + path.split('/')[-1] if prefix=='' else prefix, normalization, self.override)
