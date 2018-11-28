@@ -13,7 +13,6 @@ gpa
     <table path="/net/sgi/metagenomics/projects/pseudo_genomics/results/assembly/v2/roary/v5/out_95/indels/indel_annot.txt" normalization="binary" transpose="False">
 roary
     </table>
-
 </genotype>
 <phenotype path="data_config/pheno_table_CLSI_S-vs-R.txt">
 </phenotype>

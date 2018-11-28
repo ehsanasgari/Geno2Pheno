@@ -215,6 +215,7 @@ class PredefinedFoldCrossVal(CrossValidator):
         Y=[Y[idy] for idy in train_idx]
 
         isolate_list=[isolate_list[idx] for idx in train_idx]
+        self.train_isolate_list=isolate_list
         map_to_idx = {isolate: idx for idx, isolate in enumerate(isolate_list)}
         splits = [[map_to_idx[item] for item in fold_list.split() if item in map_to_idx] for fold_list in
                   FileUtility.load_list(fold_file)]
@@ -251,12 +252,17 @@ class PredefinedFoldCrossVal(CrossValidator):
         # get the cv results
         cv_predictions_pred=[]
         cv_predictions_trues=[]
+
+        isolates=[]
         for train, test in self.cv:
             self.greed_search.best_estimator_.fit(self.X[train,:],[self.Y[idx] for idx in train])
             preds=self.greed_search.best_estimator_.predict(self.X[test,:])
             trues=[self.Y[idx] for idx in test]
             [cv_predictions_pred.append(pred) for pred in preds]
             [cv_predictions_trues.append(tr) for tr in trues]
+            for i in test:
+                isolates.append(i)
+        isolates=[self.train_isolate_list[i] for  iso in isolates]
 
         Y_test_pred=self.greed_search.best_estimator_.predict(self.X_test)
         f1_test=f1_score(self.Y_test,Y_test_pred)
@@ -265,4 +271,4 @@ class PredefinedFoldCrossVal(CrossValidator):
         # save in file
         FileUtility.save_obj(file_name,
                              [label_set, conf, label_set, self.greed_search.best_score_, self.greed_search.best_estimator_,
-                              self.greed_search.cv_results_, self.greed_search.best_params_,  (cv_predictions_pred,cv_predictions_trues ), (Y_test_pred, self.Y_test) ])
+                              self.greed_search.cv_results_, self.greed_search.best_params_,  (cv_predictions_pred,cv_predictions_trues,isolates), (Y_test_pred, self.Y_test) ])

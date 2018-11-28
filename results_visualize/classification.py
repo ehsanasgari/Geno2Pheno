@@ -20,7 +20,7 @@ def create_excell_file(input_path, output_path):
     df2=[]
     for file in files_cv:
         [label_set, conf, label_set, best_score_, best_estimator_,
-         cv_results_, best_params_, (cv_predictions_pred, cv_predictions_trues),
+         cv_results_, best_params_, (cv_predictions_pred, cv_predictions_trues, isolates),
          (Y_test_pred, Y_test)] = FileUtility.load_obj(file)
         rep = file.split('/')[-1].split('_CV_')[0]
         CV_scheme = file.split('_CV_')[1].split('_')[0]
