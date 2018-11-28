@@ -166,6 +166,8 @@ class Geno2Pheno:
                     cv_test_file=subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_test.txt'])
 
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
+
+
                 ## iterate over feature sets
                 for feature in features:
                     classifiers=[]

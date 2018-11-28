@@ -62,15 +62,15 @@ def create_excell_project(path, output_path):
         df_test=pd.read_excel(file,sheet_name='Test')
         df_test['phenotype']=phenotype
         if cv=='std':
-            sheets['CV std Test']=df_test
+            sheets['CV std Test'].append(df_test)
         else:
-            sheets['CV tree Test']=df_test
+            sheets['CV tree Test'].append(df_test)
         df_cross_val=pd.read_excel(file,sheet_name='Cross-validation')
         df_cross_val['phenotype']=phenotype
         if cv=='std':
-            sheets['CV std Cross-val']=df_cross_val
+            sheets['CV std Cross-val'].append(df_cross_val)
         else:
-            sheets['CV tree Cross-val']=df_cross_val
+            sheets['CV tree Cross-val'].append(df_cross_val)
     for x,frames in sheets.items():
         result = pd.concat(frames)
         result.to_excel(writer, sheet_name=x)
