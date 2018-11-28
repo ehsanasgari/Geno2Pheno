@@ -21,7 +21,7 @@ from utility.file_utility import FileUtility
 from classifier.classical_classifiers import SVM, RFClassifier, KNN, LogRegression
 import tqdm
 import warnings
-from results_visualize.classification import create_excell_file
+from results_visualize.classification import create_excell_file,create_excell_project
 from clustering.newick_clustering import tree2mat_group
 
 class Geno2Pheno:
@@ -195,8 +195,8 @@ class Geno2Pheno:
                         #if classifier.lower()=='dnn':
                         #    Model = DNN(X, Y)
                         #    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
-
-
+        FileUtility.ensure_dir(self.output+'/'+'ultimate_outputs/')
+        create_excell_project(predict_path,self.output+'/'+'ultimate_outputs/')
 
 
 
