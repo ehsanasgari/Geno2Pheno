@@ -23,6 +23,7 @@ import tqdm
 import warnings
 from results_visualize.classification import create_excell_file,create_excell_project
 from clustering.newick_clustering import tree2mat_group
+import itertools
 
 class Geno2Pheno:
     def __init__(self, genml_path, override=1, cores=4):
@@ -167,16 +168,19 @@ class Geno2Pheno:
 
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
 
-
+                feature_combinations=[]
+                for x in [[list(x) for x in list(itertools.combinations(features,r))] for r in range(1,len(features)+1)]:
+                    feature_combinations+=x
                 ## iterate over feature sets
-                for feature in features:
+                for feature_setting in feature_combinations:
                     classifiers=[]
                     for model in predict.getElementsByTagName('model'):
                         for x in model.childNodes:
                             if not x.nodeName=="#text":
                                 classifiers.append(x.nodeName)
-                    X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats([feature], phenotype, mapping)
+                    X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats(feature_setting, phenotype, mapping)
 
+                    feature='##'.join(feature_setting)
                     ## iterate over classifiers
                     for classifier in tqdm.tqdm(classifiers):
                         basepath_cls=subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis
