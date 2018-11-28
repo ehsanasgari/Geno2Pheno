@@ -57,6 +57,7 @@ def create_excell_project(path, output_path):
 
     sheets={'CV std Test':[],'CV std Cross-val':[],'CV tree Test':[],'CV tree Cross-val':[]}
     for file in files:
+        print (file)
         phenotype=path.split('/')[-3]
         cv=path.split('/')[-4].split('_')[-2]
         df_test=pd.read_excel(file,sheet_name='Test')
