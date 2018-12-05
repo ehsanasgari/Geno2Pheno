@@ -108,99 +108,100 @@ class Geno2Pheno:
 
         FileUtility.save_list(log_file, log_info)
 
-    def predict_block(self):
+    def predict_block(self, ultimate=True):
         '''
         :return:
         '''
         predict_blocks = self.xmldoc.getElementsByTagName('predict')
+        predict_path=self.output+'/classifications/'
 
-        # iterate over predict block
-        for predict in predict_blocks:
-            predict_path=self.output+'/classifications/'
-            # Sub prediction
-            FileUtility.ensure_dir(predict_path)
-            setting_name=predict.attributes['name'].value
-            subdir=predict_path+setting_name+'/'
+        if not ultimate:
+            # iterate over predict block
+            for predict in predict_blocks:
+                # Sub prediction
+                FileUtility.ensure_dir(predict_path)
+                setting_name=predict.attributes['name'].value
+                subdir=predict_path+setting_name+'/'
 
-            FileUtility.ensure_dir(subdir)
+                FileUtility.ensure_dir(subdir)
 
-            ## label mapping
-            labels=predict.getElementsByTagName('labels')[0].getElementsByTagName('label')
-            mapping=dict()
-            for label in labels:
-                val=label.attributes['value'].value
-                phenotype=label.firstChild.nodeValue.strip()
-                mapping[phenotype]=int(val)
+                ## label mapping
+                labels=predict.getElementsByTagName('labels')[0].getElementsByTagName('label')
+                mapping=dict()
+                for label in labels:
+                    val=label.attributes['value'].value
+                    phenotype=label.firstChild.nodeValue.strip()
+                    mapping[phenotype]=int(val)
 
-            ## optimizing for ..
-            optimization=predict.getElementsByTagName('optimize')[0].firstChild.nodeValue.strip()
-            ## number of folds
-            self.cvbasis=predict.getElementsByTagName('eval')[0].firstChild.nodeValue.strip()
-            folds=int(predict.getElementsByTagName('eval')[0].attributes['folds'].value)
-            test_ratio=float(predict.getElementsByTagName('eval')[0].attributes['test'].value)
+                ## optimizing for ..
+                optimization=predict.getElementsByTagName('optimize')[0].firstChild.nodeValue.strip()
+                ## number of folds
+                self.cvbasis=predict.getElementsByTagName('eval')[0].firstChild.nodeValue.strip()
+                folds=int(predict.getElementsByTagName('eval')[0].attributes['folds'].value)
+                test_ratio=float(predict.getElementsByTagName('eval')[0].attributes['test'].value)
 
-            if optimization not in ['accuracy','scores_r_1','scores_f1_1','scores_f1_0','f1_macro','f1_micro']:
-                print ('Error in choosing optimization score')
+                if optimization not in ['accuracy','scores_r_1','scores_f1_1','scores_f1_0','f1_macro','f1_micro']:
+                    print ('Error in choosing optimization score')
 
-            ## Genotype tables
-            GPA=GenotypePhenotypeAccess(self.output)
-            ## iterate over phenotypes if there exist more than one
-            for phenotype in GPA.phenotypes:
-                print ('working on phenotype ',phenotype)
-                FileUtility.ensure_dir(subdir+phenotype+'/')
+                ## Genotype tables
+                GPA=GenotypePhenotypeAccess(self.output)
+                ## iterate over phenotypes if there exist more than one
+                for phenotype in GPA.phenotypes:
+                    print ('working on phenotype ',phenotype)
+                    FileUtility.ensure_dir(subdir+phenotype+'/')
 
-                ## create cross-validation
-                FileUtility.ensure_dir(subdir+phenotype+'/cv/')
-                cv_file=''
-                cv_test_file=''
-                if self.cvbasis=='tree':
-                    FileUtility.ensure_dir(subdir+phenotype+'/cv/tree/')
-                    if self.override or not FileUtility.exists(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
-                        GPA.create_treefold(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt']), self.metadata_path + 'phylogentictree.txt', folds, test_ratio, phenotype, mapping)
-                    cv_file=subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt'])
-                    cv_test_file=subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_test.txt'])
-                else:
-                    FileUtility.ensure_dir(subdir+phenotype+'/cv/rand/')
-                    if self.override or not FileUtility.exists(subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
-                        GPA.create_randfold(subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt']), folds, test_ratio, phenotype, mapping)
-                    cv_file=subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt'])
-                    cv_test_file=subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_test.txt'])
+                    ## create cross-validation
+                    FileUtility.ensure_dir(subdir+phenotype+'/cv/')
+                    cv_file=''
+                    cv_test_file=''
+                    if self.cvbasis=='tree':
+                        FileUtility.ensure_dir(subdir+phenotype+'/cv/tree/')
+                        if self.override or not FileUtility.exists(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
+                            GPA.create_treefold(subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt']), self.metadata_path + 'phylogentictree.txt', folds, test_ratio, phenotype, mapping)
+                        cv_file=subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_folds.txt'])
+                        cv_test_file=subdir+phenotype+'/cv/tree/'+''.join([phenotype,'_',setting_name,'_test.txt'])
+                    else:
+                        FileUtility.ensure_dir(subdir+phenotype+'/cv/rand/')
+                        if self.override or not FileUtility.exists(subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt'])):
+                            GPA.create_randfold(subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt']), folds, test_ratio, phenotype, mapping)
+                        cv_file=subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_folds.txt'])
+                        cv_test_file=subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_test.txt'])
 
-                features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
+                    features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
 
-                feature_combinations=[]
-                for x in [[list(x) for x in list(itertools.combinations(features,r))] for r in range(1,len(features)+1)]:
-                    feature_combinations+=x
-                ## iterate over feature sets
-                for feature_setting in feature_combinations:
-                    classifiers=[]
-                    for model in predict.getElementsByTagName('model'):
-                        for x in model.childNodes:
-                            if not x.nodeName=="#text":
-                                classifiers.append(x.nodeName)
-                    X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats(feature_setting, phenotype, mapping)
+                    feature_combinations=[]
+                    for x in [[list(x) for x in list(itertools.combinations(features,r))] for r in range(1,len(features)+1)]:
+                        feature_combinations+=x
+                    ## iterate over feature sets
+                    for feature_setting in feature_combinations:
+                        classifiers=[]
+                        for model in predict.getElementsByTagName('model'):
+                            for x in model.childNodes:
+                                if not x.nodeName=="#text":
+                                    classifiers.append(x.nodeName)
+                        X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats(feature_setting, phenotype, mapping)
 
-                    feature='##'.join(feature_setting)
-                    ## iterate over classifiers
-                    for classifier in tqdm.tqdm(classifiers):
-                        basepath_cls=subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis
-                        if classifier.lower()=='svm' and (not FileUtility.exists(basepath_cls+'_SVM.pickle') or self.override):
-                            Model = SVM(X, Y)
-                            Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
-                        if classifier.lower()=='rf' and  (not FileUtility.exists(basepath_cls+'_RF.pickle') or self.override):
-                            Model = RFClassifier(X, Y)
-                            Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
-                        if classifier.lower()=='lr' and (not FileUtility.exists(basepath_cls+'_LR.pickle') or self.override):
-                            Model = LogRegression(X, Y)
-                            Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                        feature='##'.join(feature_setting)
+                        ## iterate over classifiers
+                        for classifier in tqdm.tqdm(classifiers):
+                            basepath_cls=subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis
+                            if classifier.lower()=='svm' and (not FileUtility.exists(basepath_cls+'_SVM.pickle') or self.override):
+                                Model = SVM(X, Y)
+                                Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                            if classifier.lower()=='rf' and  (not FileUtility.exists(basepath_cls+'_RF.pickle') or self.override):
+                                Model = RFClassifier(X, Y)
+                                Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                            if classifier.lower()=='lr' and (not FileUtility.exists(basepath_cls+'_LR.pickle') or self.override):
+                                Model = LogRegression(X, Y)
+                                Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
 
 
 
-                FileUtility.ensure_dir(subdir+phenotype+'/'+'final_results/')
-                create_excell_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
-                        #if classifier.lower()=='dnn':
-                        #    Model = DNN(X, Y)
-                        #    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
+                    FileUtility.ensure_dir(subdir+phenotype+'/'+'final_results/')
+                    create_excell_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
+                            #if classifier.lower()=='dnn':
+                            #    Model = DNN(X, Y)
+                            #    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
         FileUtility.ensure_dir(self.output+'/'+'ultimate_outputs/')
         create_excell_project(predict_path,self.output+'/'+'ultimate_outputs/')
 
