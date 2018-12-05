@@ -43,6 +43,8 @@ class IntermediateRepCreate(object):
         vec, vocab = GenotypeReader.get_nuc_kmer_distribution(seq, k)
         return strain, vec, vocab
 
+
+
     def create_kmer_table(self, path, k, cores=4, override=False):
 
         save_path = self.output_path + 'sequence_' + str(k) + 'mer'
