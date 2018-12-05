@@ -64,7 +64,7 @@ class NPETrain:
         if backend == 'Sentencepiece':
             FileUtility.save_list('/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/Pseudogenomics/temp/tmp_txt', corpus)
             spm.SentencePieceTrainer.Train(
-                '--input=/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/Pseudogenomics/temp/tmp_txt --model_prefix=' + output_dir + ' --add_dummy_prefix=0 --max_sentencepiece_length=512 --model_type=bpe --mining_sentence_size=5000000 --input_sentence_size=10000000 --vocab_size=50000')
+                '--input=/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/Pseudogenomics/temp/tmp_txt --model_prefix=' + output_dir + '_500K --add_dummy_prefix=0 --max_sentencepiece_length=512 --model_type=bpe --mining_sentence_size=5000000 --input_sentence_size=10000000 --vocab_size=500000')
             #FileUtility.save_list('/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/Pseudogenomics/temp/tmp_txt', corpus[0:10])
         elif backend == 'normalbpe':
             train_npe(corpus, output_dir, vocab_size, output_dir + '_freq')
