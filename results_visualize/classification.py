@@ -55,18 +55,21 @@ def create_excell_project(path, output_path):
     files = FileUtility.recursive_glob(path, '*.xlsx')
     writer = pd.ExcelWriter(output_path+'/classifications.xls', engine='xlsxwriter')
 
+
     sheets={'CV std Test':[],'CV std Cross-val':[],'CV tree Test':[],'CV tree Cross-val':[]}
     for file in files:
         phenotype=file.split('/')[-3]
         cv=file.split('/')[-4].split('_')[-2]
-        df_test=pd.read_excel(file,sheet_name='Test')
+        xls=pd.ExcelFile(file)
+        df_test=pd.read_excel(xls, 'Test')
+        df_cross_val=pd.read_excel(xls,'Cross-validation')
+
         df_test['phenotype']=phenotype
         if cv=='std':
             sheets['CV std Test'].append(df_test.copy())
         else:
             sheets['CV tree Test'].append(df_test.copy())
 
-        df_cross_val=pd.read_excel(file,sheet_name='Cross-validation')
         df_cross_val['phenotype']=phenotype
         if cv=='std':
             sheets['CV std Cross-val'].append(df_cross_val.copy())
