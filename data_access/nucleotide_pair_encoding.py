@@ -72,7 +72,7 @@ class NPETrain:
         :return:
         '''
 
-        file_name = file_name_sample[0]
+        file_name = file_name_sample
         corpus = []
         if file_name[-1] == 'q':
             for cur_record in SeqIO.parse(file_name, "fastq"):
