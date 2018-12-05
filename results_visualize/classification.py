@@ -46,7 +46,12 @@ def create_excell_file(input_path, output_path):
         df2 = pd.DataFrame(data=table_cv,
                            columns=['feature', 'CV', 'classifier', 'accuracy', 'Precision', 'Recall', 'F1'])
     writer = pd.ExcelWriter(output_path)
+    df1.reset_index(drop=True, inplace=True)
+    df1.sort_values(['F1','feature','classifier'], ascending=[False, True, True])
     df1.to_excel(writer, 'Test')
+
+    df2.sort_values(['F1','feature','classifier'], ascending=[False, True, True])
+    df2.reset_index(drop=True, inplace=True)
     df2.to_excel(writer, 'Cross-validation')
     writer.save()
 
@@ -78,5 +83,7 @@ def create_excell_project(path, output_path):
 
     for x,frames in sheets.items():
         result = pd.concat(frames)
+        result.reset_index(drop=True, inplace=True)
+        result.sort_values(['phenotype', 'F1','feature','classifier'], ascending=[True, False, True, True])
         result.to_excel(writer, sheet_name=x)
     writer.close()
