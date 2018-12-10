@@ -11,8 +11,8 @@ def create_excell_file(input_path, output_path):
     files_cv = FileUtility.recursive_glob(input_path, '*.pickle')
 
     files_cv.sort()
-    table_test = {'classifier': [], 'feature': [], 'CV': [], 'Precision': [], 'Recall': [], 'F1': [], 'accuracy': []}
-    table_cv = {'classifier': [], 'feature': [], 'CV': [], 'Precision': [], 'Recall': [], 'F1': [], 'accuracy': []}
+    table_test = {'classifier': [], 'feature': [], 'CV': [], 'Precision': [], 'Recall': [], 'F1': [],'macroF1': [], 'accuracy': []}
+    table_cv = {'classifier': [], 'feature': [], 'CV': [], 'Precision': [], 'Recall': [], 'F1': [], 'macroF1': [],'accuracy': []}
 
     import warnings
     warnings.filterwarnings('ignore')
