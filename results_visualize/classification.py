@@ -40,16 +40,17 @@ def create_excell_file(input_path, output_path):
         table_cv['Precision'].append(np.round(precision_score(cv_predictions_trues, cv_predictions_pred), 2))
         table_cv['Recall'].append(np.round(recall_score(cv_predictions_trues, cv_predictions_pred), 2))
         table_cv['F1'].append(np.round(f1_score(cv_predictions_trues, cv_predictions_pred), 2))
+        table_cv['macroF1'].append(np.round(f1_score(cv_predictions_trues, cv_predictions_pred,average='macro'), 2))
         table_cv['accuracy'].append(np.round(accuracy_score(cv_predictions_trues, cv_predictions_pred), 2))
         df1 = pd.DataFrame(data=table_test,
                            columns=['feature', 'CV', 'classifier', 'accuracy', 'Precision', 'Recall', 'F1'])
         df2 = pd.DataFrame(data=table_cv,
                            columns=['feature', 'CV', 'classifier', 'accuracy', 'Precision', 'Recall', 'F1'])
     writer = pd.ExcelWriter(output_path)
-    df1.sort_values(['F1','feature','classifier'], ascending=[False, True, True], inplace=True)
+    df1.sort_values(['macroF1','F1','feature','classifier'], ascending=[False, True, True], inplace=True)
     df1.to_excel(writer, 'Test', index=False)
 
-    df2.sort_values(['F1','feature','classifier'], ascending=[False, True, True], inplace=True)
+    df2.sort_values(['macroF1','F1','feature','classifier'], ascending=[False, True, True], inplace=True)
     df2.to_excel(writer, 'Cross-validation', index=False)
     writer.save()
 
@@ -81,6 +82,6 @@ def create_excell_project(path, output_path):
 
     for x,frames in sheets.items():
         result = pd.concat(frames).copy()
-        result.sort_values(['phenotype', 'F1','classifier','feature'], ascending=[True, False, True, True], inplace=True)
+        result.sort_values(['phenotype', 'macroF1','classifier','feature'], ascending=[True, False, True, True], inplace=True)
         result.to_excel(writer, sheet_name=x, index=False)
     writer.close()
