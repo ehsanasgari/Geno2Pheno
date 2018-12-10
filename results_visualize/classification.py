@@ -32,6 +32,7 @@ def create_excell_file(input_path, output_path):
         table_test['Precision'].append(np.round(precision_score(Y_test, Y_test_pred), 2))
         table_test['Recall'].append(np.round(recall_score(Y_test, Y_test_pred), 2))
         table_test['F1'].append(np.round(f1_score(Y_test, Y_test_pred), 2))
+        table_test['macroF1'].append(np.round(f1_score(Y_test, Y_test_pred,average='macro'), 2))
         table_test['accuracy'].append(np.round(accuracy_score(Y_test, Y_test_pred), 2))
 
         table_cv['feature'].append(rep)
