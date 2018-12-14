@@ -262,7 +262,7 @@ class PredefinedFoldCrossVal(CrossValidator):
             [cv_predictions_trues.append(tr) for tr in trues]
             for i in test:
                 isolates.append(i)
-        isolates=[self.train_isolate_list[i] for  iso in isolates]
+        isolates=[self.train_isolate_list[iso] for  iso in isolates]
 
         Y_test_pred=self.greed_search.best_estimator_.predict(self.X_test)
         f1_test=f1_score(self.Y_test,Y_test_pred)
