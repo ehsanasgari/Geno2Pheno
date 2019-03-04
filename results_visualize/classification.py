@@ -58,7 +58,7 @@ def create_excell_file(input_path, output_path):
 
 def create_excell_project(path, output_path):
     files = FileUtility.recursive_glob(path, '*.xlsx')
-    if len(file)>0:
+    if len(files)>0:
         writer = pd.ExcelWriter(output_path+'/classifications.xls', engine='xlsxwriter')
 
 
