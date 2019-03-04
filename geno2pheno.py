@@ -21,7 +21,7 @@ from utility.file_utility import FileUtility
 from classifier.classical_classifiers import SVM, RFClassifier, KNN, LogRegression
 import tqdm
 import warnings
-from results_visualize.classification import create_excell_file,create_excell_project
+from results_visualize.classification import create_excel_file,create_excel_project
 from clustering.newick_clustering import tree2mat_group
 import itertools
 
@@ -124,7 +124,6 @@ class Geno2Pheno:
             subdir=predict_path+setting_name+'/'
 
             FileUtility.ensure_dir(subdir)
-
             ## label mapping
             labels=predict.getElementsByTagName('labels')[0].getElementsByTagName('label')
             mapping=dict()
@@ -149,7 +148,6 @@ class Geno2Pheno:
             for phenotype in GPA.phenotypes:
                 print ('working on phenotype ',phenotype)
                 FileUtility.ensure_dir(subdir+phenotype+'/')
-
                 ## create cross-validation
                 FileUtility.ensure_dir(subdir+phenotype+'/cv/')
                 cv_file=''
@@ -170,8 +168,10 @@ class Geno2Pheno:
 
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
                 feature_combinations=[]
-                for x in [[list(x) for x in list(itertools.combinations(features,r))] for r in range(1,len(features)+1)]:
+                max_length_feature_comb=1#len(features)
+                for x in [[list(x) for x in list(itertools.combinations(features,r))] for r in range(1,max_length_feature_comb+1)]:
                     feature_combinations+=x
+
                 ## iterate over feature sets
                 for feature_setting in feature_combinations:
                     classifiers=[]
@@ -195,25 +195,17 @@ class Geno2Pheno:
                             if classifier.lower()=='lr' and (not FileUtility.exists(basepath_cls+'_LR.pickle') or self.override):
                                 Model = LogRegression(X, Y)
                                 Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
-
+                            #if classifier.lower()=='dnn':
+                            #    Model = DNN(X, Y)
+                            #    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
 
 
                 FileUtility.ensure_dir(subdir+phenotype+'/'+'final_results/')
-                create_excell_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
-                        #if classifier.lower()=='dnn':
-                        #    Model = DNN(X, Y)
-                        #    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
+                create_excel_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
+
 
         FileUtility.ensure_dir(self.output+'/'+'ultimate_outputs/')
-        create_excell_project(predict_path,self.output+'/'+'ultimate_outputs/')
-
-
-
-#elif mode=='pairs':
-#
-#            prefix_list=[list(x) for x in list(itertools.combinations(prefix_list,2))]
-#        #elif mode=='multi':
-#        #else:
+        create_excel_project(predict_path,self.output+'/'+'ultimate_outputs/')
 
 
 def checkArgs(args):

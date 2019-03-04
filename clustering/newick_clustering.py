@@ -1,3 +1,11 @@
+__author__ = "Ehsaneddin Asgari"
+__license__ = "Apache 2"
+__version__ = "1.0.0"
+__maintainer__ = "Ehsaneddin Asgari"
+__email__ = "asgari@berkeley.edu"
+__project__ = "GENO2PHENO of SEQ2GENO2PHENO"
+__website__ = ""
+
 import sys
 sys.path.append('../')
 from utility.file_utility import FileUtility
@@ -9,7 +17,12 @@ from sklearn.cluster import SpectralClustering
 import os
 
 def tree2mat_group(tree_file, n_group=20):
-
+    '''
+    This function maps the phylgenetic tree to adj matrix and perform spectral clustering on it
+    :param tree_file:
+    :param n_group:
+    :return:
+    '''
     if not os.path.exists(tree_file.replace(tree_file.split('/')[-1], 'phylogenetic_nodes_and_clusters.txt')):
         print ('Create phylogenetic information distance and groupings..')
         t = Phylo.read(tree_file, 'newick')

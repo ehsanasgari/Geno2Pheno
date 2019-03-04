@@ -1,3 +1,12 @@
+__author__ = "Ehsaneddin Asgari"
+__license__ = "Apache 2"
+__version__ = "1.0.0"
+__maintainer__ = "Ehsaneddin Asgari"
+__email__ = "asgari@berkeley.edu"
+__project__ = "GENO2PHENO of SEQ2GENO2PHENO"
+__website__ = ""
+
+
 import sys
 
 sys.path.append('../')
@@ -7,7 +16,7 @@ import numpy as np
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
 
 
-def create_excell_file(input_path, output_path):
+def create_excel_file(input_path, output_path):
     files_cv = FileUtility.recursive_glob(input_path, '*.pickle')
     if len(files_cv) >0:
         files_cv.sort()
@@ -56,7 +65,7 @@ def create_excell_file(input_path, output_path):
         writer.save()
 
 
-def create_excell_project(path, output_path):
+def create_excel_project(path, output_path):
     files = FileUtility.recursive_glob(path, '*.xlsx')
     if len(files)>0:
         writer = pd.ExcelWriter(output_path+'/classifications.xls', engine='xlsxwriter')
