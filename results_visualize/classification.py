@@ -61,7 +61,6 @@ def create_excell_project(path, output_path):
     if len(files)>0:
         writer = pd.ExcelWriter(output_path+'/classifications.xls', engine='xlsxwriter')
 
-
         sheets={'CV std Test':[],'CV std Cross-val':[],'CV tree Test':[],'CV tree Cross-val':[]}
         for file in files:
             phenotype=file.split('/')[-3]

@@ -169,7 +169,7 @@ class Geno2Pheno:
                         cv_test_file=subdir+phenotype+'/cv/rand/'+''.join([phenotype,'_',setting_name,'_test.txt'])
 
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
-
+                print (features)
                 feature_combinations=[]
                 for x in [[list(x) for x in list(itertools.combinations(features,r))] for r in range(1,len(features)+1)]:
                     feature_combinations+=x
