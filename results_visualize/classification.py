@@ -69,7 +69,6 @@ def create_excel_project(path, output_path):
     files = FileUtility.recursive_glob(path, '*.xlsx')
     if len(files)>0:
         writer = pd.ExcelWriter(output_path+'/classifications.xls', engine='xlsxwriter')
-
         sheets={'CV std Test':[],'CV std Cross-val':[],'CV tree Test':[],'CV tree Cross-val':[]}
         for file in files:
             phenotype=file.split('/')[-3]
@@ -91,7 +90,8 @@ def create_excel_project(path, output_path):
                 sheets['CV tree Cross-val'].append(df_cross_val.copy())
 
         for x,frames in sheets.items():
-            result = pd.concat(frames).copy()
+            # in case of having only one frame
+            result = pd.concat(frames).copy() if len(frames)>1 else  frames[0].copy()
             result.sort_values(['phenotype', 'macroF1','classifier','feature'], ascending=[True, False, True, True], inplace=True)
             result.to_excel(writer, sheet_name=x, index=False)
         writer.close()
