@@ -202,7 +202,7 @@ class Geno2Pheno:
 
                         # generate selected features
                         FileUtility.ensure_dir(self.output+'/'+'ultimate_outputs/')
-                        print(ultimate_outputs)
+                        print(self.output+'/'+'ultimate_outputs/')
                         generate_top_features(self.output, classifiers, topk=200)
                 FileUtility.ensure_dir(subdir+phenotype+'/'+'final_results/')
                 create_excel_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
