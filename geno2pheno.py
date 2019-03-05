@@ -24,6 +24,7 @@ import warnings
 from results_visualize.classification import create_excel_file,create_excel_project
 from clustering.newick_clustering import tree2mat_group
 import itertools
+from marker_detection.classification_based import generate_top_features
 
 class Geno2Pheno:
     def __init__(self, genml_path, override=1, cores=4):
@@ -199,7 +200,8 @@ class Geno2Pheno:
                             #    Model = DNN(X, Y)
                             #    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
 
-
+                        # generate selected features
+                        generate_top_features(self.output, classifiers, topk=200)
                 FileUtility.ensure_dir(subdir+phenotype+'/'+'final_results/')
                 create_excel_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
 

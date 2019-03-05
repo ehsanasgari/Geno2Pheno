@@ -1,77 +1,61 @@
+__author__ = "Ehsaneddin Asgari"
+__license__ = "Apache 2"
+__version__ = "1.0.0"
+__maintainer__ = "Ehsaneddin Asgari"
+__email__ = "asgari@berkeley.edu"
+__project__ = "GENO2PHENO of SEQ2GENO2PHENO"
+__website__ = ""
+
 import sys
 sys.path.append('../')
 from utility.file_utility import FileUtility
-from utility.visualization_utility import create_mat_plot
-from utility.math_utility import generate_binary
-from utility.list_set_util import get_intersection_of_list
-import itertools
-import numpy as np
+import pandas as pd
 
+def generate_top_features(path, classifier_list, topk=200):
 
+    writer = pd.ExcelWriter(path+'/ultimate_outputs/selected_features.xls', engine='xlsxwriter')
 
-files=FileUtility.recursive_glob('/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/K_pneumoniae/feature_selection/classifications/infection_vs_carriage/Human_invasive/','*')
-files.sort()
+    final_results=dict()
+    for classifier in classifier_list:
+        feature_files = FileUtility.recursive_glob(path+'/feature_selection/','*_'+classifier)
+        res=dict()
+        for file in feature_files:
+            phenotype=file.split('/')[0:-1][-1]
+            if not phenotype in res:
+                res[phenotype]=[file]
+            else:
+                if file.split('/')[-1].count('##')>res[phenotype][0].split('/')[-1].count('##'):
+                    res[phenotype]=[file]
+                elif file.split('/')[-1].count('##')==res[phenotype][0].split('/')[-1].count('##'):
+                    res[phenotype].append(file)
+        for phenotype in res.keys():
+            if phenotype not in final_results:
+                final_results[phenotype]=[]
+            final_results[phenotype]+=res[phenotype]
 
-print (files)
+    for phenotype,files in final_results.items():
+        selected=[{x.split('\t')[0]:1/(idx+1) for idx, x in enumerate(FileUtility.load_list(file)[1:topk])} for file in files]
+        res=set(selected[0])
+        for set_select in selected[1::]:
+             res=res.intersection(set_select)
 
-categorized_files=[]
-prev=''
-new_list=[]
-for file in files:
-    if not prev =='':
-        new_list=dict([(file.split('_')[-1],file)])
-        prev=file
-    elif ''.join(file.split('_')[0:-1])==''.join(prev.split('_')[0:-1]):
-        new_list[file.split('_')[-1]]=file
-    else:
-        file_list.append(new_list)
-        new_list=dict([(file.split('_')[-1],file)])
-        prev=file
+        geno_val_res=dict()
+        for dict_geno_val in selected:
+            for x,val in dict_geno_val.items():
+                if x not in geno_val_res:
+                    geno_val_res[x]=[val,1]
+                else:
+                    geno_val_res[x][0]+=val
+                    geno_val_res[x][1]+=1
 
-print (file_list)
+        df_dict={'feature_name':[],'mrr':[],'freq_confirmation':[]}
+        for name, values in geno_val_res.items():
+            rr, nr = values
+            df_dict['feature_name'].append(name)
+            df_dict['mrr'].append(rr/nr)
+            df_dict['freq_confirmation'].append(nr)
+        df=pd.DataFrame(df_dict)
+        df.sort_values(['freq_confirmation','mrr','feature_name'], ascending=[False, False, False], inplace=True)
+        df=df.copy()
+        df.to_excel(writer, sheet_name=phenotype, index=False)
 
-# features_addresses={'Random Forest':'../../amr_results/5_3_2017/classifications_standard/##drug##gpa_trimmed_gpa_roaryRF_features', 'Chi2':'../../amr_results/res_before_5_3_2017/results/feature_selection/chi2/##drug##gpa_trimmed_gpa_roary','PhyloChi':'/mounts/data/proj/asgari/dissertation/git_repos/amr_results/features/phylochi2/gpa_trimmed_gpa_roary##drug##.txt','SVM':'../../amr_results/features/gpa/##drug##_S-vs-R_non-zero+weights.txt','Treewas':'../../amr_results/features/treewas/gpa/##drug##_S.vs.R_terminal_p-vals_name.txt'}
-#
-#
-# def generate_feature_sets(features_addresses):
-#     '''
-#         Final all features
-#     '''
-#     methods=list(features_addresses.keys())
-#     methods.sort()
-#     res=dict()
-#     for drug in ['Ciprofloxacin', 'Tobramycin', 'Colistin', 'Ceftazidim', 'Meropenem']:
-#         res[drug]=dict()
-#         for idx,method in enumerate(methods):
-#             if method=='Random Forest' or method=='SVM':
-#                 res[drug][method]=dict([(x.split('\t')[0].replace(' ','').replace('gpa_roary##','').replace('gpa_trimmed##',''),float(x.split('\t')[1])) for x in FileUtility.load_list(features_addresses[method].replace('##drug##',drug))[1::]])
-#             if method=='Chi2' or method=='PhyloChi':
-#                 res[drug][method]=dict([(x.split('\t')[0].replace(' ','').replace('gain_','').replace('loss_','').replace('gpa_roary##','').replace('gpa_trimmed##',''),float(x.split('\t')[1])) for x in FileUtility.load_list(features_addresses[method].replace('##drug##',drug))[1::] if float(x.split('\t')[1]) > 10 ])
-#             if method=='Treewas':
-#                 res[drug][method]=dict([(x.split('\t')[0].replace(' ',''),float(x.split('\t')[1])) for x in FileUtility.load_list(features_addresses[method].replace('##drug##',drug))[1::] if float(x.split('\t')[1]) < 0.05 ])
-#     return res
-#
-# def generate_intersection_matrix(features_addresses, drug):
-#     '''
-#         This function generates intersection table for all methods for a given drug
-#     '''
-#     methods=list(features_addresses.keys())
-#     methods.sort()
-#     method_pairs=list(itertools.combinations(range(len(methods)),2))+[(x,x) for x in range(len(methods))]
-#     mat=np.zeros((len(methods),len(methods)))
-#     for idx,idy in method_pairs:
-#         if methods[idx]=='Random Forest' or methods[idx]=='SVM':
-#             residx=dict([(x.split('\t')[0].replace(' ','').replace('gpa_roary##','').replace('gpa_trimmed##',''),float(x.split('\t')[1])) for x in FileUtility.load_list(features_addresses[methods[idx]].replace('##drug##',drug))[1::]])
-#         if methods[idy]=='Random Forest' or methods[idy]=='SVM':
-#             residy=dict([(x.split('\t')[0].replace(' ','').replace('gpa_roary##','').replace('gpa_trimmed##',''),float(x.split('\t')[1])) for x in FileUtility.load_list(features_addresses[methods[idy]].replace('##drug##',drug))[1::]])
-#         if methods[idx]=='Chi2' or methods[idx]=='PhyloChi':
-#             residx=dict([(x.split('\t')[0].replace(' ','').replace('gain_','').replace('loss_','').replace('gpa_roary##','').replace('gpa_trimmed##',''),float(x.split('\t')[1])) for x in FileUtility.load_list(features_addresses[methods[idx]].replace('##drug##',drug))[1::] if float(x.split('\t')[1]) > 4 ])
-#         if methods[idy]=='Chi2' or methods[idy]=='PhyloChi':
-#             residy=dict([(x.split('\t')[0].replace(' ','').replace('gain_','').replace('loss_','').replace('gpa_roary##','').replace('gpa_trimmed##',''),float(x.split('\t')[1])) for x in FileUtility.load_list(features_addresses[methods[idy]].replace('##drug##',drug))[1::] if float(x.split('\t')[1]) > 4])
-#         if methods[idx]=='Treewas':
-#             residx=dict([(x.split('\t')[0].replace(' ',''),float(x.split('\t')[1])) for x in FileUtility.load_list(features_addresses[methods[idx]].replace('##drug##',drug))[1::] if float(x.split('\t')[1]) < 0.05 ])
-#         if methods[idy]=='Treewas':
-#             residy=dict([(x.split('\t')[0].replace(' ',''),float(x.split('\t')[1])) for x in FileUtility.load_list(features_addresses[methods[idy]].replace('##drug##',drug))[1::] if float(x.split('\t')[1]) < 0.05])
-#         mat[idx,idy]=len(set(residx.keys()).intersection(residy.keys()))
-#         mat[idy,idx]=mat[idx,idy]
-#     return mat, methods
