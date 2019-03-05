@@ -77,7 +77,7 @@ def create_excel_project(path, output_path):
             df_test=pd.read_excel(xls, 'Test')
             df_cross_val=pd.read_excel(xls,'Cross-validation')
 
-            print (phenotype, cv, df_test ,df_cross_val)
+            print (phenotype, cv)
             df_test['phenotype']=phenotype
             if cv=='std':
                 sheets['CV std Test'].append(df_test.copy())
