@@ -201,6 +201,8 @@ class Geno2Pheno:
                             #    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
 
                         # generate selected features
+                        FileUtility.ensure_dir(self.output+'/'+'ultimate_outputs/')
+                        print(ultimate_outputs)
                         generate_top_features(self.output, classifiers, topk=200)
                 FileUtility.ensure_dir(subdir+phenotype+'/'+'final_results/')
                 create_excel_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
