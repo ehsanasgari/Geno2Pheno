@@ -14,7 +14,11 @@ from utility.file_utility import FileUtility
 import pandas as pd
 import numpy as np
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
+import matplotlib
+import matplotlib.pyplot as plt
+import seaborn as sns;
 
+sns.set()
 
 def create_excel_file(input_path, output_path):
     files_cv = FileUtility.recursive_glob(input_path, '*.pickle')
@@ -92,3 +96,22 @@ def create_excel_project(path, output_path):
             result.sort_values(['phenotype', 'macroF1','classifier','feature'], ascending=[True, False, True, True], inplace=True)
             result.to_excel(writer, sheet_name=x, index=False)
         writer.close()
+        create_barplot(output_path+'/classifications.xls')
+
+def create_barplot(xlsfile):
+    plt.clf()
+    xls = pd.ExcelFile(xlsfile)
+    sheets = xls.sheet_names
+    sheets.sort()
+    results=[]
+    for sheet in sheets:
+        df = xls.parse(sheet)
+        df['Results']=sheet
+        results.append(df.copy())
+    df=pd.concat(results)
+    df=df[~df.feature.str.contains('#')]
+    df['classification setting']=df['feature']+'/'+df['Results']
+    sns.barplot(x="classification setting", y="macroF1", hue="classifier",data=df)
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+    plt.savefig('/'.join(xlsfile.split('/')[0:-1])+'/'+'results.png')

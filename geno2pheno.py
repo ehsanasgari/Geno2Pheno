@@ -169,6 +169,7 @@ class Geno2Pheno:
 
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
                 feature_combinations=[]
+                ## TODO: ask as an input
                 max_length_feature_comb = 2#len(features)
 
                 for x in [[list(x) for x in list(itertools.combinations(features,r))] for r in range(1,max_length_feature_comb+1)]:
