@@ -77,6 +77,7 @@ def create_excel_project(path, output_path):
             df_test=pd.read_excel(xls, 'Test')
             df_cross_val=pd.read_excel(xls,'Cross-validation')
 
+            print (phenotype, cv, df_test ,df_cross_val)
             df_test['phenotype']=phenotype
             if cv=='std':
                 sheets['CV std Test'].append(df_test.copy())
@@ -91,8 +92,6 @@ def create_excel_project(path, output_path):
 
         for x,frames in sheets.items():
             # in case of having only one frame
-            print (len(frames))
-            print (frames)
             result = pd.concat(frames).copy() if len(frames)>1 else  frames[0].copy()
             result.sort_values(['phenotype', 'macroF1','classifier','feature'], ascending=[True, False, True, True], inplace=True)
             result.to_excel(writer, sheet_name=x, index=False)
