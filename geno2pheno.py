@@ -186,10 +186,10 @@ class Geno2Pheno:
                         X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats(feature_setting, phenotype, mapping)
 
                         feature='##'.join(feature_setting)
-                        print(feature)
                         ## iterate over classifiers
                         for classifier in tqdm.tqdm(classifiers):
                             basepath_cls=subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis
+                            print(basepath_cls)
                             if classifier.lower()=='svm' and (not FileUtility.exists(basepath_cls+'_SVM.pickle') or self.override):
                                 Model = SVM(X, Y)
                                 Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
