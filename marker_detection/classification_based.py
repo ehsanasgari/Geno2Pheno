@@ -32,7 +32,6 @@ def generate_top_features(path, classifier_list, topk=200):
             if phenotype not in final_results:
                 final_results[phenotype]=[]
             final_results[phenotype]+=res[phenotype]
-    print(final_results)
     for phenotype,files in final_results.items():
         selected=[{x.split('\t')[0]:1/(idx+1) for idx, x in enumerate(FileUtility.load_list(file)[1:topk])} for file in files]
         res=set(selected[0])
