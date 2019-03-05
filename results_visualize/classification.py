@@ -77,18 +77,14 @@ def create_excel_project(path, output_path):
             df_test=pd.read_excel(xls, 'Test')
             df_cross_val=pd.read_excel(xls,'Cross-validation')
 
-            print (phenotype, cv)
             df_test['phenotype']=phenotype
-            if cv=='std':
-                sheets['CV std Test'].append(df_test.copy())
-            else:
-                sheets['CV tree Test'].append(df_test.copy())
+
+            sheets['CV std Test'].append(df_test[df_test['CV']=='std'].copy())
+            sheets['CV tree Test'].append(df_test[df_test['CV']=='tree'].copy())
 
             df_cross_val['phenotype']=phenotype
-            if cv=='std':
-                sheets['CV std Cross-val'].append(df_cross_val.copy())
-            else:
-                sheets['CV tree Cross-val'].append(df_cross_val.copy())
+            sheets['CV std Cross-val'].append(df_cross_val[df_cross_val['CV']=='std'].copy())
+            sheets['CV tree Cross-val'].append(df_cross_val[df_cross_val['CV']=='tree'].copy())
 
         for x,frames in sheets.items():
             # in case of having only one frame
