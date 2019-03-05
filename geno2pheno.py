@@ -174,7 +174,6 @@ class Geno2Pheno:
                 for x in [[list(x) for x in list(itertools.combinations(features,r))] for r in range(1,max_length_feature_comb+1)]:
                     feature_combinations+=x
 
-                print (feature_combinations)
 
                 ## iterate over feature sets
                 for feature_setting in feature_combinations:
@@ -187,6 +186,7 @@ class Geno2Pheno:
                         X, Y, feature_names, final_strains = GPA.get_xy_prediction_mats(feature_setting, phenotype, mapping)
 
                         feature='##'.join(feature_setting)
+                        print(feature)
                         ## iterate over classifiers
                         for classifier in tqdm.tqdm(classifiers):
                             basepath_cls=subdir+phenotype+'/'+'_'.join([''.join(feature.split('.')[0:-1]) if len(feature.split('.'))>1 else feature])+'_CV_'+self.cvbasis
