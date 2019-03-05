@@ -169,7 +169,7 @@ class Geno2Pheno:
 
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
                 feature_combinations=[]
-                max_length_feature_comb=1#len(features)
+                max_length_feature_comb = 2#len(features)
                 for x in [[list(x) for x in list(itertools.combinations(features,r))] for r in range(1,max_length_feature_comb+1)]:
                     feature_combinations+=x
 
@@ -199,9 +199,9 @@ class Geno2Pheno:
                             #if classifier.lower()=='dnn':
                             #    Model = DNN(X, Y)
                             #    Model.tune_and_eval(subdir+phenotype+'/'+'_'.join([feature]),njobs=self.cores, kfold=10)
-
                         # generate selected features
                         FileUtility.ensure_dir(self.output+'/'+'ultimate_outputs/')
+                        print ('Select the top markers..')
                         generate_top_features(self.output, [x.upper() for x in classifiers], topk=200)
                 FileUtility.ensure_dir(subdir+phenotype+'/'+'final_results/')
                 create_excel_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
