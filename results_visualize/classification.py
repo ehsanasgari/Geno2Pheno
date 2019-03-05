@@ -79,11 +79,11 @@ def create_excel_project(path, output_path):
 
             df_test['phenotype']=phenotype
 
-            sheets['CV std Test'].append(df_test[df_test['CV']=='std'].copy())
+            sheets['CV std Test'].append(df_test[df_test['CV']=='rand'].copy())
             sheets['CV tree Test'].append(df_test[df_test['CV']=='tree'].copy())
 
             df_cross_val['phenotype']=phenotype
-            sheets['CV std Cross-val'].append(df_cross_val[df_cross_val['CV']=='std'].copy())
+            sheets['CV std Cross-val'].append(df_cross_val[df_cross_val['CV']=='rand'].copy())
             sheets['CV tree Cross-val'].append(df_cross_val[df_cross_val['CV']=='tree'].copy())
 
         for x,frames in sheets.items():
