@@ -6,7 +6,6 @@ __email__ = "asgari@berkeley.edu"
 __project__ = "GENO2PHENO of SEQ2GENO2PHENO"
 __website__ = ""
 
-
 import sys
 
 sys.path.append('../')

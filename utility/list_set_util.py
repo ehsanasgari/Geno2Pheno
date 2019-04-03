@@ -1,3 +1,9 @@
+__author__ = "Ehsaneddin Asgari"
+__license__ = "Apache 2"
+__version__ = "1.0.0"
+__maintainer__ = "Ehsaneddin Asgari"
+__email__ = "asgari@berkeley.edu ehsaneddin.asgari@helmholtz-hzi.de"
+
 import operator
 
 def get_intersection_of_list(list_of_list_features):
