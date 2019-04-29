@@ -14,9 +14,9 @@ gpa
 roary
     </table>
 </genotype>
-<phenotype path="data_config/pheno_table_CLSI_S-vs-R.txt">
+<phenotype path="GeneML/pheno_table_CLSI_S-vs-R.txt">
 </phenotype>
-<phylogentictree path="data_config/mitip_422_gt90.fasttree"></phylogentictree>
+<phylogentictree path="GeneML/mitip_422_gt90.fasttree"></phylogentictree>
 
 <predict name="S_vs_R_tree_cv">
     <optimize>scores_f1_1</optimize>
