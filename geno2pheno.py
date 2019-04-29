@@ -116,7 +116,6 @@ class Geno2Pheno:
         predict_blocks = self.xmldoc.getElementsByTagName('predict')
         predict_path=self.output+'/classifications/'
 
-
         # iterate over predict block
         for predict in predict_blocks:
             # Sub prediction
@@ -246,7 +245,13 @@ def checkArgs(args):
     G2P = Geno2Pheno(parsedArgs.genml_path, parsedArgs.override, parsedArgs.cores)
     return False
 
+def fxn():
+    warnings.warn("deprecated", DeprecationWarning)
+
 if __name__ == '__main__':
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        fxn()
     err = checkArgs(sys.argv)
     if err:
         print(err)
