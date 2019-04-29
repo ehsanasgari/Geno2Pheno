@@ -18,7 +18,6 @@ from Bio import SeqIO
 from Bio.Alphabet import generic_dna
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from biom import load_table
 from scipy import sparse
 #from bootstrapping.bootstrapping import BootStrapping
 
@@ -131,18 +130,6 @@ class FileUtility(object):
         fasta_files.sort()
         mapping = {v: k for k, v in enumerate(fasta_files)}
         return fasta_files, mapping
-
-    @staticmethod
-    def read_OTU_format(biom_file):
-        '''
-        return OTU content
-        :param biom_file:
-        :return:
-        '''
-        table = load_table(biom_file)
-        X_otu = table.matrix_data
-        OTU_ID_Mapping = {x.split('.')[1]: idx for idx, x in enumerate(list(table.ids()))}
-        return X_otu, OTU_ID_Mapping
 
     @staticmethod
     def save_obj(filename, value):
