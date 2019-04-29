@@ -4,7 +4,7 @@
      <table path="/net/sgi/metagenomics/projects/pseudo_genomics/data/gene_expression/v2/rpg_414_log.txt"  normalization="zu" transpose="False">
 genexp
     </table>
-    <table path="/net/sgi/metagenomics/projects/pseudo_genomics/results/featuresAnalysis/v2/non-syn_snps/non_syn_snps_aa_uq.uniq.txt"  normalization="binary" transpose="False">
+    <table path="/net/sgi/metagenomics/projects/pseudo_genomics/results/PackageTesting/recompute_Pseudomonas/v1/nonsyn_SNPs_final.bin.mat_NONRDNT"  normalization="binary" transpose="False">
 snps
     </table>
     <table path="/net/sgi/metagenomics/projects/pseudo_genomics/results/featuresAnalysis/v2/gpa/annot.uniq.txt"  normalization="binary" transpose="False">
