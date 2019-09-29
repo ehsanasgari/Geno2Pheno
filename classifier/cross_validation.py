@@ -229,7 +229,7 @@ class PredefinedFoldCrossVal(CrossValidator):
         self.X = X
         self.Y = Y
 
-    def tune_and_evaluate(self, estimator, parameters, score='f1_macro', n_jobs=-1, file_name='results'):
+    def tune_and_evaluate(self, estimator, parameters, score='f1_macro', n_jobs=-1, file_name='results', NUM_TRIALS=10):
         '''
         :param estimator:
         :param parameters:p
@@ -238,9 +238,28 @@ class PredefinedFoldCrossVal(CrossValidator):
         :param file_name: directory/tuning/classifier/features/
         :return:
         '''
-        # greed_search
-        self.greed_search = GridSearchCV(estimator=estimator, param_grid=parameters, cv=self.cv, scoring=self.scoring,
-                                         refit=score, error_score=0, n_jobs=n_jobs,verbose=0)
+
+        # Loop for each trial
+        nested_scores = [0]*NUM_TRIALS
+
+        for i in range(NUM_TRIALS):
+            # Choose cross-validation techniques for the inner and outer loops,
+            # independently of the dataset.
+            # E.g "GroupKFold", "LeaveOneOut", "LeaveOneGroupOut", etc.
+            inner_cv = KFold(n_splits=4, shuffle=True, random_state=i)
+
+            # Non_nested parameter search and scoring
+            clf = GridSearchCV(estimator=svm, param_grid=p_grid, cv=inner_cv,
+                               iid=False)
+            # greed_search
+            self.greed_search = GridSearchCV(estimator=estimator, param_grid=parameters, cv=inner_cv,
+                                             scoring=self.scoring,
+                                             refit=score, error_score=0, n_jobs=n_jobs, verbose=0)
+
+            # Nested CV with parameter optimization
+            nested_score = cross_val_score(self.greed_search, X=X_iris, y=y_iris, cv=self.cv)
+            nested_scores[i] = nested_score.mean()
+
 
         label_set = list(set(self.Y))
         label_set.sort()
