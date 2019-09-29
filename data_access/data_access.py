@@ -217,15 +217,15 @@ class GenotypePhenotypeAccess(object):
 
         groups=[int(isolate_to_group[iso]) for iso in final_strains]
         group_kfold = GroupKFold(n_splits=round(1/test_ratio))
-        for train_index, test_index in group_kfold.split(final_strains, Y, groups):
-            X_test=[final_strains[x] for x in test_index]
-            FileUtility.save_list(path.replace('_folds.txt', '_test.txt'), ['\t'.join(X_test)])
-            break
+
+        train_index, test_index = list(group_kfold.split(final_strains, Y, groups))[0]
+        X_test=[final_strains[x] for x in test_index]
+        FileUtility.save_list(path.replace('_folds.txt', '_test.txt'), ['\t'.join(X_test)])
 
         group_kfold = GroupKFold(n_splits=cv)
 
         folds=[]
-        for train_index, test_index in group_kfold.split(train_index, [Y[idx] for idx in train_index],  [groups[idx] for idx in train_index]):
+        for _, test_index in group_kfold.split(train_index, [Y[idx] for idx in train_index],  [groups[idx] for idx in train_index]):
             folds.append(test_index)
         folds=['\t'.join([final_strains[x] for x in fold.tolist()]) for fold in  folds]
         FileUtility.save_list(path, folds)

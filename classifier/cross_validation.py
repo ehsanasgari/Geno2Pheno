@@ -246,7 +246,7 @@ class PredefinedFoldCrossVal(CrossValidator):
             # Choose cross-validation techniques for the inner and outer loops,
             # independently of the dataset.
             # E.g "GroupKFold", "LeaveOneOut", "LeaveOneGroupOut", etc.
-            inner_cv = KFold(n_splits=4, shuffle=True, random_state=i)
+            inner_cv = StratifiedKFold(n_splits=4, shuffle=True, random_state=i)
 
             # Non_nested parameter search and scoring
             clf = GridSearchCV(estimator=svm, param_grid=p_grid, cv=inner_cv,
