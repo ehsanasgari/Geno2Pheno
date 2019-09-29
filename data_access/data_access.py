@@ -221,7 +221,7 @@ class GenotypePhenotypeAccess(object):
         train_index, test_index = list(group_kfold.split(final_strains, Y, groups))[0]
         X_test=[final_strains[x] for x in test_index]
         FileUtility.save_list(path.replace('_folds.txt', '_test.txt'), ['\t'.join(X_test)])
-
+        final_strains = [final_strains[ix] for ix in train_index]
         group_kfold = GroupKFold(n_splits=cv)
 
         folds=[]
