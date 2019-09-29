@@ -21,6 +21,29 @@ import math
 import operator
 from utility.list_set_util import argsort
 
+__author__ = "Ehsaneddin Asgari"
+__license__ = "Apache 2"
+__version__ = "1.0.0"
+__maintainer__ = "Ehsaneddin Asgari"
+__email__ = "asgari@berkeley.edu"
+__project__ = "GENO2PHENO of SEQ2GENO2PHENO"
+__website__ = ""
+
+import sys
+
+sys.path.append('../')
+from sklearn.svm import LinearSVC, SVC
+from classifier.cross_validation import KFoldCrossVal, PredefinedFoldCrossVal
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from utility.file_utility import FileUtility
+import numpy as np
+import codecs
+import math
+import operator
+from utility.list_set_util import argsort
+
 class SVM:
     '''
         Support vector machine classifier
@@ -37,8 +60,8 @@ class SVM:
         self.Y = Y
 
         SVM.params_tuning = [{'C': [1000, 500, 200, 100, 50, 20, 10, 5, 2, 1, 0.2, 0.5, 0.01, 0.02, 0.05, 0.001],
-                               'penalty': ['l1'], "tol": [1e-06, 1e-04], 'dual': [False, True], "fit_intercept": [True],
-                               'loss': ['l2'], 'class_weight': ['balanced', None]}]
+                               'penalty': ['l1'],'intercept_scaling':[1], "tol": [1e-06], 'dual': [False], "fit_intercept": [True],
+                               'loss': ['l2'], 'class_weight': ['balanced']}]
 
     def tune_and_eval(self, results_file,
                       params=None, njobs=50, kfold=10, feature_names=None, optimized_for='f1_macro'):
@@ -56,8 +79,8 @@ class SVM:
         CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_SVM',
                              n_jobs=njobs)
         if feature_names is not None:
-            [label_set, conf, label_set, best_score_, best_estimator_,
-                              cv_results_, best_params_,  (cv_predictions_pred,cv_predictions_trues,isolates ), (Y_test_pred, Y_test) ] = FileUtility.load_obj(results_file + '_SVM.pickle')
+            [nested_scores, cv_dicts, label_set, conf, label_set, best_score_, best_estimator_,
+             cv_results_, best_params_, (cv_predictions_pred, cv_predictions_trues, isolates), (Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_SVM.pickle')
             self.generate_SVM_important_features(best_estimator_, feature_names, results_file)
 
     def tune_and_eval_predefined(self, results_file, isolates, folds_file, test_file, params=None, njobs=50,feature_names=None, optimized_for='f1_macro'):
@@ -75,8 +98,8 @@ class SVM:
         self.CV.tune_and_evaluate(self.model, parameters=params, score=optimized_for, file_name=results_file + '_SVM',
                                   n_jobs=njobs)
         if feature_names is not None:
-            [label_set, conf, label_set, best_score_, best_estimator_,
-                              cv_results_, best_params_,  (cv_predictions_pred,cv_predictions_trues ,isolates), (Y_test_pred, Y_test) ] = FileUtility.load_obj(results_file + '_SVM.pickle')
+            [nested_scores, cv_dicts, label_set, conf, label_set, best_score_, best_estimator_,
+             cv_results_, best_params_, (cv_predictions_pred, cv_predictions_trues, isolates), (Y_test_pred, Y_test)] = FileUtility.load_obj(results_file + '_SVM.pickle')
             self.generate_SVM_important_features(best_estimator_, feature_names, results_file)
 
     def generate_SVM_important_features(self, clf_SVM, feature_names, results_file, N=1000):
@@ -99,8 +122,6 @@ class SVM:
         for idx in idxs:
             f.write('\t'.join([feature_names[idx], str(clf_SVM.coef_.tolist()[0][idx])]) + '\n')
         f.close()
-
-
 
 class LogRegression:
     '''
