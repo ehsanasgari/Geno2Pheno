@@ -1,4 +1,4 @@
-<project output="/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/Pseudogenomics/" name="pseudogenomics_infection">
+<project output="/net/sgi/metagenomics/projects/pseudo_genomics/results/geno2pheno_package/Pseudogenomics_nestedSVM/" name="pseudogenomics_infection">
 <genotype>
      <table path="/net/sgi/metagenomics/projects/pseudo_genomics/data/gene_expression/v2/rpg_414_log.txt"  normalization="zu" transpose="False">
 genexp
@@ -12,7 +12,7 @@ snps
 </phenotype>
 <phylogentictree path="GeneML/mitip_422_gt90.fasttree"></phylogentictree>
 
-<predict name="S_vs_R_nestedtree_cv">
+<predict name="S_vs_R">
     <optimize>scores_f1_1</optimize>
     <eval folds="10" test="0.1">tree</eval>
     <labels>
