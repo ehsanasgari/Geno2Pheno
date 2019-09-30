@@ -113,6 +113,14 @@ class Geno2Pheno:
         '''
         :return:
         '''
+        import warnings
+        from sklearn.exceptions import DataConversionWarning, FitFailedWarning, UndefinedMetricWarning, ConvergenceWarning
+        warnings.filterwarnings(action='ignore', category=DataConversionWarning)
+        warnings.filterwarnings(action='ignore', category=FitFailedWarning)
+        warnings.filterwarnings(action='ignore', category=DeprecationWarning)
+        warnings.filterwarnings(action='ignore', category=UndefinedMetricWarning)
+        warnings.filterwarnings(action='ignore', category=ConvergenceWarning)
+        
         predict_blocks = self.xmldoc.getElementsByTagName('predict')
         predict_path=self.output+'/classifications/'
 
@@ -169,9 +177,9 @@ class Geno2Pheno:
                 features=[x.split('/')[-1].replace('_feature_vect.npz','') for x in FileUtility.recursive_glob(self.representation_path, '*.npz')]
                 feature_combinations=[]
                 ## TODO: ask as an input
-                max_length_feature_comb = 2#len(features)
+                max_length_feature_comb = 3#len(features)
 
-                for x in [[list(x) for x in list(itertools.combinations(features,r))] for r in range(1,max_length_feature_comb+1)]:
+                for x in [[list(x) for x in list(itertools.combinations(features,r))] for r in range(3,max_length_feature_comb+1)]:
                     feature_combinations+=x
 
 
@@ -193,7 +201,7 @@ class Geno2Pheno:
                             basepath_cls=subdir+phenotype+'/'+feature_text+'_CV_'+self.cvbasis
                             if classifier.lower()=='svm' and (not FileUtility.exists(basepath_cls+'_SVM.pickle') or self.override):
                                 Model = SVM(X, Y)
-                                Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
+                                Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names, params=[{'C': [1000, 500, 200, 100, 50, 20, 10, 5, 2, 1, 0.2, 0.5, 0.01, 0.02, 0.05, 0.001]}])
                             if classifier.lower()=='rf' and  (not FileUtility.exists(basepath_cls+'_RF.pickle') or self.override):
                                 Model = RFClassifier(X, Y)
                                 Model.tune_and_eval_predefined(basepath_cls, final_strains, folds_file=cv_file, test_file=cv_test_file,njobs=self.cores, feature_names=feature_names)
@@ -208,11 +216,11 @@ class Geno2Pheno:
                         print ('Select the top markers..')
                         generate_top_features(self.output, [x.upper() for x in classifiers], topk=200)
                 FileUtility.ensure_dir(subdir+phenotype+'/'+'final_results/')
-                create_excel_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
+                #create_excel_file(subdir+phenotype+'/', subdir+phenotype+'/final_results/classification_res.xlsx')
 
 
         FileUtility.ensure_dir(self.output+'/'+'ultimate_outputs/')
-        create_excel_project(predict_path,self.output+'/'+'ultimate_outputs/')
+        #create_excel_project(predict_path,self.output+'/'+'ultimate_outputs/')
 
 
 def checkArgs(args):

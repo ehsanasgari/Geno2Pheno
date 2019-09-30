@@ -21,29 +21,6 @@ import math
 import operator
 from utility.list_set_util import argsort
 
-__author__ = "Ehsaneddin Asgari"
-__license__ = "Apache 2"
-__version__ = "1.0.0"
-__maintainer__ = "Ehsaneddin Asgari"
-__email__ = "asgari@berkeley.edu"
-__project__ = "GENO2PHENO of SEQ2GENO2PHENO"
-__website__ = ""
-
-import sys
-
-sys.path.append('../')
-from sklearn.svm import LinearSVC, SVC
-from classifier.cross_validation import KFoldCrossVal, PredefinedFoldCrossVal
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from utility.file_utility import FileUtility
-import numpy as np
-import codecs
-import math
-import operator
-from utility.list_set_util import argsort
-
 class SVM:
     '''
         Support vector machine classifier
@@ -92,6 +69,7 @@ class SVM:
         :param njobs:
         :return:
         '''
+        
         if params==None:
             params=SVM.params_tuning
         self.CV = PredefinedFoldCrossVal(self.X, self.Y, isolates, folds_file, test_file)
