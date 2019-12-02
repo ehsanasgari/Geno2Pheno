@@ -1,0 +1,23 @@
+<project output="/Users/vwr33vv/Documents/project_outputs/geno2pheno/res/" name="toytest">
+<genotype>
+    <table path="/Users/vwr33vv/Documents/projects/usecases/Geno2Pheno/toy_data/genotype_table.txt" normalization="binary" transpose="False">
+toygeno
+    </table>
+</genotype>
+<phenotype path="/Users/vwr33vv/Documents/projects/usecases/Geno2Pheno/toy_data/phenotypes.txt">
+</phenotype>
+<phylogentictree path="/Users/vwr33vv/Documents/projects/usecases/Geno2Pheno/toy_data/phylo_tree.txt"></phylogentictree>
+<predict name="resistance">
+    <optimize>scores_f1_1</optimize>
+    <eval folds="10" test="0.1">tree</eval>
+    <labels>
+            <label value="1">1</label>
+            <label value="0">0</label>
+    </labels>
+    <model>
+        <svm/>
+        <rf/>
+        <lr/>
+    </model>
+</predict>
+</project>
